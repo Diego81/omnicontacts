@@ -4,7 +4,7 @@ module OmniContacts
   class OAuth2
     include HTTPUtils
 
-    def redirect_url
+    def authorization_url
       "https://" + auth_host + authorize_path + "?" + authorize_url_params
     end
 

@@ -3,14 +3,14 @@ require "omnicontacts/oauth2"
 module OmniContacts
   class Gmail < OmniContacts::OAuth2
 
-    attr_reader :client_id, :client_secret, :redirect_uri, :ssl_ca_file_path, :auth_host, :authorize_path, :request_token_path, :scope
+    attr_reader :client_id, :client_secret, :ssl_ca_file, :auth_host, :authorize_path, :request_token_path, :scope
 
     def initialize app, client_id, client_secret, options ={}
       @app = app
       @client_id = client_id
       @client_secret = client_secret
-      @redirect_uri = "http://localhost:3000/oauth2callback"
-      @ssl_ca_file_path = "/etc/ssl/certs/curl-ca-bundle.crt"
+      @redirect_path = options[:redirect_path] || "/contacts/gmail/callback"
+      @ssl_ca_file = options[:ssl_ca_file]
       @auth_host = "accounts.google.com"
       @authorize_path = "/o/oauth2/auth"
       @request_token_path = "/o/oauth2/token"
@@ -20,29 +20,35 @@ module OmniContacts
     end
 
     def call env
-      if env["PATH_INFO"] =~ /^\/contacts\/gmail/
+      @env = env
+      if env["PATH_INFO"] == "/contacts/gmail"
         redirect_to_google_site
       else
-        if env["PATH_INFO"] =~ /^\/oauth2callback/
-          env["omnicontacts.emails"] = fetch_contacts(env)
+        puts "redirect path is " + @redirect_path
+        if env["PATH_INFO"] =~ /^#{@redirect_path}/
+          env["omnicontacts.emails"] = fetch_contacts
         end
         @app.call(env)
       end
     end
 
+    def redirect_uri
+      host_url_from_rack_env(@env) + @redirect_path
+    end
+
     private
 
     def redirect_to_google_site
-      [302, {"location" => redirect_url }, []]
+      [302, {"location" => authorization_url }, []]
     end
 
-    def fetch_contacts env
-      code =  query_string_to_map(env["QUERY_STRING"])["code"]
+    def fetch_contacts
+      code =  query_string_to_map(@env["QUERY_STRING"])["code"]
       contacts_from_code(code) 
     end
 
-    def contacts_from_code code
-      token, token_type = access_token_from_code code
+    def contacts_from_code(code)
+      token, token_type = access_token_from_code(code)
       contacts_from_access_token token, token_type
     end
 

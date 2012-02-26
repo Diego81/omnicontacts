@@ -1,17 +1,17 @@
 require "omnicontacts/oauth1"
 
 module OmniContacts
-  class Yahoo < OAuth1
+  class Yahoo < OAuth1 
 
-    attr_reader :consumer_key, :consumer_secret, :callback, :ssl_ca_file_path, :auth_host, :request_token_path, :auth_path, :access_token_path
+    attr_reader :consumer_key, :consumer_secret, :ssl_ca_file, :auth_host, :request_token_path, :auth_path, :access_token_path
 
-    def initialize app, consumer_key, consumer_secret, token_persistence_class
+    def initialize app, consumer_key, consumer_secret, token_persistence_class, options = {}
       @app = app
       @token_persistence_class = token_persistence_class
       @consumer_key = consumer_key
       @consumer_secret = consumer_secret
-      @callback = "http://localhost:3000/yahoocallback"
-      @ssl_ca_file_path = "/etc/ssl/certs/curl-ca-bundle.crt"
+      @callback_path = options[:callback_path] || "/contacts/yahoo/callback"
+      @ssl_ca_file = options[:ssl_ca_file]
       @auth_host = "api.login.yahoo.com"
       @request_token_path = "/oauth/v2/get_request_token"
       @auth_path = "/oauth/v2/request_auth"
@@ -19,14 +19,19 @@ module OmniContacts
     end
 
     def call env
-      if env["PATH_INFO"] =~ /^\/contacts\/yahoo/     
+      @env = env
+      if env["PATH_INFO"] == "/contacts/yahoo"
         obtain_token_and_redirect
       else
-        if env["PATH_INFO"] =~ /^\/yahoocallback/
+        if env["PATH_INFO"] =~ /^#{@callback_path}/
           env["omnicontacts.emails"] = fetch_contacts(env)
         end
         @app.call env
       end
+    end
+
+    def callback
+      host_url_from_rack_env(@env) + @callback_path
     end
 
     private

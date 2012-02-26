@@ -3,14 +3,14 @@ require "omnicontacts/oauth2"
 module OmniContacts
   class Hotmail < OAuth2
 
-    attr_reader :client_id, :client_secret, :redirect_uri, :ssl_ca_file_path, :auth_host, :authorize_path, :request_token_path, :scope
+    attr_reader :client_id, :client_secret, :ssl_ca_file, :auth_host, :authorize_path, :request_token_path, :scope
 
-    def initialize app, client_id, client_secret
+    def initialize app, client_id, client_secret, options = {}
       @app = app
       @client_id = client_id
       @client_secret = client_secret
-      @redirect_uri = "http://localhost:3000/hotmailcallback"
-      @ssl_ca_file_path = "/etc/ssl/certs/curl-ca-bundle.crt"
+      @redirect_path = options[:redirect_path] || "/contacts/hotmail/callback"
+      @ssl_ca_file = options[:ssl_ca_file]
       @auth_host = "oauth.live.com"
       @authorize_path = "/authorize"
       @scope = "wl.basic"
@@ -20,20 +20,25 @@ module OmniContacts
     end
 
     def call env
-      if env["PATH_INFO"] =~ /^\/contacts\/hotmail/  
+      @env = env
+      if env["PATH_INFO"] == "/contacts/hotmail"  
         redirect_to_hotmail_site
       else
-        if env["PATH_INFO"] =~ /^\/hotmailcallback/
+        if env["PATH_INFO"] =~ /^#{@redirect_path}/
           env["omnicontacts.emails"] = fetch_contacts(env)
         end
         @app.call(env)
       end
     end
 
+    def redirect_uri
+      host_url_from_rack_env(@env) + @redirect_path
+    end
+
     private
 
     def redirect_to_hotmail_site
-     [302, {"location" => redirect_url}, []] 
+     [302, {"location" => authorization_url}, []] 
     end
 
     def fetch_contacts env

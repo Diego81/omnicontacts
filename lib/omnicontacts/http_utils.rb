@@ -18,8 +18,12 @@ module OmniContacts
     def https_connection (host)
       result = Net::HTTP.new(host, SSL_PORT)
       result.use_ssl = true
-      # use certificate in configuration file. If it is not there do not use SSL (use fake SSL)
-      result.ca_file = ssl_ca_file_path
+      if ssl_ca_file
+        result.ca_file = ssl_ca_file
+      else
+        # log warning
+        result.verify_mode = OpenSSL::SSL::VERIFY_NONE
+      end
       result
     end
 
@@ -30,6 +34,12 @@ module OmniContacts
         memo
       end 
     end 
+
+    def host_url_from_rack_env env
+      port = ( (env["SERVER_PORT"] == 80) && "") || ":#{env['SERVER_PORT']}"  
+      host = (env["HTTP_HOST"]) || (env["SERVER_NAME"] + port)
+      env["rack.url_scheme"] + "://" + host
+    end
 
   end
 end
