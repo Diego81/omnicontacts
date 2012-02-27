@@ -25,7 +25,7 @@ module OmniContacts
         redirect_to_hotmail_site
       else
         if env["PATH_INFO"] =~ /^#{@redirect_path}/
-          env["omnicontacts.emails"] = fetch_contacts(env)
+          env["omnicontacts.contacts"] = fetch_contacts(env)
         end
         @app.call(env)
       end
@@ -61,7 +61,7 @@ module OmniContacts
       json = ActiveSupport::JSON.decode(escape_windows_format(response.body)) 
       result = []
       json["data"].each do |contact|
-        result << contact["name"] if valid_email? contact["name"]
+        result << {:email => contact["name"]} if valid_email? contact["name"]
       end
       result
     end

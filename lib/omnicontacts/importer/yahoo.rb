@@ -24,7 +24,7 @@ module OmniContacts
         obtain_token_and_redirect
       else
         if env["PATH_INFO"] =~ /^#{@callback_path}/
-          env["omnicontacts.emails"] = fetch_contacts(env)
+          env["omnicontacts.contacts"] = fetch_contacts(env)
         end
         @app.call env
       end
@@ -90,12 +90,20 @@ module OmniContacts
 
     def contacts_from_response response
       raise "Request failed" if response.code != "200"
+      puts response.body
       json = ActiveSupport::JSON.decode(response.body)
       result = []
-      json["contacts"]["contact"].each do |contact|
-        contact["fields"].each do |field|
-          result << field["value"] if field["type"] == "email"
+      json["contacts"]["contact"].each do |entry|
+        contact = {}
+        entry["fields"].each do |field|
+          contact[:email] = field["value"] if field["type"] == "email"
+          if field["type"] == "name"
+            name = field["value"]["givenName"]
+            surname = field["value"]["familyName"]
+            contact[:name] = "#{name} #{surname}" if name && surname
+          end
         end
+        result << contact if contact[:email]
       end
       result
     end

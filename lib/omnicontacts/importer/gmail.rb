@@ -1,4 +1,5 @@
 require "omnicontacts/oauth2"
+require "rexml/document"
 
 module OmniContacts
   class Gmail < OmniContacts::OAuth2
@@ -24,9 +25,8 @@ module OmniContacts
       if env["PATH_INFO"] == "/contacts/gmail"
         redirect_to_google_site
       else
-        puts "redirect path is " + @redirect_path
         if env["PATH_INFO"] =~ /^#{@redirect_path}/
-          env["omnicontacts.emails"] = fetch_contacts
+          env["omnicontacts.contacts"] = fetch_contacts
         end
         @app.call(env)
       end
@@ -72,7 +72,14 @@ module OmniContacts
       contacts = []
       xml.elements.each('//entry') do |entry|
         gd_email = entry.elements['gd:email']
-        contacts << gd_email.attributes['address'] if gd_email
+        if gd_email
+          contact = {:email => gd_email.attributes['address']}
+          gd_name = entry.elements['gd:name']
+          if gd_name
+            contact[:name] = gd_name.elements['gd:fullName'].text
+          end
+          contacts << contact
+        end
       end
       contacts 
     end
