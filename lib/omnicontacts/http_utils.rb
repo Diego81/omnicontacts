@@ -15,6 +15,12 @@ module OmniContacts
       CGI.escape(to_encode)
     end
 
+    def https_post host,path, params
+      response = https_connection(host).request_post(path, to_query_string(params))
+      raise response.body if response.code != "200"
+      response.body
+    end
+
     def https_connection (host)
       result = Net::HTTP.new(host, SSL_PORT)
       result.use_ssl = true

@@ -1,4 +1,5 @@
-require "omnicontacts/oauth2"
+require "omnicontacts/protocol/oauth2"
+require "json"
 
 module OmniContacts
   class Hotmail < OAuth2
@@ -58,7 +59,7 @@ module OmniContacts
 
     def contacts_from_response response
       raise "Request failed" if response.code != "200"
-      json = ActiveSupport::JSON.decode(escape_windows_format(response.body)) 
+      json = JSON.parse(escape_windows_format(response.body)) 
       result = []
       json["data"].each do |contact|
         result << {:email => contact["name"]} if valid_email? contact["name"]

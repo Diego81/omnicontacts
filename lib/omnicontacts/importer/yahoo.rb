@@ -1,7 +1,9 @@
-require "omnicontacts/oauth1"
+require "omnicontacts/protocol/oauth1"
+require "json"
 
 module OmniContacts
-  class Yahoo < OAuth1 
+  class Yahoo 
+    include OAuth1 
 
     attr_reader :consumer_key, :consumer_secret, :ssl_ca_file, :auth_host, :request_token_path, :auth_path, :access_token_path
 
@@ -90,8 +92,7 @@ module OmniContacts
 
     def contacts_from_response response
       raise "Request failed" if response.code != "200"
-      puts response.body
-      json = ActiveSupport::JSON.decode(response.body)
+      json = JSON.parse(response.body)
       result = []
       json["contacts"]["contact"].each do |entry|
         contact = {}

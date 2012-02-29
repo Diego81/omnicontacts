@@ -1,7 +1,8 @@
 require "omnicontacts/http_utils"
+require "json"
 
 module OmniContacts
-  class OAuth2
+  module OAuth2
     include HTTPUtils
 
     def authorization_url
@@ -21,23 +22,26 @@ module OmniContacts
       })    
     end
 
+    public
+
     def access_token_from_code code
-      token_response = https_connection(auth_host).request_post(request_token_path, token_req_params(code)) 
-      access_token_from_response token_response.body
+      access_token_from_response https_post(auth_host, request_token_path, token_req_params(code))
     end
 
+    private
+
     def token_req_params code
-      to_query_string( {
+       {
         :client_id => client_id,
         :client_secret => client_secret,
         :code => code,
         :redirect_uri => encode(redirect_uri),
         :grant_type => "authorization_code"
-      })
+      }
     end
 
     def access_token_from_response response
-      json = ActiveSupport::JSON.decode(response)
+      json = JSON.parse(response)
       raise json["error"] if json["error"]
       [json["access_token"], json["token_type"]]
     end
