@@ -35,4 +35,34 @@ describe OmniContacts::HTTPUtils do
       OmniContacts::HTTPUtils.host_url_from_rack_env(env).should eq("http://localhost:8080")
     end
   end
+
+  describe "https_post" do
+
+    before(:each) do 
+      @connection = double
+      Net::HTTP.should_receive(:new).and_return(@connection)
+      @connection.should_receive(:use_ssl=).with(true)
+      @test_target = Object.new
+      @test_target.extend OmniContacts::HTTPUtils
+      @response = double
+    end
+
+    it "should execute a request with success" do
+      @test_target.should_receive(:ssl_ca_file).and_return(nil)
+      @connection.should_receive(:verify_mode=).with(OpenSSL::SSL::VERIFY_NONE)
+      @connection.should_receive(:request_post).and_return(@response)
+      @response.should_receive(:code).and_return("200")
+      @response.should_receive(:body).and_return("some content")
+      @test_target.send(:https_post, "host", "path", {})
+    end
+
+    it "should raise an exception with response code != 200" do
+      @test_target.should_receive(:ssl_ca_file).and_return(nil)
+      @connection.should_receive(:verify_mode=).with(OpenSSL::SSL::VERIFY_NONE)
+      @connection.should_receive(:request_get).and_return(@response)
+      @response.should_receive(:code).and_return("500")
+      @response.should_receive(:body).and_return("some error message")
+      expect {@test_target.send(:https_get, "host", "path", {})}.should raise_error
+    end
+  end
 end

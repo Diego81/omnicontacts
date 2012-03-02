@@ -18,7 +18,7 @@ describe OmniContacts::Importer::Gmail do
 
     it "should request the contacts by specifying version and code in the http headers" do 
       gmail.should_receive(:access_token_from_code).and_return(["token", "token_type"])
-      gmail.should_receive(:https_get) do |host, path, headers|
+      gmail.should_receive(:https_get) do |host, path, params, headers|
         headers["GData-Version"].should eq("3.0")
         headers["Authorization"].should eq("token_type token")
         contacts_as_xml

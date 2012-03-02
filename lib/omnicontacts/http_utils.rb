@@ -38,9 +38,9 @@ module OmniContacts
       response.body
     end
 
-    def https_get host, path, headers
+    def https_get host, path, params, headers =[]
       https_connection host  do |connection|
-        connection.request_get(path, headers)
+        connection.request_get(path + "?" + to_query_string(params), headers)
       end
     end
 

@@ -20,7 +20,7 @@ module OmniContacts
 
       def fetch_contacts_from_authorization_code authorization_code
         (access_token, token_type) = access_token_from_code(authorization_code)
-        contacts_response = https_get(@contacts_host, @contacts_path, contacts_req_headers(access_token, token_type))    
+        contacts_response = https_get(@contacts_host, @contacts_path, {}, contacts_req_headers(access_token, token_type))    
         parse_contacts contacts_response
       end
 
