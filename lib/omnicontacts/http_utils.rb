@@ -1,3 +1,6 @@
+require "net/http"
+require "cgi"
+
 module OmniContacts
   module HTTPUtils
 
@@ -16,21 +19,29 @@ module OmniContacts
     end
 
     def https_post host,path, params
-      response = https_connection(host).request_post(path, to_query_string(params))
+      https_connection host do |connection| 
+        connection.request_post(path, to_query_string(params))
+      end
+    end
+
+    def https_connection (host)
+      connection = Net::HTTP.new(host, SSL_PORT)
+      connection.use_ssl = true
+      if ssl_ca_file
+        connection.ca_file = ssl_ca_file
+      else
+        # log warning
+        connection.verify_mode = OpenSSL::SSL::VERIFY_NONE
+      end
+      response = yield connection
       raise response.body if response.code != "200"
       response.body
     end
 
-    def https_connection (host)
-      result = Net::HTTP.new(host, SSL_PORT)
-      result.use_ssl = true
-      if ssl_ca_file
-        result.ca_file = ssl_ca_file
-      else
-        # log warning
-        result.verify_mode = OpenSSL::SSL::VERIFY_NONE
+    def https_get host, path, headers
+      https_connection host  do |connection|
+        connection.request_get(path, headers)
       end
-      result
     end
 
     def query_string_to_map query_string 

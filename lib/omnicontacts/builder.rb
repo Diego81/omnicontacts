@@ -9,7 +9,7 @@ module OmniContacts
 
     def importer importer, *args
       begin
-        middleware = OmniContacts.const_get(importer.to_s.capitalize)
+        middleware = OmniContacts::Importer.const_get(importer.to_s.capitalize)
       rescue NameError
         raise LoadError, "Could not find importer #{importer}."
       end
