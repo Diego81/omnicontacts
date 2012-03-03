@@ -51,6 +51,11 @@ module OmniContacts
         [302, {"location" => "/contacts/failure?error_message=#{error_type}"}, []]
       end
 
+      def session
+        raise "You must provide a session to use OmniContacts" unless @env["rack.session"]
+        @env["rack.session"]
+      end
+
       def logger
         @env["rack.errors"] if @env
       end

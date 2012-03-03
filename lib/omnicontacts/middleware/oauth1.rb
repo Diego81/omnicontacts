@@ -36,11 +36,6 @@ module OmniContacts
         "#{@base_prop_name}.#{oauth_token}.oauth_token_secret"  
       end
 
-      def session
-        raise "You must provide a session to use OmniContacts" unless @env["rack.session"]
-        @env["rack.session"]
-      end
-
       def redirect_to_authorization_site auth_token
         [302, {"location" => authorization_url(auth_token)}, []]
       end
