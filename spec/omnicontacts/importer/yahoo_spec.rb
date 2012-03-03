@@ -11,7 +11,7 @@ describe OmniContacts::Importer::Yahoo do
        {"type":"name", "value": { "givenName":"John", "familyName":"Doe"} }] }] 
     } }'}
 
-    let(:yahoo) { OmniContacts::Importer::Yahoo.new( {}, "consumer_key", "consumer_secret", Class.new ) }
+    let(:yahoo) { OmniContacts::Importer::Yahoo.new( {}, "consumer_key", "consumer_secret" ) }
 
     it "should request the contacts by specifying all required parameters" do
       yahoo.should_receive(:access_token).and_return(["access_token", "access_token_secret", "guid"])

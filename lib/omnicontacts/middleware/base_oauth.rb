@@ -1,0 +1,60 @@
+module OmniContacts
+  module Middleware
+    class BaseOAuth
+
+      attr_reader :ssl_ca_file
+
+      def initialize app, options
+        @app = app
+        @listening_path = "/contacts/" + self.class.name.split('::').last.downcase
+        @ssl_ca_file = options[:ssl_ca_file]
+      end
+
+      def call env
+        @env = env
+        if env["PATH_INFO"] == @listening_path
+          handle_initial_request
+        elsif env["PATH_INFO"] =~ /^#{redirect_path}/
+          handle_callback
+        else
+          @app.call(env)
+        end
+      end
+
+      private
+
+      def handle_initial_request
+        execute_and_rescue_exceptions do 
+          request_authorization_from_user
+        end
+      end
+
+      def handle_callback
+        execute_and_rescue_exceptions do 
+          @env["omnicontacts.contacts"] = fetch_contacts
+          @app.call(@env)
+        end
+      end
+
+      def execute_and_rescue_exceptions 
+        yield
+      rescue AuthorizationError => e
+        handle_error :not_authorized, e
+      rescue ::Timeout::Error, ::Errno::ETIMEDOUT => e
+        handle_error :timeout, e
+      rescue  ::RuntimeError => e
+        handle_error :internal_error, e
+      end
+
+      def handle_error error_type, exception
+        logger << ("Error #{error_type} while processing #{@env["PATH_INFO"]}: #{exception.message}") if logger
+        [302, {"location" => "/contacts/failure?error_message=#{error_type}"}, []]
+      end
+
+      def logger
+        @env["rack.errors"] if @env
+      end
+
+    end
+  end
+end

@@ -1,5 +1,6 @@
 require "net/http"
 require "cgi"
+require "openssl"
 
 module OmniContacts
   module HTTPUtils
@@ -30,10 +31,13 @@ module OmniContacts
       if ssl_ca_file
         connection.ca_file = ssl_ca_file
       else
-        # log warning
+        logger << "No SSL ca file provided. It is highly reccomended to use one in production envinronments" if respond_to?(:logger) && logger
         connection.verify_mode = OpenSSL::SSL::VERIFY_NONE
       end
-      response = yield connection
+      process_http_response(yield(connection))
+    end
+
+    def process_http_response response
       raise response.body if response.code != "200"
       response.body
     end
@@ -42,6 +46,11 @@ module OmniContacts
       https_connection host  do |connection|
         connection.request_get(path + "?" + to_query_string(params), headers)
       end
+    end
+
+    def http_get host, path, params
+      connection = Net::HTTP.new(host)
+      process_http_response connection.request_get(path + "?" + to_query_string(params))
     end
 
     def query_string_to_map query_string 

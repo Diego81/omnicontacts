@@ -3,7 +3,7 @@ require "json"
 
 module OmniContacts
   module Importer
-    class Hotmail < OmniContacts::Middleware::OAuth2
+    class Hotmail < Middleware::OAuth2
 
       attr_reader :auth_host, :authorize_path, :request_token_path, :scope
 

@@ -26,7 +26,7 @@ describe OmniContacts::Middleware::OAuth2 do
     end.to_app
   }
 
-  describe "visiting the listening path" do
+  context "visiting the listening path" do
     it "should redirect to authorization site when visiting the listening path" do
       get "/contacts/oauth2middleware"
       last_response.should be_redirect
@@ -34,11 +34,17 @@ describe OmniContacts::Middleware::OAuth2 do
     end
   end
 
-  describe "visiting the callback url after authorization" do
+  context "visiting the callback url after authorization" do
     it "should fetch the contacts" do
       get '/redirect_path?code=ABC'
       last_response.should be_ok
       last_request.env["omnicontacts.contacts"].size.should be(1)
+    end
+
+    it "should redirect to failure page because user did not allow access to contacts list" do
+      get '/redirect_path?error=not_authorized'
+      last_response.should be_redirect
+      last_response.headers["location"].should eq("/contacts/failure?error_message=not_authorized")
     end
   end
 end

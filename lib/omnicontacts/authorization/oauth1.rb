@@ -41,7 +41,7 @@ module OmniContacts
           if map.has_key?(key)
             map[key]
           else
-            raise query_string
+            raise "No value found for #{key} in #{query_string}"
           end
         end
       end
@@ -52,7 +52,6 @@ module OmniContacts
         "https://" + auth_host + auth_path + "?oauth_token=" + auth_token
       end
 
-      # use a config object or a Struct
       def access_token auth_token, auth_token_secret, auth_verifier, additional_fields_to_extract = []
         access_token_resp = https_post(auth_host, access_token_path, access_token_req_params(auth_token, auth_token_secret, auth_verifier))      
         values_from_query_string(access_token_resp, ( ["oauth_token", "oauth_token_secret"] + additional_fields_to_extract) )

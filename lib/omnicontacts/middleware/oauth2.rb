@@ -1,46 +1,36 @@
 require "omnicontacts/authorization/oauth2"
+require "omnicontacts/middleware/base_oauth"
 
 module OmniContacts
   module Middleware
-    class OAuth2
-      include OmniContacts::Authorization::OAuth2
+    class OAuth2 < BaseOAuth
+      include Authorization::OAuth2
 
-      attr_reader :client_id, :client_secret, :ssl_ca_file, :redirect_path
+      attr_reader :client_id, :client_secret, :redirect_path
 
       def initialize app, client_id, client_secret, options ={}
-        @app = app
+        super app, options
         @client_id = client_id
         @client_secret = client_secret
         @redirect_path = options[:redirect_path] 
         @ssl_ca_file = options[:ssl_ca_file]
-        @listening_path = "/contacts/" + self.class.name.downcase
       end
 
-      def call env
-        @env = env
-        if env["PATH_INFO"] == @listening_path
-          redirect_to_authorization_site
-        else
-          if env["PATH_INFO"] =~ /^#{redirect_path}/
-            env["omnicontacts.contacts"] = fetch_contacts
-          end
-          @app.call(env)
-        end
+      def request_authorization_from_user
+        [302, {"location" => authorization_url}, []]
       end
 
       def redirect_uri
         host_url_from_rack_env(@env) + redirect_path
       end
 
-      private
-
-      def redirect_to_authorization_site
-        [302, {"location" => authorization_url }, []]
-      end
-
       def fetch_contacts
         code =  query_string_to_map(@env["QUERY_STRING"])["code"]
-        fetch_contacts_from_authorization_code(code) 
+        if code
+          fetch_contacts_from_authorization_code(code) 
+        else
+          raise AuthorizationError.new("User did not grant access to contacts list")
+        end
       end
 
     end
