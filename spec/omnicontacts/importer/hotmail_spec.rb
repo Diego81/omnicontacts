@@ -23,7 +23,7 @@ describe OmniContacts::Importer::Hotmail do
     }"}
 
     describe "fetch_contacts_from_authorization_code" do 
-      
+
       it "should request the contacts by providing the token in the url" do
         hotmail.should_receive(:access_token_from_code).and_return(["token", "token_type"])
         hotmail.should_receive(:https_get) do |host, path, params, headers|
