@@ -22,21 +22,22 @@ describe OmniContacts::Importer::Hotmail do
        }]
     }"}
 
-    describe "fetch_contacts_from_authorization_code" do 
+    describe "fetch_contacts_using_access_token" do 
+
+      let(:token) { "token"}
+      let(:token_type) { "token_type" }
 
       it "should request the contacts by providing the token in the url" do
-        hotmail.should_receive(:access_token_from_code).and_return(["token", "token_type"])
         hotmail.should_receive(:https_get) do |host, path, params, headers|
-          params[:access_token].should eq("token")
+          params[:access_token].should eq(token)
           contacts_as_json
         end
-        hotmail.fetch_contacts_from_authorization_code("code")
+        hotmail.fetch_contacts_using_access_token token, token_type
       end
 
       it "should correctly parse the contacts" do 
-        hotmail.should_receive(:access_token_from_code).and_return(["token", "token_type"])
         hotmail.should_receive(:https_get).and_return(contacts_as_json)
-        result = hotmail.fetch_contacts_from_authorization_code("code")
+        result = hotmail.fetch_contacts_using_access_token token, token_type
         result.size.should be(1)
         result.first[:name].should be_nil
         result.first[:email].should eq("henrik@hotmail.com")

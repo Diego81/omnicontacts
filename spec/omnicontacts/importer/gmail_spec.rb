@@ -14,22 +14,23 @@ describe OmniContacts::Importer::Gmail do
      </entry>"
   }
 
-  describe  "fetch contacts from authorization code" do 
+  describe  "fetch_contacts_using_access_token" do 
+
+    let(:token) { "token"}
+    let(:token_type) { "token_type" }
 
     it "should request the contacts by specifying version and code in the http headers" do 
-      gmail.should_receive(:access_token_from_code).and_return(["token", "token_type"])
       gmail.should_receive(:https_get) do |host, path, params, headers|
         headers["GData-Version"].should eq("3.0")
-        headers["Authorization"].should eq("token_type token")
+        headers["Authorization"].should eq("#{token_type} #{token}")
         contacts_as_xml
       end
-      gmail.fetch_contacts_from_authorization_code "code"
+      gmail.fetch_contacts_using_access_token token, token_type
     end
 
     it "should correctly parse name and email" do 
-      gmail.should_receive(:access_token_from_code).and_return(["token", "token_type"])
       gmail.should_receive(:https_get).and_return(contacts_as_xml)
-      result = gmail.fetch_contacts_from_authorization_code("code")
+      result = gmail.fetch_contacts_using_access_token token, token_type
       result.size.should be(1)
       result.first[:name].should eq("Edward Bennet")
       result.first[:email].should eq("bennet@gmail.com")

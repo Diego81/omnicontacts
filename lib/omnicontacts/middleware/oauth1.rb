@@ -13,8 +13,7 @@ module OmniContacts
         @consumer_key = consumer_key
         @consumer_secret = consumer_secret
         @callback_path = options[:callback_path] 
-        @base_prop_name = "omnicontacts.#{self.class.name.downcase}"
-        @token_prop_name = "#{@base_prop_name}.oauth_token"
+        @token_prop_name = "#{base_prop_name}.oauth_token"
       end
 
       def callback
@@ -33,7 +32,7 @@ module OmniContacts
       end
 
       def token_secret_prop_name oauth_token
-        "#{@base_prop_name}.#{oauth_token}.oauth_token_secret"  
+        "#{base_prop_name}.#{oauth_token}.oauth_token_secret"  
       end
 
       def redirect_to_authorization_site auth_token

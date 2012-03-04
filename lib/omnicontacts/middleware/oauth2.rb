@@ -27,10 +27,22 @@ module OmniContacts
       def fetch_contacts
         code =  query_string_to_map(@env["QUERY_STRING"])["code"]
         if code
-          fetch_contacts_from_authorization_code(code) 
+          refresh_token = session[refresh_token_prop_name(code)]
+          (access_token, token_type, refresh_token) = if refresh_token
+                                                        refresh_access_token(refresh_token)
+                                                      else
+                                                        fetch_access_token(code)
+                                                      end
+          contacts = fetch_contacts_using_access_token(access_token, token_type)
+          session[refresh_token_prop_name(code)] = refresh_token if refresh_token
+          contacts
         else
           raise AuthorizationError.new("User did not grant access to contacts list")
         end
+      end
+
+      def refresh_token_prop_name code
+        "#{base_prop_name}.#{code}.refresh_token"
       end
 
     end

@@ -60,6 +60,10 @@ module OmniContacts
         @env["rack.errors"] if @env
       end
 
+      def base_prop_name
+        "omnicontacts.#{self.class.name.downcase}"
+      end
+
     end
   end
 end

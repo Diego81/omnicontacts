@@ -26,7 +26,7 @@ describe OmniContacts::Authorization::OAuth2 do
     it {should include("response_type=code")}
   end
 
-  describe "access_token_from_code" do
+  describe "fetch_access_token" do
 
     it "should provide all mandatory parameters in a https post request" do
       code = "code"
@@ -40,24 +40,24 @@ describe OmniContacts::Authorization::OAuth2 do
         params[:grant_type].should eq("authorization_code")
         %[{"access_token": "access_token", "token_type":"token_type"}]
       end
-      (access_token, token_type) = test_target.access_token_from_code code
+      (access_token, token_type) = test_target.fetch_access_token code
     end
 
     it "should successfully parse the token from the JSON response" do 
       test_target.should_receive(:https_post).and_return(%[{"access_token": "access_token", "token_type":"token_type"}])
-      (access_token, token_type) = test_target.access_token_from_code "code"
+      (access_token, token_type) = test_target.fetch_access_token "code"
       access_token.should eq("access_token")
       token_type.should eq("token_type")
     end
 
     it "should raise if the http request fails" do 
       test_target.should_receive(:https_post).and_raise("Invalid code")
-      expect{test_target.access_token_from_code("code")}.should raise_error
+      expect{test_target.fetch_access_token("code")}.should raise_error
     end
 
     it "should raise an error if the JSON response contains an error field" do
       test_target.should_receive(:https_post).and_return(%[{"error": "error_message"}])
-      expect{test_target.access_token_from_code("code")}.should raise_error
+      expect{test_target.fetch_access_token("code")}.should raise_error
     end
   end
 

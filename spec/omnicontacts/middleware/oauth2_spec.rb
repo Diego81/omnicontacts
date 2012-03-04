@@ -13,7 +13,19 @@ describe OmniContacts::Middleware::OAuth2 do
         "/redirect_path"
       end
 
-      def fetch_contacts_from_authorization_code code
+      def self.mock_session
+        @mock_session ||= {}
+      end
+
+      def session
+        OAuth2Middleware.mock_session  
+      end
+
+      def fetch_access_token code
+        ["access_token", "token_type", "token_refresh"]  
+      end
+
+      def fetch_contacts_using_access_token token, token_type
         [{:name => "John Doe", :email => "john@example.com"}]
       end
     end

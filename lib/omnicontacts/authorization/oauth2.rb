@@ -17,7 +17,7 @@ module OmniContacts
           :client_id => client_id,
           :scope => encode(scope),
           :response_type => "code",
-          :access_type => "online",
+          :access_type => "offline",
           :approval_prompt => "force",
           :redirect_uri => encode(redirect_uri)
         })    
@@ -25,7 +25,7 @@ module OmniContacts
 
       public
 
-      def access_token_from_code code
+      def fetch_access_token code
         access_token_from_response https_post(auth_host, request_token_path, token_req_params(code))
       end
 
@@ -42,11 +42,29 @@ module OmniContacts
       end
 
       def access_token_from_response response
+        puts "raw response is " + response
         json = JSON.parse(response)
         raise json["error"] if json["error"]
-        [json["access_token"], json["token_type"]]
+        [ json["access_token"], json["token_type"], json["refresh_token"] ]
       end
 
+      public
+
+      def refresh_access_token refresh_token
+        access_token_from_response https_post(auth_host, request_token_path, refresh_token_req_params(refresh_token))
+      end
+
+      private
+
+      def refresh_token_req_params refresh_token
+        {
+          :client_id => client_id,
+          :client_secret => client_secret,
+          :refresh_token => refresh_token,
+          :grant_type => "refresh_token"
+        }
+        
+      end
     end
   end
 end
