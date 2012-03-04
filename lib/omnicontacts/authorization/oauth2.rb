@@ -42,7 +42,6 @@ module OmniContacts
       end
 
       def access_token_from_response response
-        puts "raw response is " + response
         json = JSON.parse(response)
         raise json["error"] if json["error"]
         [ json["access_token"], json["token_type"], json["refresh_token"] ]

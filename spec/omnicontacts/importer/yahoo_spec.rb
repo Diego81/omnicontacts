@@ -14,7 +14,7 @@ describe OmniContacts::Importer::Yahoo do
     let(:yahoo) { OmniContacts::Importer::Yahoo.new( {}, "consumer_key", "consumer_secret" ) }
 
     it "should request the contacts by specifying all required parameters" do
-      yahoo.should_receive(:access_token).and_return(["access_token", "access_token_secret", "guid"])
+      yahoo.should_receive(:fetch_access_token).and_return(["access_token", "access_token_secret", "guid"])
       yahoo.should_receive(:http_get) do |host, path, params|
         params[:format].should eq("json")
         params[:oauth_consumer_key].should eq("consumer_key")
@@ -30,7 +30,7 @@ describe OmniContacts::Importer::Yahoo do
     end
 
     it "should parse the contacts correctly" do
-      yahoo.should_receive(:access_token).and_return(["access_token", "access_token_secret", "guid"])
+      yahoo.should_receive(:fetch_access_token).and_return(["access_token", "access_token_secret", "guid"])
       yahoo.should_receive(:http_get).and_return(contacts_as_json)
       result = yahoo.fetch_contacts_from_token_and_verifier "auth_token", "auth_token_secret", "oauth_verifier"
       result.size.should be(1)

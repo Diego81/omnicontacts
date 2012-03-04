@@ -52,7 +52,7 @@ module OmniContacts
         "https://" + auth_host + auth_path + "?oauth_token=" + auth_token
       end
 
-      def access_token auth_token, auth_token_secret, auth_verifier, additional_fields_to_extract = []
+      def fetch_access_token auth_token, auth_token_secret, auth_verifier, additional_fields_to_extract = []
         access_token_resp = https_post(auth_host, access_token_path, access_token_req_params(auth_token, auth_token_secret, auth_verifier))      
         values_from_query_string(access_token_resp, ( ["oauth_token", "oauth_token_secret"] + additional_fields_to_extract) )
       end

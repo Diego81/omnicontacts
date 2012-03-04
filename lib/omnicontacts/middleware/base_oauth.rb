@@ -6,7 +6,7 @@ module OmniContacts
 
       def initialize app, options
         @app = app
-        @listening_path = "/contacts/" + self.class.name.split('::').last.downcase
+        @listening_path = "/contacts/" + class_name
         @ssl_ca_file = options[:ssl_ca_file]
       end
 
@@ -22,6 +22,10 @@ module OmniContacts
       end
 
       private
+
+      def class_name
+        self.class.name.split('::').last.downcase
+      end
 
       def handle_initial_request
         execute_and_rescue_exceptions do 
@@ -61,7 +65,7 @@ module OmniContacts
       end
 
       def base_prop_name
-        "omnicontacts.#{self.class.name.downcase}"
+        "omnicontacts." + class_name
       end
 
     end

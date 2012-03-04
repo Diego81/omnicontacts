@@ -49,7 +49,7 @@ describe OmniContacts::Authorization::OAuth1 do
     it{should eq("https://#{test_target.auth_host}#{test_target.auth_path}?oauth_token=token")}
   end
 
-  describe "access_token" do 
+  describe "fetch_access_token" do 
     it "should request the access token using all required parameters" do 
       auth_token = "token"
       auth_token_secret = "token_secret"
@@ -66,12 +66,12 @@ describe OmniContacts::Authorization::OAuth1 do
         params[:oauth_verifier].should eq(auth_verifier)
         "oauth_token=access_token&oauth_token_secret=access_token_secret&other_param=other_value"
       end
-      test_target.access_token auth_token, auth_token_secret, auth_verifier, ["other_param"]
+      test_target.fetch_access_token auth_token, auth_token_secret, auth_verifier, ["other_param"]
     end
 
     it "should successfully extract access_token and the other fields" do 
       test_target.should_receive(:https_post).and_return("oauth_token=access_token&oauth_token_secret=access_token_secret&other_param=other_value")
-      test_target.access_token("token","token_scret","verified",["other_param"]).should eq(["access_token", "access_token_secret", "other_value"])
+      test_target.fetch_access_token("token","token_scret","verified",["other_param"]).should eq(["access_token", "access_token_secret", "other_value"])
     end
   end
 
