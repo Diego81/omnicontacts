@@ -4,7 +4,7 @@ require "base64"
 # This module represent a OAuth 1.0 Client.
 #
 # Classes including the module must implement
-# the following set of methods:
+# the following methods:
 # * auth_host ->  the host of the authorization server
 # * auth_token_path -> the path to query to obtain a request token
 # * consumer_key -> the registered consumer key of the client
