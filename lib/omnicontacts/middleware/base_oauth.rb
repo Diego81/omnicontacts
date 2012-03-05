@@ -1,3 +1,10 @@
+# This class contains the common behavior for middlewares
+# implementing either versions of OAuth.
+#
+# Extending classes are required to implement
+# the following methods:
+# * request_authorization_from_user 
+# * fetch_contatcs
 module OmniContacts
   module Middleware
     class BaseOAuth
@@ -10,9 +17,27 @@ module OmniContacts
         @ssl_ca_file = options[:ssl_ca_file]
       end
 
+      private
+
+      def class_name
+        self.class.name.split('::').last.downcase
+      end
+
+      public
+
+      # Rack callback. It handles three cases:
+      # * user visit middleware entru point. 
+      #   In this case request_authorization_from_user is called
+      # * user is redirected back to the application 
+      #   from the authorization site. In this case the list
+      #   of contacts is fetched and stored in the variables
+      #   omnicontacts.contacts within the Rack env variable.
+      #   Once that is done the next middleware component is called.
+      # * user visits any other resource. In this case the request
+      #   is simply forwarded to the next middleware component.
       def call env
         @env = env
-        if env["PATH_INFO"] == @listening_path
+        if env["PATH_INFO"] =~ /^#{@listening_path}\/?$/
           handle_initial_request
         elsif env["PATH_INFO"] =~ /^#{redirect_path}/
           handle_callback
@@ -22,10 +47,6 @@ module OmniContacts
       end
 
       private
-
-      def class_name
-        self.class.name.split('::').last.downcase
-      end
 
       def handle_initial_request
         execute_and_rescue_exceptions do 
@@ -40,6 +61,9 @@ module OmniContacts
         end
       end
 
+      #  This method rescues executes a block of code and
+      #  rescue all exceptions. In case of an exception the 
+      #  user is redirected to the failure endpoint.
       def execute_and_rescue_exceptions 
         yield
       rescue AuthorizationError => e

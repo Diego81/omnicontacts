@@ -5,14 +5,13 @@ module OmniContacts
   module Importer
     class Gmail < Middleware::OAuth2
 
-      attr_reader :auth_host, :authorize_path, :request_token_path, :scope
+      attr_reader :auth_host, :authorize_path, :auth_token_path, :scope
 
       def initialize *args
         super *args
-        @redirect_path ||= "/contacts/gmail/callback"
         @auth_host = "accounts.google.com"
         @authorize_path = "/o/oauth2/auth"
-        @request_token_path = "/o/oauth2/token"
+        @auth_token_path = "/o/oauth2/token"
         @scope = "https://www.google.com/m8/feeds"
         @contacts_host = "www.google.com"
         @contacts_path = "/m8/feeds/contacts/default/full"

@@ -5,15 +5,14 @@ module OmniContacts
   module Importer
     class Hotmail < Middleware::OAuth2
 
-      attr_reader :auth_host, :authorize_path, :request_token_path, :scope
+      attr_reader :auth_host, :authorize_path, :auth_token_path, :scope
 
       def initialize *args
         super *args
-        @redirect_path ||= "/contacts/hotmail/callback"
         @auth_host = "oauth.live.com"
         @authorize_path = "/authorize"
         @scope = "wl.basic"
-        @request_token_path = "/token"
+        @auth_token_path = "/token"
         @contacts_host = "apis.live.net"
         @contacts_path = "/v5.0/me/contacts"
       end
@@ -22,6 +21,8 @@ module OmniContacts
         contacts_response = https_get(@contacts_host, @contacts_path, :access_token =>access_token)
         contacts_from_response contacts_response
       end
+
+      private
 
       def contacts_from_response contacts_as_json
         json = JSON.parse(escape_windows_format(contacts_as_json)) 

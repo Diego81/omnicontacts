@@ -4,22 +4,22 @@ require "omnicontacts/authorization/oauth1"
 describe OmniContacts::Authorization::OAuth1 do 
 
   before(:all) do 
-    OAuth1TestClass= Struct.new(:consumer_key, :consumer_secret, :auth_host, :request_token_path, :auth_path, :access_token_path, :callback)
+    OAuth1TestClass= Struct.new(:consumer_key, :consumer_secret, :auth_host, :auth_token_path, :auth_path, :access_token_path, :callback)
     class OAuth1TestClass 
       include OmniContacts::Authorization::OAuth1
     end
   end
 
   let(:test_target) do
-    OAuth1TestClass.new("consumer_key", "secret1", "auth_host", "request_token_path", "auth_path", "access_token_path", "callback")
+    OAuth1TestClass.new("consumer_key", "secret1", "auth_host", "auth_token_path", "auth_path", "access_token_path", "callback")
   end
 
-  describe "request_token" do 
+  describe "fetch_authorization_token" do 
 
     it "should request the token providing all mandatory parameters" do 
       test_target.should_receive(:https_post) do |host, path, params|
         host.should eq(test_target.auth_host)
-        path.should eq(test_target.request_token_path)
+        path.should eq(test_target.auth_token_path)
         params[:oauth_consumer_key].should eq(test_target.consumer_key)
         params[:oauth_nonce].should_not be_nil
         params[:oauth_signature_method].should eq("PLAINTEXT")
@@ -29,17 +29,17 @@ describe OmniContacts::Authorization::OAuth1 do
         params[:oauth_callback].should eq(test_target.callback)
         "oauth_token=token&oauth_token_secret=token_secret"
       end
-      test_target.request_token
+      test_target.fetch_authorization_token
     end
 
     it "should successfully parse the result" do 
       test_target.should_receive(:https_post).and_return("oauth_token=token&oauth_token_secret=token_secret")
-      test_target.request_token.should eq(["token", "token_secret"])
+      test_target.fetch_authorization_token.should eq(["token", "token_secret"])
     end
 
     it "should raise an error if request is invalid" do 
       test_target.should_receive(:https_post).and_return("invalid_request")
-      expect{test_target.request_token}.should raise_error
+      expect{test_target.fetch_authorization_token}.should raise_error
     end
 
   end
@@ -76,7 +76,7 @@ describe OmniContacts::Authorization::OAuth1 do
   end
 
   describe "oauth_signature" do
-    subject{ test_target.oauth_signature("http://social.yahooapis.com/v1/user", {:name => "diego", :surname => "castorina"}, "secret2")}
+    subject{ test_target.oauth_signature("GET", "http://social.yahooapis.com/v1/user", {:name => "diego", :surname => "castorina"}, "secret2")}
     it{ should eq("ZqWoQISWcuz%2FSDnDxWihtsFDKwc%3D")}
   end
 end

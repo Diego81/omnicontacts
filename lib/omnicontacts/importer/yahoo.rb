@@ -5,13 +5,12 @@ module OmniContacts
   module Importer
     class Yahoo < Middleware::OAuth1 
 
-      attr_reader :auth_host, :request_token_path, :auth_path, :access_token_path
+      attr_reader :auth_host, :auth_token_path, :auth_path, :access_token_path
 
       def initialize *args
         super *args
-        @callback_path ||= "/contacts/yahoo/callback"
         @auth_host = "api.login.yahoo.com"
-        @request_token_path = "/oauth/v2/get_request_token"
+        @auth_token_path = "/oauth/v2/get_request_token"
         @auth_path = "/oauth/v2/request_auth"
         @access_token_path = "/oauth/v2/get_token"
         @contacts_host = "social.yahooapis.com"
@@ -23,6 +22,8 @@ module OmniContacts
         contacts_response = http_get(@contacts_host, contacts_path, contacts_req_params(access_token, access_token_secret, contacts_path) )
         contacts_from_response contacts_response
       end
+
+      private
 
       def contacts_req_params access_token, access_token_secret, contacts_path
         params = {
@@ -36,7 +37,7 @@ module OmniContacts
           :view => "compact"
         } 
         contacts_url = "http://#{@contacts_host}#{contacts_path}"
-        params["oauth_signature"] = oauth_signature(contacts_url, params, access_token_secret)
+        params["oauth_signature"] = oauth_signature("GET", contacts_url, params, access_token_secret)
         params
       end
 

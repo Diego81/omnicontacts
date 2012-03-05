@@ -4,14 +4,14 @@ require "omnicontacts/authorization/oauth2"
 describe OmniContacts::Authorization::OAuth2 do 
 
   before(:all) do 
-    OAuth2TestClass= Struct.new(:auth_host, :authorize_path, :client_id, :client_secret, :scope, :redirect_uri,:request_token_path)
+    OAuth2TestClass= Struct.new(:auth_host, :authorize_path, :client_id, :client_secret, :scope, :redirect_uri,:auth_token_path)
     class OAuth2TestClass 
       include OmniContacts::Authorization::OAuth2
     end
   end
 
   let(:test_target) do 
-    OAuth2TestClass.new("auth_host", "authorize_path", "client_id", "client_secret", "scope", "redirect_uri", "request_token_path")
+    OAuth2TestClass.new("auth_host", "authorize_path", "client_id", "client_secret", "scope", "redirect_uri", "auth_token_path")
   end
 
   describe "authorization_url" do 
@@ -34,7 +34,7 @@ describe OmniContacts::Authorization::OAuth2 do
       code = "code"
       test_target.should_receive(:https_post) do |host, path, params|
         host.should eq(test_target.auth_host)
-        path.should eq(test_target.request_token_path)
+        path.should eq(test_target.auth_token_path)
         params[:code].should eq(code)
         params[:client_id].should eq(test_target.client_id)
         params[:client_secret].should eq(test_target.client_secret)
@@ -69,7 +69,7 @@ describe OmniContacts::Authorization::OAuth2 do
       refresh_token = "refresh_token"
       test_target.should_receive(:https_post) do |host, path, params|
         host.should eq(test_target.auth_host)
-        path.should eq(test_target.request_token_path)
+        path.should eq(test_target.auth_token_path)
         params[:client_id].should eq(test_target.client_id)
         params[:client_secret].should eq(test_target.client_secret)
         params[:refresh_token].should eq(refresh_token)

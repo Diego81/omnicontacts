@@ -1,6 +1,13 @@
 require "omnicontacts/authorization/oauth2"
 require "omnicontacts/middleware/base_oauth"
 
+# This class is a OAuth 2 Rack middleware.
+#
+# Extending class are required to implement
+# the following methods:
+# * fetch_contacts_using_access_token -> it 
+#   fetches the list of contacts from the authorization
+#   server.
 module OmniContacts
   module Middleware
     class OAuth2 < BaseOAuth
@@ -12,7 +19,7 @@ module OmniContacts
         super app, options
         @client_id = client_id
         @client_secret = client_secret
-        @redirect_path = options[:redirect_path] 
+        @redirect_path = options[:redirect_path] ||= "/contacts/#{class_name}/callback"
         @ssl_ca_file = options[:ssl_ca_file]
       end
 
@@ -24,6 +31,15 @@ module OmniContacts
         host_url_from_rack_env(@env) + redirect_path
       end
 
+      # It extract the authorization code from the query string.
+      # It uses it to obtain an access token.
+      # If the authorization code has a refresh token associated 
+      # with it in the session, it uses the obtain an access token.
+      # It fetches the list of contacts and stores the refresh token
+      # associated with the access token in the session.
+      # Finally it returns the list of contacts.
+      # If no authorization code is found in the query string an
+      # AuthoriazationError is raised.
       def fetch_contacts
         code =  query_string_to_map(@env["QUERY_STRING"])["code"]
         if code
