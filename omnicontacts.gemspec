@@ -3,7 +3,7 @@ require File.expand_path('../lib/omnicontacts', __FILE__)
 
 Gem::Specification.new do |gem|
   gem.name = 'omnicontacts'
-  gem.description = %q{A generalized Rack framework for importing contacts from major email providers.}
+  gem.description = %q{A generalized Rack middleware for importing contacts from major email providers.}
   gem.authors = ['Diego Castorina']
   gem.email = ['diegocastorina@gmail.com']
 
