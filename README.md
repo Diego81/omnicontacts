@@ -1,4 +1,4 @@
-= OmniContacts
+# OmniContacts
 
 Inspired by the popular OmniAuth, OmniContacts is a library that enables users of an application to import contacts from their email accounts.
 The current version allows to import contacts from the three most popular web email providers: Gmail, Yahoo and Hotmail.
@@ -7,7 +7,7 @@ OmniContacts is a Rack middleware, therefore you can use it with Rails, Sinatra 
 OmniContacts uses the OAuth protocol to communicate with the contacts provider. Yahoo still uses OAuth 1.0, while both Gmail and Hotmail support OAuth 2.0.
 In order to use OmniContacts, it is therefore necessary to first register your application with the providers you want to use and to obtain client_id and client_secret.
 
-== Usage
+## Usage
 
 Add OmniContacts as a dependency:
 ```ruby
@@ -32,7 +32,7 @@ Since Yahoo implements the version 1.0 of the OAuth protocol, naming is slightly
 While `:ssl_ca_file` is optional, it is highly recommended to set it on production environments for obvious security reasons.
 On the other hand it makes things much easier to leave the default value for `:redirect_path` and `:callback path`, the reason of which will be clear after reading the following section.
 
-== Integrating with your Application
+## Integrating with your Application
 
 To use OmniContacts you only need to redirect users to `/contacts/:importer`, where `:importer` can be google, yahoo or hotmail. Once the user has authorized your application, he will be redirected back to your website, to the path specified in `:redirect_path` (or `:callback_path` for yahoo). The user is redirected to `/contacts/:importer/callback` by default, which therefore makes things much simpler to not specify any value for `:redirect_path` or `:callback_path`.
 The list of contacts can be accessed via the `omnicontacts.contacts` key in the environment hash. The list of contacts is a simple array of hashes. Each hash has two keys: `:email` and `:name`, containing the email and the name of the contact respectively.
@@ -49,7 +49,7 @@ end
 
 If the user does not authorize your application to access his/her contacts list, or any other inconvenience occurs, he/she is redirected to `/contacts/failure`. The query string will contain a parameter named `error_message` which specifies why the list of contacts could not be retrieved. `error_message` can have one of the following values: `not_authorized`, `timeout` and `internal_error`.
 
-==  Tips and tricks
+##  Tips and tricks
 
 OmniContacts supports OAuth 1.0 and OAuth 2.0 token refresh, but for both it needs to persist data between requests. OmniContacts stores access tokens in the session. If you hit the 4KB cookie storage limit you better opt for the Memcache or the Active Record storage.
 
