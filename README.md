@@ -2,7 +2,7 @@
 
 Inspired by the popular OmniAuth, OmniContacts is a library that enables users of an application to import contacts from their email accounts.
 The current version allows to import contacts from the three most popular web email providers: Gmail, Yahoo and Hotmail.
-OmniContacts is a Rack middleware, therefore you can use it with Rails, Sinatra and with any Rack-based framework.
+OmniContacts is a Rack middleware, therefore you can use it with Rails, Sinatra and with any other Rack-based framework.
 
 OmniContacts uses the OAuth protocol to communicate with the contacts provider. Yahoo still uses OAuth 1.0, while both Gmail and Hotmail support OAuth 2.0.
 In order to use OmniContacts, it is therefore necessary to first register your application with the providers you want to use and to obtain client_id and client_secret.
@@ -14,7 +14,7 @@ Add OmniContacts as a dependency:
 gem "omnicontacts"
 ```
 
-As for OmniAuth, there is a Builder facilitating the usage of multiple contacts importer. In the case of a Rails application, the following code could be placed at `config/initializers/omnicontacts.rb`:
+As for OmniAuth, there is a Builder facilitating the usage of multiple contacts importers. In the case of a Rails application, the following code could be placed at `config/initializers/omnicontacts.rb`:
 
 ```ruby
 require "omnicontacts"
@@ -28,14 +28,14 @@ end
 ```
 
 Every importer expects `client_id` and `client_secret` as mandatory, while `:redirect_path` and `:ssl_ca_file` are optional.
-Since Yahoo implements the version 1.0 of the OAuth protocol, naming is a little bit different. Instead of `:redirect_path` you should use `:callback_path` as key in the hash providing the optional parameters.
-While `:ssl_ca_file` is optional, it is highly reccomended to set it on production environments for obvious security reasons.
-On the other hand it makes things much easier to leave the default values for `:redirect_path` and `:callback path`, the reason will be clear after reading the following section.
+Since Yahoo implements the version 1.0 of the OAuth protocol, naming is slightly different. Instead of `:redirect_path` you should use `:callback_path` as key in the hash providing the optional parameters.
+While `:ssl_ca_file` is optional, it is highly recommended to set it on production environments for obvious security reasons.
+On the other hand it makes things much easier to leave the default value for `:redirect_path` and `:callback path`, the reason of which will be clear after reading the following section.
 
 == Integrating with your Application
 
-To use OmniContacts you only need to redirect users to `/contacts/:importer`, where `:importer` can be google, yahoo or hotmail. Once the user has authorized your application, he will be redirected back to your website, to the url specified in `:redirect_path` (or `:callback_path` for yahoo). By default the user is redirected to `/contacts/:importer/callback`, for this reason it makes things much simpler not to specify any value for `:redirect_path` or `:callback_path`.
-The list of contacts can be accessed via the `omnicontacts.contacts` key in the environment hash. The list if contacts is a simple array of hashes. Each hash has two keys: `:email` and `:name`, containing the email and the name of the contact respectively.
+To use OmniContacts you only need to redirect users to `/contacts/:importer`, where `:importer` can be google, yahoo or hotmail. Once the user has authorized your application, he will be redirected back to your website, to the path specified in `:redirect_path` (or `:callback_path` for yahoo). The user is redirected to `/contacts/:importer/callback` by default, which therefore makes things much simpler to not specify any value for `:redirect_path` or `:callback_path`.
+The list of contacts can be accessed via the `omnicontacts.contacts` key in the environment hash. The list of contacts is a simple array of hashes. Each hash has two keys: `:email` and `:name`, containing the email and the name of the contact respectively.
 
 ```ruby
 def contacts_callback
@@ -47,18 +47,18 @@ def contacts_callback
 end
 ```
 
-If the user does not authorize your application to access his contacts list, or any other inconvenience occurs, the user is redirected to `/contacts/failure`. The query string will contain an parameter named `error_message` which specifies why the list of contacts could not be retrieved. `error_message` can have one of the following values: `not_authorized`, `timeout` and `internal_error`.
+If the user does not authorize your application to access his/her contacts list, or any other inconvenience occurs, he/she is redirected to `/contacts/failure`. The query string will contain a parameter named `error_message` which specifies why the list of contacts could not be retrieved. `error_message` can have one of the following values: `not_authorized`, `timeout` and `internal_error`.
 
 ==  Tips and tricks
 
-OmniContacts supports OAuth 1.0 and OAuth 2.0 token refresh, in order to do this access tokens are stored in the session. If you hit the 4KB cookie storage limit you better opt for the Memcache or Active Record storage.
+OmniContacts supports OAuth 1.0 and OAuth 2.0 token refresh, but for both it needs to persist data between requests. OmniContacts stores access tokens in the session. If you hit the 4KB cookie storage limit you better opt for the Memcache or the Active Record storage.
 
 Gmail requires you to register the redirect_path on their website along with your application. Make sure to use the same value present in the configuration file, or `/contacts/gmail/callback` if using the default.
 
-Yahoo requires you to configure on their website the Permissions the user grants to your application. Make sure to select Read Contacts.
+Yahoo requires you to configure the Permissions your application requires. Make sure to go the Yahoo website and to select Read permission for Contacts.
 
 Hotmail does not accept requests from localhost. This can be quite annoying during development, but unfortunately this is the way it is.
-Hotmail presents another "peculiar" feature. Their API returns a Contact object, which does not contain an email field! However, if the contact has either name, family name or both set to null, than there is a field called name which does contain the email address. To summarize,an  Hotmail contact will only be returned if the name field contains a valid email address, otherwise it will be skipped. Another consequence is that OmniContacts can provide contacts with the only `:email` key set.
+Hotmail presents another "peculiar" feature. Their API returns a Contact object, which does not contain an e-mail field! However, if the contact has either name, family name or both set to null, than there is a field called name which does contain the e-mail address. To summarize, a  Hotmail contact will only be returned if the name field contains a valid e-mail address, otherwise it will be skipped. Another consequence is that OmniContacts can provide contacts with only the `:email` key set.
 
 ## License
 
