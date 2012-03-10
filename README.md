@@ -10,6 +10,7 @@ In order to use OmniContacts, it is therefore necessary to first register your a
 ## Usage
 
 Add OmniContacts as a dependency:
+
 ```ruby
 gem "omnicontacts"
 
