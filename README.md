@@ -12,6 +12,7 @@ In order to use OmniContacts, it is therefore necessary to first register your a
 Add OmniContacts as a dependency:
 ```ruby
 gem "omnicontacts"
+
 ```
 
 As for OmniAuth, there is a Builder facilitating the usage of multiple contacts importers. In the case of a Rails application, the following code could be placed at `config/initializers/omnicontacts.rb`:
