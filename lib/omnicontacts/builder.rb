@@ -23,7 +23,7 @@ module OmniContacts
     end
 
     def call env
-      @ins << @app unless @ins.include?(@app)
+      @ins << @app unless rack14? || @ins.include?(@app)
       to_app.call(env)
     end
   end
