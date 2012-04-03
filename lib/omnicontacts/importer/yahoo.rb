@@ -44,6 +44,7 @@ module OmniContacts
       def contacts_from_response contacts_as_json 
         json = JSON.parse(contacts_as_json)
         result = []
+        return result unless json["contacts"]["contact"]
         json["contacts"]["contact"].each do |entry|
           contact = {}
           entry["fields"].each do |field|

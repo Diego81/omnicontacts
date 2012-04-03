@@ -38,5 +38,14 @@ describe OmniContacts::Importer::Yahoo do
       result.first[:email].should eq("john@yahoo.com")
     end
 
+    it "should return an empty list of contacts" do
+      empty_contacts_list = '{"contacts": {"start":0, "count":0}}'
+      yahoo.should_receive(:fetch_access_token).and_return(["access_token", "access_token_secret", "guid"])
+      yahoo.should_receive(:http_get).and_return(empty_contacts_list)
+      result = yahoo.fetch_contacts_from_token_and_verifier "auth_token", "auth_token_secret", "oauth_verifier"
+      result.should be_empty
+
+    end
+
   end
 end
