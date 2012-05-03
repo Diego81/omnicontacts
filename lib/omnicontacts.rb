@@ -9,4 +9,5 @@ module OmniContacts
 
   class AuthorizationError < RuntimeError
   end
+
 end
