@@ -49,13 +49,13 @@ module OmniContacts
       private
 
       def handle_initial_request
-        execute_and_rescue_exceptions do 
+        execute_and_rescue_exceptions do
           request_authorization_from_user
         end
       end
 
       def handle_callback
-        execute_and_rescue_exceptions do 
+        execute_and_rescue_exceptions do
           @env["omnicontacts.contacts"] = fetch_contacts
           @app.call(@env)
         end
@@ -64,13 +64,13 @@ module OmniContacts
       #  This method rescues executes a block of code and
       #  rescue all exceptions. In case of an exception the 
       #  user is redirected to the failure endpoint.
-      def execute_and_rescue_exceptions 
+      def execute_and_rescue_exceptions
         yield
       rescue AuthorizationError => e
         handle_error :not_authorized, e
       rescue ::Timeout::Error, ::Errno::ETIMEDOUT => e
         handle_error :timeout, e
-      rescue  ::RuntimeError => e
+      rescue ::RuntimeError => e
         handle_error :internal_error, e
       end
 

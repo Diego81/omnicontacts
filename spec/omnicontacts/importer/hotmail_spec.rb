@@ -1,9 +1,9 @@
 require "spec_helper"
 require "omnicontacts/importer/hotmail"
 
-describe OmniContacts::Importer::Hotmail do 
+describe OmniContacts::Importer::Hotmail do
 
-  let(:hotmail) {OmniContacts::Importer::Hotmail.new({}, "client_id", "client_secret") }
+  let(:hotmail) { OmniContacts::Importer::Hotmail.new({}, "client_id", "client_secret") }
 
   let(:contacts_as_json) {
     "{
@@ -20,28 +20,28 @@ describe OmniContacts::Importer::Hotmail do
        \"birth_day\": 29, 
        \"birth_month\": 3 
        }]
-    }"}
+    }" }
 
-    describe "fetch_contacts_using_access_token" do 
+  describe "fetch_contacts_using_access_token" do
 
-      let(:token) { "token"}
-      let(:token_type) { "token_type" }
+    let(:token) { "token" }
+    let(:token_type) { "token_type" }
 
-      it "should request the contacts by providing the token in the url" do
-        hotmail.should_receive(:https_get) do |host, path, params, headers|
-          params[:access_token].should eq(token)
-          contacts_as_json
-        end
-        hotmail.fetch_contacts_using_access_token token, token_type
+    it "should request the contacts by providing the token in the url" do
+      hotmail.should_receive(:https_get) do |host, path, params, headers|
+        params[:access_token].should eq(token)
+        contacts_as_json
       end
-
-      it "should correctly parse the contacts" do 
-        hotmail.should_receive(:https_get).and_return(contacts_as_json)
-        result = hotmail.fetch_contacts_using_access_token token, token_type
-        result.size.should be(1)
-        result.first[:name].should be_nil
-        result.first[:email].should eq("henrik@hotmail.com")
-      end
+      hotmail.fetch_contacts_using_access_token token, token_type
     end
+
+    it "should correctly parse the contacts" do
+      hotmail.should_receive(:https_get).and_return(contacts_as_json)
+      result = hotmail.fetch_contacts_using_access_token token, token_type
+      result.size.should be(1)
+      result.first[:name].should be_nil
+      result.first[:email].should eq("henrik@hotmail.com")
+    end
+  end
 
 end

@@ -18,14 +18,14 @@ module OmniContacts
       end
 
       def fetch_contacts_using_access_token access_token, access_token_secret
-        contacts_response = https_get(@contacts_host, @contacts_path, :access_token =>access_token)
+        contacts_response = https_get(@contacts_host, @contacts_path, :access_token => access_token)
         contacts_from_response contacts_response
       end
 
       private
 
       def contacts_from_response contacts_as_json
-        json = JSON.parse(escape_windows_format(contacts_as_json)) 
+        json = JSON.parse(escape_windows_format(contacts_as_json))
         result = []
         json["data"].each do |contact|
           result << {:email => contact["name"]} if valid_email? contact["name"]
@@ -34,7 +34,7 @@ module OmniContacts
       end
 
       def escape_windows_format value
-        value.gsub(/[\r\s]/,'')
+        value.gsub(/[\r\s]/, '')
       end
 
       def valid_email? value

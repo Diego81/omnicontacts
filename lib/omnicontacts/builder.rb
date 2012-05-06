@@ -2,7 +2,7 @@ require "omnicontacts"
 
 module OmniContacts
   class Builder < Rack::Builder
-    def initialize(app,&block)
+    def initialize(app, &block)
       if rack14?
         super
       else

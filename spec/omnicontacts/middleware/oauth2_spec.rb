@@ -1,9 +1,9 @@
 require "spec_helper"
 require "omnicontacts/middleware/oauth2"
 
-describe OmniContacts::Middleware::OAuth2 do 
+describe OmniContacts::Middleware::OAuth2 do
 
-  before(:all) do 
+  before(:all) do
     class OAuth2Middleware < OmniContacts::Middleware::OAuth2
       def authorization_url
         "http://www.example.com"
@@ -18,11 +18,11 @@ describe OmniContacts::Middleware::OAuth2 do
       end
 
       def session
-        OAuth2Middleware.mock_session  
+        OAuth2Middleware.mock_session
       end
 
       def fetch_access_token code
-        ["access_token", "token_type", "token_refresh"]  
+        ["access_token", "token_type", "token_refresh"]
       end
 
       def fetch_contacts_using_access_token token, token_type
@@ -33,8 +33,8 @@ describe OmniContacts::Middleware::OAuth2 do
 
   let(:app) {
     Rack::Builder.new do |b|
-    b.use OAuth2Middleware, "client_id", "client_secret"
-    b.run lambda{ |env| [200, {"Content-Type" => "text/html"}, ["Hello World"]] }
+      b.use OAuth2Middleware, "client_id", "client_secret"
+      b.run lambda { |env| [200, {"Content-Type" => "text/html"}, ["Hello World"]] }
     end.to_app
   }
 

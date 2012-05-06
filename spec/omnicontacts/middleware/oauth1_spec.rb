@@ -17,13 +17,14 @@ describe OmniContacts::Middleware::OAuth1 do
         "http://www.example.com"
       end
 
-     def fetch_contacts_from_token_and_verifier oauth_token, ouath_token_secret, oauth_verifier
+      def fetch_contacts_from_token_and_verifier oauth_token, ouath_token_secret, oauth_verifier
         [{:name => "John Doe", :email => "john@example.com"}]
       end
 
       def self.mock_session
         @mock_session ||= {}
       end
+
       def session
         OAuth1Middleware.mock_session
       end
@@ -32,8 +33,8 @@ describe OmniContacts::Middleware::OAuth1 do
 
   let(:app) {
     Rack::Builder.new do |b|
-    b.use OAuth1Middleware, "consumer_id", "consumer_secret"
-    b.run lambda{ |env| [200, {"Content-Type" => "text/html"}, ["Hello World"]] }
+      b.use OAuth1Middleware, "consumer_id", "consumer_secret"
+      b.run lambda { |env| [200, {"Content-Type" => "text/html"}, ["Hello World"]] }
     end.to_app
   }
 
@@ -61,11 +62,11 @@ describe OmniContacts::Middleware::OAuth1 do
       last_request.env["omnicontacts.contacts"].size.should be(1)
     end
 
-    it "should redirect to failure url if oauth_token_secret is not found in the session" do 
+    it "should redirect to failure url if oauth_token_secret is not found in the session" do
       OAuth1Middleware.mock_session.should_receive(:[]).and_return(nil)
       get "/contacts/oauth1middleware/callback?oauth_token=token&oauth_verifier=verifier"
       last_response.should be_redirect
-      last_response.headers["location"].should eq("/contacts/failure?error_message=not_authorized") 
+      last_response.headers["location"].should eq("/contacts/failure?error_message=not_authorized")
     end
   end
 end

@@ -18,18 +18,18 @@ module OmniContacts
       end
 
       def fetch_contacts_using_access_token access_token, token_type
-        contacts_response = https_get(@contacts_host, @contacts_path, contacts_req_params, contacts_req_headers(access_token, token_type))    
+        contacts_response = https_get(@contacts_host, @contacts_path, contacts_req_params, contacts_req_headers(access_token, token_type))
         parse_contacts contacts_response
       end
 
-      private 
+      private
 
       def contacts_req_params
-        { "max-results" => "100"}
+        {"max-results" => "100"}
       end
 
       def contacts_req_headers token, token_type
-        {"GData-Version" => "3.0",  "Authorization" => "#{token_type} #{token}"}  
+        {"GData-Version" => "3.0", "Authorization" => "#{token_type} #{token}"}
       end
 
       def parse_contacts contacts_as_xml
@@ -46,7 +46,7 @@ module OmniContacts
             contacts << contact
           end
         end
-        contacts 
+        contacts
       end
 
     end

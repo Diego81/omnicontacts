@@ -27,13 +27,13 @@ module OmniContacts
 
       def authorize_url_params
         to_query_string({
-          :client_id => client_id,
-          :scope => encode(scope),
-          :response_type => "code",
-          :access_type => "offline",
-          :approval_prompt => "force",
-          :redirect_uri => encode(redirect_uri)
-        })    
+                          :client_id => client_id,
+                          :scope => encode(scope),
+                          :response_type => "code",
+                          :access_type => "offline",
+                          :approval_prompt => "force",
+                          :redirect_uri => encode(redirect_uri)
+                        })
       end
 
       public
@@ -58,7 +58,7 @@ module OmniContacts
       def access_token_from_response response
         json = JSON.parse(response)
         raise json["error"] if json["error"]
-        [ json["access_token"], json["token_type"], json["refresh_token"] ]
+        [json["access_token"], json["token_type"], json["refresh_token"]]
       end
 
       public
@@ -77,7 +77,7 @@ module OmniContacts
           :refresh_token => refresh_token,
           :grant_type => "refresh_token"
         }
-        
+
       end
     end
   end

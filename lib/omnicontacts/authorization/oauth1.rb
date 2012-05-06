@@ -14,7 +14,7 @@ require "base64"
 # * access_token_path -> the path to query in order to obtain the access token
 module OmniContacts
   module Authorization
-    module OAuth1 
+    module OAuth1
       include HTTPUtils
 
       OAUTH_VERSION = "1.0"
@@ -41,11 +41,11 @@ module OmniContacts
       end
 
       def random_string
-        (0...50).map{ ('a'..'z').to_a[rand(26)] }.join
+        (0...50).map { ('a'..'z').to_a[rand(26)] }.join
       end
 
       def timestamp
-        Time.now.to_i.to_s 
+        Time.now.to_i.to_s
       end
 
       def values_from_query_string query_string, keys_to_extract
@@ -71,11 +71,11 @@ module OmniContacts
       # The result comprises the access token, the access token secret and a list of additional fields extracted from the server's response.
       # The list of additional fields to extract is specified as last parameter
       def fetch_access_token auth_token, auth_token_secret, auth_verifier, additional_fields_to_extract = []
-        access_token_resp = https_post(auth_host, access_token_path, access_token_req_params(auth_token, auth_token_secret, auth_verifier))      
-        values_from_query_string(access_token_resp, ( ["oauth_token", "oauth_token_secret"] + additional_fields_to_extract) )
+        access_token_resp = https_post(auth_host, access_token_path, access_token_req_params(auth_token, auth_token_secret, auth_verifier))
+        values_from_query_string(access_token_resp, (["oauth_token", "oauth_token_secret"] + additional_fields_to_extract))
       end
 
-      private 
+      private
 
       def access_token_req_params auth_token, auth_token_secret, auth_verifier
         {

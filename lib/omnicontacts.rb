@@ -1,5 +1,3 @@
-require "rack"
-
 module OmniContacts
 
   VERSION = "0.1.5"

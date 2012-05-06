@@ -9,9 +9,9 @@ describe OmniContacts::Importer::Yahoo do
       {"start":1, "count":1, 
       "contact":[{"id":10, "fields":[{"id":819, "type":"email", "value":"john@yahoo.com"},
        {"type":"name", "value": { "givenName":"John", "familyName":"Doe"} }] }] 
-    } }'}
+    } }' }
 
-    let(:yahoo) { OmniContacts::Importer::Yahoo.new( {}, "consumer_key", "consumer_secret" ) }
+    let(:yahoo) { OmniContacts::Importer::Yahoo.new({}, "consumer_key", "consumer_secret") }
 
     it "should request the contacts by specifying all required parameters" do
       yahoo.should_receive(:fetch_access_token).and_return(["access_token", "access_token_secret", "guid"])

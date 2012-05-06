@@ -41,7 +41,7 @@ module OmniContacts
       # If no authorization code is found in the query string an
       # AuthoriazationError is raised.
       def fetch_contacts
-        code =  query_string_to_map(@env["QUERY_STRING"])["code"]
+        code = query_string_to_map(@env["QUERY_STRING"])["code"]
         if code
           refresh_token = session[refresh_token_prop_name(code)]
           (access_token, token_type, refresh_token) = if refresh_token

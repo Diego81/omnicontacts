@@ -1,9 +1,9 @@
 require "spec_helper"
 require "omnicontacts/importer/gmail"
 
-describe OmniContacts::Importer::Gmail do 
+describe OmniContacts::Importer::Gmail do
 
-  let(:gmail) { OmniContacts::Importer::Gmail.new( {}, "client_id", "client_secret") }
+  let(:gmail) { OmniContacts::Importer::Gmail.new({}, "client_id", "client_secret") }
 
   let(:contacts_as_xml) {
     "<entry xmlns:gd='http://schemas.google.com/g/2005'>
@@ -14,12 +14,12 @@ describe OmniContacts::Importer::Gmail do
      </entry>"
   }
 
-  describe  "fetch_contacts_using_access_token" do 
+  describe "fetch_contacts_using_access_token" do
 
-    let(:token) { "token"}
+    let(:token) { "token" }
     let(:token_type) { "token_type" }
 
-    it "should request the contacts by specifying version and code in the http headers" do 
+    it "should request the contacts by specifying version and code in the http headers" do
       gmail.should_receive(:https_get) do |host, path, params, headers|
         headers["GData-Version"].should eq("3.0")
         headers["Authorization"].should eq("#{token_type} #{token}")
@@ -28,7 +28,7 @@ describe OmniContacts::Importer::Gmail do
       gmail.fetch_contacts_using_access_token token, token_type
     end
 
-    it "should correctly parse name and email" do 
+    it "should correctly parse name and email" do
       gmail.should_receive(:https_get).and_return(contacts_as_xml)
       result = gmail.fetch_contacts_using_access_token token, token_type
       result.size.should be(1)
