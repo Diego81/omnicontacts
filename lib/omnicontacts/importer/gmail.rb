@@ -41,7 +41,8 @@ module OmniContacts
             contact = {:email => gd_email.attributes['address']}
             gd_name = entry.elements['gd:name']
             if gd_name
-              contact[:name] = gd_name.elements['gd:fullName'].text
+              gd_full_name = gd_name.elements['gd:fullName']
+              contact[:name] = gd_full_name.text if gd_full_name
             end
             contacts << contact
           end
