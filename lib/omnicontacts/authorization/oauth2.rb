@@ -27,13 +27,13 @@ module OmniContacts
 
       def authorize_url_params
         to_query_string({
-                          :client_id => client_id,
-                          :scope => encode(scope),
-                          :response_type => "code",
-                          :access_type => "offline",
-                          :approval_prompt => "force",
-                          :redirect_uri => encode(redirect_uri)
-                        })
+            :client_id => client_id,
+            :scope => encode(scope),
+            :response_type => "code",
+            :access_type => "offline",
+            :approval_prompt => "force",
+            :redirect_uri => encode(redirect_uri)
+          })
       end
 
       public

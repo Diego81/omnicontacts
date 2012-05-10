@@ -36,8 +36,16 @@ On the other hand it makes things much easier to leave the default value for `:r
 
 ## Integrating with your Application
 
-To use OmniContacts you only need to redirect users to `/contacts/:importer`, where `:importer` can be google, yahoo or hotmail. Once the user has authorized your application, he will be redirected back to your website, to the path specified in `:redirect_path` (or `:callback_path` for yahoo). The user is redirected to `/contacts/:importer/callback` by default, which therefore makes things much simpler to not specify any value for `:redirect_path` or `:callback_path`.
-The list of contacts can be accessed via the `omnicontacts.contacts` key in the environment hash. The list of contacts is a simple array of hashes. Each hash has two keys: `:email` and `:name`, containing the email and the name of the contact respectively.
+To use the Gem you first need to redirect users to `/contacts/:importer`, where `:importer` can be google, yahoo or hotmail. 
+No changes to `config/routes.rb` are needed for this step since OmniContacts will be listening on that path and redirect the user to the email provider's website in order to authorize your app to access his contact list.
+Once that is done the user will be redirected back to your application, to the path specified in `:redirect_path` (or `:callback_path` for yahoo).
+If nothing is specified the default value is `/contacts/:importer/callback` (e.g. `/contacts/yahoo/callback`). This makes things simpler and you can just add the following line to `config/routes.rb`:
+
+```ruby
+  match "/contacts/:importer/callback" => "your_controller#callback"
+```
+
+The list of contacts can be accessed via the `omnicontacts.contacts` key in the environment hash. It is a simple array of hashes. Each hash has two keys: `:email` and `:name`, containing the email and the name of the contact respectively.
 
 ```ruby
 def contacts_callback
