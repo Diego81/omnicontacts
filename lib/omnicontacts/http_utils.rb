@@ -36,7 +36,7 @@ module OmniContacts
     def host_url_from_rack_env env
       port = ((env["SERVER_PORT"] == 80) && "") || ":#{env['SERVER_PORT']}"
       host = (env["HTTP_HOST"]) || (env["SERVER_NAME"] + port)
-      scheme(env) + "://" + host
+      "#{scheme(env)}://#{host}"
     end
 
     def scheme env
@@ -45,7 +45,7 @@ module OmniContacts
       elsif env['HTTP_X_FORWARDED_SSL'] == 'on'
         'https'
       elsif env['HTTP_X_FORWARDED_PROTO']
-        env['HTTP_X_FORWARDED_PROTO'].split(',')[0]
+        env['HTTP_X_FORWARDED_PROTO'].split(',').first
       else
         env["rack.url_scheme"]
       end
