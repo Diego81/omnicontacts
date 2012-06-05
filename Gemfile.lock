@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    omnicontacts (0.1.7)
+    omnicontacts (0.2.0)
       json
       rack
 

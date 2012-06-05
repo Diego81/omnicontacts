@@ -17,16 +17,12 @@ module OmniContacts
         @ssl_ca_file = options[:ssl_ca_file]
       end
 
-      private
-
       def class_name
         self.class.name.split('::').last.downcase
       end
 
-      public
-
       # Rack callback. It handles three cases:
-      # * user visit middleware entru point. 
+      # * user visit middleware entry point. 
       #   In this case request_authorization_from_user is called
       # * user is redirected back to the application 
       #   from the authorization site. In this case the list
@@ -47,16 +43,28 @@ module OmniContacts
       end
 
       private
+      
+      def test_mode?
+        IntegrationTest.instance.enabled
+      end
 
       def handle_initial_request
         execute_and_rescue_exceptions do
-          request_authorization_from_user
+          if test_mode?
+            IntegrationTest.instance.mock_authorization_from_user(self)
+          else
+            request_authorization_from_user
+          end
         end
       end
 
       def handle_callback
         execute_and_rescue_exceptions do
-          @env["omnicontacts.contacts"] = fetch_contacts
+          @env["omnicontacts.contacts"] = if test_mode?
+            IntegrationTest.instance.mock_fetch_contacts(self)
+          else
+            fetch_contacts
+          end
           @app.call(@env)
         end
       end
