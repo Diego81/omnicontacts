@@ -70,6 +70,33 @@ Yahoo requires you to configure the Permissions your application requires. Make 
 Hotmail does not accept requests from localhost. This can be quite annoying during development, but unfortunately this is the way it is.
 Hotmail presents another "peculiar" feature. Their API returns a Contact object, which does not contain an e-mail field! However, if the contact has either name, family name or both set to null, than there is a field called name which does contain the e-mail address. To summarize, a  Hotmail contact will only be returned if the name field contains a valid e-mail address, otherwise it will be skipped. Another consequence is that OmniContacts can provide contacts with only the `:email` key set.
 
+## Integration Testing
+
+You can enable test mode like this:
+
+```ruby
+  OmniContacts.integration_test.enabled = true
+```
+
+In this way all requests to `/omnicontacts/provider` will be redirected automatically to `/omnicontacts/provider/callback`.
+
+The `mock` method allows to configure per-provider the result to return:
+
+```ruby
+  OmniContacts.integration_test.mock(:provider_name, :email => "user@example.com")
+```
+
+You can either pass a single hash or an array of hashes. If you pass a string, an error will be triggered with subsequent redirect to `/contacts/failure?error_message=internal_error`
+
+Follows a full example of an integration test:
+
+```ruby
+  OmniContacts.integration_test.enabled = true
+  OmniContacts.integration_test.mock(:gmail, :email => "user@example.com")
+  visit '/contacts/gmail'
+  page.should have_content("user@example.com")
+```
+
 ## License
 
 Copyright (c) 2012 Diego81
