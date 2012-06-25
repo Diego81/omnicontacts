@@ -109,7 +109,7 @@ module OmniContacts
         encoded_method = encode(method.upcase)
         encoded_url = encode(url)
         # params must be in alphabetical order
-        encoded_params = encode(to_query_string(params.sort))
+        encoded_params = encode(to_query_string(params.sort { |x, y| x.to_s <=> y.to_s }))
         base_string = encoded_method + '&' + encoded_url + '&' + encoded_params
         key = encode(consumer_secret) + '&' + secret
         hmac_sha1 = OpenSSL::HMAC.digest('sha1', key, base_string)

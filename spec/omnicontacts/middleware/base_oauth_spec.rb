@@ -1,4 +1,5 @@
 require "spec_helper"
+require "omnicontacts"
 require "omnicontacts/middleware/base_oauth"
 
 describe OmniContacts::Middleware::BaseOAuth do

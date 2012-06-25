@@ -5,7 +5,12 @@ describe OmniContacts::HTTPUtils do
 
   describe "to_query_string" do
     it "should create a query string from a map" do
-      OmniContacts::HTTPUtils.to_query_string(:name => "john", :surname => "doe").should eq("name=john&surname=doe")
+      result = OmniContacts::HTTPUtils.to_query_string(:name => "john", :surname => "doe")
+      if result.match(/^name/)
+        result.should eq("name=john&surname=doe")
+      else
+        result.should eq("surname=doe&name=john")
+      end
     end
   end
 
