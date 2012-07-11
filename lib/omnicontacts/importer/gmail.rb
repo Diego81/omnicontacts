@@ -15,6 +15,7 @@ module OmniContacts
         @scope = "https://www.google.com/m8/feeds"
         @contacts_host = "www.google.com"
         @contacts_path = "/m8/feeds/contacts/default/full"
+        @max_results = args[3][:max_results] || 100
       end
 
       def fetch_contacts_using_access_token access_token, token_type
@@ -25,7 +26,7 @@ module OmniContacts
       private
 
       def contacts_req_params
-        {"max-results" => "100"}
+        {"max-results" => @max_results.to_s}
       end
 
       def contacts_req_headers token, token_type
