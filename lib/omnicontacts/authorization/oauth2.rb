@@ -30,8 +30,8 @@ module OmniContacts
             :client_id => client_id,
             :scope => encode(scope),
             :response_type => "code",
-            :access_type => "offline",
-            :approval_prompt => "force",
+            :access_type => "online",
+            :approval_prompt => "auto",
             :redirect_uri => encode(redirect_uri)
           })
       end
