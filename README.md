@@ -36,7 +36,7 @@ On the other hand it makes things much easier to leave the default value for `:r
 
 ## Integrating with your Application
 
-To use the Gem you first need to redirect your users to `/contacts/:importer`, where `:importer` can be google, yahoo or hotmail. 
+To use the Gem you first need to redirect your users to `/contacts/:importer`, where `:importer` can be gmail, yahoo or hotmail. 
 No changes to `config/routes.rb` are needed for this step since OmniContacts will be listening on that path and redirect the user to the email provider's website in order to authorize your app to access his contact list.
 Once that is done the user will be redirected back to your application, to the path specified in `:redirect_path` (or `:callback_path` for yahoo).
 If nothing is specified the default value is `/contacts/:importer/callback` (e.g. `/contacts/yahoo/callback`). This makes things simpler and you can just add the following line to `config/routes.rb`:
