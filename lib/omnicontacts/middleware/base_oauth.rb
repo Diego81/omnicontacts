@@ -84,7 +84,7 @@ module OmniContacts
 
       def handle_error error_type, exception
         logger << ("Error #{error_type} while processing #{@env["PATH_INFO"]}: #{exception.message}") if logger
-        [302, {"location" => "/contacts/failure?error_message=#{error_type}"}, []]
+        [302, {"location" => "/contacts/failure?error_message=#{error_type}&importer=#{class_name}"}, []]
       end
 
       def session
