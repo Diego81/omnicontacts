@@ -22,7 +22,7 @@ describe OmniContacts::Authorization::OAuth2 do
     it { should include("client_id=#{test_target.client_id}") }
     it { should include("scope=#{test_target.scope}") }
     it { should include("redirect_uri=#{test_target.redirect_uri}") }
-    it { should include("access_type=offline") }
+    it { should include("access_type=online") }
     it { should include("response_type=code") }
   end
 
