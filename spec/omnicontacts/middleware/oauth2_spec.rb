@@ -56,7 +56,7 @@ describe OmniContacts::Middleware::OAuth2 do
     it "should redirect to failure page because user did not allow access to contacts list" do
       get '/redirect_path?error=not_authorized'
       last_response.should be_redirect
-      last_response.headers["location"].should eq("/contacts/failure?error_message=not_authorized")
+      last_response.headers["location"].should eq("/contacts/failure?error_message=not_authorized&importer=oauth2middleware")
     end
   end
 end

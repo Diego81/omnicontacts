@@ -36,7 +36,7 @@ describe OmniContacts::Middleware::BaseOAuth do
     get "/contacts/testprovider"
     get "/contacts/testprovider/callback"
     last_response.should be_redirect
-    last_response.headers["location"].should eq("/contacts/failure?error_message=internal_error")
+    last_response.headers["location"].should eq("/contacts/failure?error_message=internal_error&importer=testprovider")
   end
   
   after(:all) do 

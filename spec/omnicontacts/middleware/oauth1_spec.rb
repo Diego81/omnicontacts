@@ -50,7 +50,7 @@ describe OmniContacts::Middleware::OAuth1 do
       OAuth1Middleware.mock_auth_token_resp.should_receive(:body).and_raise("Request failed")
       get "contacts/oauth1middleware"
       last_response.should be_redirect
-      last_response.headers["location"].should eq("/contacts/failure?error_message=internal_error")
+      last_response.headers["location"].should eq("/contacts/failure?error_message=internal_error&importer=oauth1middleware")
     end
   end
 
@@ -66,7 +66,7 @@ describe OmniContacts::Middleware::OAuth1 do
       OAuth1Middleware.mock_session.should_receive(:[]).and_return(nil)
       get "/contacts/oauth1middleware/callback?oauth_token=token&oauth_verifier=verifier"
       last_response.should be_redirect
-      last_response.headers["location"].should eq("/contacts/failure?error_message=not_authorized")
+      last_response.headers["location"].should eq("/contacts/failure?error_message=not_authorized&importer=oauth1middleware")
     end
   end
 end
