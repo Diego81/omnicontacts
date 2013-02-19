@@ -65,6 +65,12 @@ OmniContacts supports OAuth 1.0 and OAuth 2.0 token refresh, but for both it nee
 
 Gmail requires you to register the redirect_path on their website along with your application. Make sure to use the same value present in the configuration file, or `/contacts/gmail/callback` if using the default.
 
+To configure the max number of contacts to download from Gmail, just add a max contact parameter in your initializer:
+
+```ruby
+importer :gmail, "xxx", "yyy", :max_contacts => 1000
+```
+
 Yahoo requires you to configure the Permissions your application requires. Make sure to go the Yahoo website and to select Read permission for Contacts.
 
 Hotmail does not accept requests from localhost. This can be quite annoying during development, but unfortunately this is the way it is.
