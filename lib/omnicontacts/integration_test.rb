@@ -19,7 +19,7 @@ class IntegrationTest
   end
   
   def mock_authorization_from_user provider
-    [302, {"location" => provider.redirect_path}, []]
+    [302, {"Content-Type" => "application/x-www-form-urlencoded", "location" => provider.redirect_path}, []]
   end
   
   def mock_fetch_contacts provider
