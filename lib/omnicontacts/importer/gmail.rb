@@ -1,5 +1,4 @@
 require "omnicontacts/middleware/oauth2"
-require "rexml/document"
 
 module OmniContacts
   module Importer
@@ -20,34 +19,49 @@ module OmniContacts
 
       def fetch_contacts_using_access_token access_token, token_type
         contacts_response = https_get(@contacts_host, @contacts_path, contacts_req_params, contacts_req_headers(access_token, token_type))
-        parse_contacts contacts_response
+        contacts_from_response contacts_response
       end
 
       private
 
       def contacts_req_params
-        {"max-results" => @max_results.to_s}
+        {'max-results' => @max_results.to_s, 'alt' => 'json'}
       end
 
       def contacts_req_headers token, token_type
         {"GData-Version" => "3.0", "Authorization" => "#{token_type} #{token}"}
       end
 
-      def parse_contacts contacts_as_xml
-        xml = REXML::Document.new(contacts_as_xml)
+      def contacts_from_response response_as_json
+        response = JSON.parse(response_as_json)
         contacts = []
-        xml.elements.each('//entry') do |entry|
-          gd_email = entry.elements['gd:email']
-          if gd_email
-            contact = {:email => gd_email.attributes['address']}
-            gd_name = entry.elements['gd:name']
-            if gd_name
-              gd_full_name = gd_name.elements['gd:fullName']
-              contact[:name] = gd_full_name.text if gd_full_name
-            end
-            contacts << contact
+        response['feed']['entry'].each do |entry|
+          # creating nil fields to keep the fields consistent across other networks
+          contact = {:id => nil, :first_name => nil, :last_name => nil, :name => nil, :email => nil, :gender => nil, :birthday => nil, :image_source => nil, :relation => nil}
+          contact[:id] = entry['id']['$t'] if entry['id']
+          if entry['gd$name']
+            contact[:first_name] = normalize_name(entry['gd$name']['gd$givenName']['$t']) if entry['gd$name']['gd$givenName']
+            contact[:last_name] = normalize_name(entry['gd$name']['gd$familyName']['$t']) if entry['gd$name']['gd$familyName']
+            contact[:name] = normalize_name(entry['gd$name']['gd$fullName']['$t']) if entry['gd$name']['gd$fullName']
+            contact[:name] = full_name(contact[:first_name],contact[:last_name]) if contact[:name].nil?
           end
+
+          contact[:email] = entry['gd$email'][0]['address'] if entry['gd$email']
+          contact[:first_name], contact[:last_name], contact[:name] = email_to_name(contact[:name]) if !contact[:name].nil? && contact[:name].include?('@')
+          contact[:first_name], contact[:last_name], contact[:name] = email_to_name(contact[:email]) if contact[:name].nil? && contact[:email]
+          #format - year-month-date
+          if entry['gContact$birthday']
+            birthday = entry['gContact$birthday']['when'].split('-')
+            contact[:birthday] = birthday_format(birthday[2], birthday[3], nil) if birthday.size == 4
+            contact[:birthday] = birthday_format(birthday[1], birthday[2], birthday[0]) if birthday.size == 3
+          end
+          # value is either "male" or "female"
+          contact[:gender] = entry['gContact$gender']['value']  if entry['gContact$gender']
+          contact[:relation] = entry['gContact$relation']['rel'] if entry['gContact$relation']
+
+          contacts << contact if contact[:name]
         end
+        contacts.uniq! {|c| c[:email] || c[:name]}
         contacts
       end
 

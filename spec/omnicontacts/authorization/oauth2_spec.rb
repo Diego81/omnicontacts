@@ -55,12 +55,12 @@ describe OmniContacts::Authorization::OAuth2 do
 
     it "should raise if the http request fails" do
       test_target.should_receive(:https_post).and_raise("Invalid code")
-      expect { test_target.fetch_access_token("code") }.should raise_error
+      expect { test_target.fetch_access_token("code") }.to raise_error
     end
 
     it "should raise an error if the JSON response contains an error field" do
       test_target.should_receive(:https_post).and_return(%[{"error": "error_message"}])
-      expect { test_target.fetch_access_token("code") }.should raise_error
+      expect { test_target.fetch_access_token("code") }.to raise_error
     end
   end
 
