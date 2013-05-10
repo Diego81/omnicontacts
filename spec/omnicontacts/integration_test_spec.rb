@@ -45,7 +45,7 @@ describe IntegrationTest do
     
     it "should throw an exception" do
       IntegrationTest.instance.mock('test', :some_error)
-      expect {IntegrationTest.instance.mock_fetch_contacts(@provider)}.should raise_error
+      expect {IntegrationTest.instance.mock_fetch_contacts(@provider)}.to raise_error
     end
   end
 end

@@ -56,6 +56,9 @@ module OmniContacts
       end
 
       def access_token_from_response response
+        if auth_host == "graph.facebook.com"
+          response = query_string_to_map(response).to_json
+        end
         json = JSON.parse(response)
         raise json["error"] if json["error"]
         [json["access_token"], json["token_type"], json["refresh_token"]]

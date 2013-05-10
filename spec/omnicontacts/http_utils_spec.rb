@@ -67,7 +67,7 @@ describe OmniContacts::HTTPUtils do
       @connection.should_receive(:request_get).and_return(@response)
       @response.should_receive(:code).and_return("500")
       @response.should_receive(:body).and_return("some error message")
-      expect { @test_target.send(:https_get, "host", "path", {}) }.should raise_error
+      expect { @test_target.send(:https_get, "host", "path", {}) }.to raise_error
     end
   end
 end

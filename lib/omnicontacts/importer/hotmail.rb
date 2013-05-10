@@ -11,7 +11,7 @@ module OmniContacts
         super *args
         @auth_host = "oauth.live.com"
         @authorize_path = "/authorize"
-        @scope = "wl.basic"
+        @scope = "wl.signin, wl.basic, wl.birthday , wl.emails ,wl.contacts_birthday , wl.contacts_photos"
         @auth_token_path = "/token"
         @contacts_host = "apis.live.net"
         @contacts_path = "/v5.0/me/contacts"
@@ -24,13 +24,22 @@ module OmniContacts
 
       private
 
-      def contacts_from_response contacts_as_json
-        json = JSON.parse(escape_windows_format(contacts_as_json))
-        result = []
-        json["data"].each do |contact|
-          result << {:email => contact["name"]} if valid_email? contact["name"]
+      def contacts_from_response response_as_json
+        response = JSON.parse(response_as_json)
+        contacts = []
+        response['data'].each do |entry|
+          # creating nil fields to keep the fields consistent across other networks
+          contact = {:id => nil, :first_name => nil, :last_name => nil, :name => nil, :email => nil, :gender => nil, :birthday => nil, :image_source => nil, :relation => nil}
+          contact[:id] = entry['user_id']
+          contact[:first_name] = normalize_name(entry['first_name'])
+          contact[:last_name] = normalize_name(entry['last_name'])
+          contact[:name] = normalize_name(entry['name'])
+          contact[:birthday] = birthday_format(entry['birth_month'], entry['birth_day'], entry['birth_year'])
+          contact[:gender] = entry['gender']
+          contact[:image_source] = 'https://apis.live.net/v5.0/' + entry['user_id'] + '/picture' if entry['user_id']
+          contacts << contact if contact[:name] || contact[:first_name]
         end
-        result
+        contacts
       end
 
       def escape_windows_format value
