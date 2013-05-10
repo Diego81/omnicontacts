@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    omnicontacts (0.2.5)
+    omnicontacts (0.3.0)
       json
       rack
 
@@ -9,7 +9,7 @@ GEM
   remote: http://rubygems.org/
   specs:
     diff-lcs (1.1.3)
-    json (1.7.3)
+    json (1.7.7)
     multi_json (1.1.0)
     rack (1.4.1)
     rack-test (0.6.1)

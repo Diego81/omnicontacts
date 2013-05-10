@@ -1,6 +1,6 @@
 module OmniContacts
   
-  VERSION = "0.2.5"
+  VERSION = "0.3.1"
 
   autoload :Builder, "omnicontacts/builder"
   autoload :Importer, "omnicontacts/importer"
