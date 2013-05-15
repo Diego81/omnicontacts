@@ -47,7 +47,7 @@ module OmniContacts
         return contacts unless response['contacts']['contact']
         response['contacts']['contact'].each do |entry|
           # creating nil fields to keep the fields consistent across other networks
-          contact = {:id => nil, :first_name => nil, :last_name => nil, :name => nil, :email => nil, :gender => nil, :birthday => nil, :image_source => nil, :relation => nil}
+          contact = {:id => nil, :first_name => nil, :last_name => nil, :name => nil, :email => nil, :gender => nil, :birthday => nil, :profile_picture=> nil, :relation => nil}
           yahoo_id = nil
           contact[:id] = entry['id'].to_s
           entry['fields'].each do |field|

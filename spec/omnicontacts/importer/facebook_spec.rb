@@ -39,7 +39,7 @@ describe OmniContacts::Importer::Facebook do
       facebook.fetch_contacts_using_access_token token, token_type
     end
 
-    it "should correctly parse id, name,email,gender, birthday, image source and relation" do
+    it "should correctly parse id, name,email,gender, birthday, profile picture and relation" do
       3.times { facebook.should_receive(:https_get).and_return(contacts_as_json) }
       result = facebook.fetch_contacts_using_access_token token, token_type
       result.size.should be(1)
@@ -50,7 +50,7 @@ describe OmniContacts::Importer::Facebook do
       result.first[:email].should be_nil
       result.first[:gender].should eq('male')
       result.first[:birthday].should eq({:day=>21, :month=>06, :year=>nil})
-      result.first[:image_source].should eq('http://profile.ak.fbcdn.net/hprofile-ak-snc6/186364_608061886_2089044200_q.jpg')
+      result.first[:profile_picture].should eq('http://profile.ak.fbcdn.net/hprofile-ak-snc6/186364_608061886_2089044200_q.jpg')
       result.first[:relation].should eq('cousin')
     end
   end

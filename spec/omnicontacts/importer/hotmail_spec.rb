@@ -37,7 +37,7 @@ describe OmniContacts::Importer::Hotmail do
       hotmail.fetch_contacts_using_access_token token, token_type
     end
 
-    it "should correctly parse id, name,email,gender, birthday, image source and relation" do
+    it "should correctly parse id, name,email,gender, birthday, profile picture and relation" do
       hotmail.should_receive(:https_get).and_return(contacts_as_json)
       result = hotmail.fetch_contacts_using_access_token token, token_type
       result.size.should be(1)
@@ -48,7 +48,7 @@ describe OmniContacts::Importer::Hotmail do
       result.first[:email].should be_nil
       result.first[:gender].should be_nil
       result.first[:birthday].should eq({:day=>5, :month=>6, :year=>1952})
-      result.first[:image_source].should eq('https://apis.live.net/v5.0/123456/picture')
+      result.first[:profile_picture].should eq('https://apis.live.net/v5.0/123456/picture')
       result.first[:relation].should be_nil
     end
   end

@@ -1,11 +1,12 @@
 # OmniContacts
 
-Inspired by the popular OmniAuth, OmniContacts is a library that enables users of an application to import contacts from their email accounts.
-The current version allows to import contacts from the three most popular web email providers: Gmail, Yahoo and Hotmail.
-OmniContacts is a Rack middleware, therefore you can use it with Rails, Sinatra and with any other Rack-based framework.
+Inspired by the popular OmniAuth, OmniContacts is a library that enables users of an application to import contacts 
+from their email or Facebook accounts. The email providers currently supported are Gmail, Yahoo and Hotmail.   
+OmniContacts is a Rack middleware, therefore you can use it with Rails, Sinatra and any other Rack-based framework.
 
-OmniContacts uses the OAuth protocol to communicate with the contacts provider. Yahoo still uses OAuth 1.0, while both Gmail and Hotmail support OAuth 2.0.
-In order to use OmniContacts, it is therefore necessary to first register your application with the providers you want to use and to obtain client_id and client_secret.
+OmniContacts uses the OAuth protocol to communicate with the contacts provider. Yahoo still uses OAuth 1.0, while
+ Facebook, Gmail and Hotmail support OAuth 2.0.   
+In order to use OmniContacts, it is therefore necessary to first register your application with the provider and to obtain client_id and client_secret.
 
 ## Usage
 
@@ -25,18 +26,19 @@ Rails.application.middleware.use OmniContacts::Builder do
   importer :gmail, "client_id", "client_secret", {:redirect_path => "/oauth2callback", :ssl_ca_file => "/etc/ssl/certs/curl-ca-bundle.crt"}
   importer :yahoo, "consumer_id", "consumer_secret", {:callback_path => '/callback'}
   importer :hotmail, "client_id", "client_secret"
+  importer :facebook, "client_id", "client_secret"
 end
 
 ```
 
-Every importer expects `client_id` and `client_secret` as mandatory, while `:redirect_path` and `:ssl_ca_file` are optional.
-Since Yahoo implements the version 1.0 of the OAuth protocol, naming is slightly different. Instead of `:redirect_path` you should use `:callback_path` as key in the hash providing the optional parameters.
+Every importer expects `client_id` and `client_secret` as mandatory, while `:redirect_path` and `:ssl_ca_file` are optional.   
+Since Yahoo implements the version 1.0 of the OAuth protocol, naming is slightly different. Instead of `:redirect_path` you should use `:callback_path` as key in the hash providing the optional parameters.    
 While `:ssl_ca_file` is optional, it is highly recommended to set it on production environments for obvious security reasons.
 On the other hand it makes things much easier to leave the default value for `:redirect_path` and `:callback path`, the reason of which will be clear after reading the following section.
 
 ## Integrating with your Application
 
-To use the Gem you first need to redirect your users to `/contacts/:importer`, where `:importer` can be gmail, yahoo or hotmail. 
+To use the Gem you first need to redirect your users to `/contacts/:importer`, where `:importer` can be facebook, gmail, yahoo or hotmail. 
 No changes to `config/routes.rb` are needed for this step since OmniContacts will be listening on that path and redirect the user to the email provider's website in order to authorize your app to access his contact list.
 Once that is done the user will be redirected back to your application, to the path specified in `:redirect_path` (or `:callback_path` for yahoo).
 If nothing is specified the default value is `/contacts/:importer/callback` (e.g. `/contacts/yahoo/callback`). This makes things simpler and you can just add the following line to `config/routes.rb`:
@@ -45,8 +47,75 @@ If nothing is specified the default value is `/contacts/:importer/callback` (e.g
   match "/contacts/:importer/callback" => "your_controller#callback"
 ```
 
-The list of contacts can be accessed via the `omnicontacts.contacts` key in the environment hash. It is a simple array of hashes. Each hash has two keys: `:email` and `:name`, containing the email and the name of the contact respectively.
+The list of contacts can be accessed via the `omnicontacts.contacts` key in the environment hash and it consists of a simple array of hashes.    
+The following table shows which fields are supported by which provider:
 
+<table>
+	<tr>
+		<th>Provider</th>
+		<th>:email</th>
+		<th>:id</th>
+		<th>:profile_image</th>
+		<th>:name</th>
+		<th>:first_name</th>
+		<th>:last_name</th>
+		<th>:birthday</th>
+		<th>:gender</th>
+		<th>:relation</th>
+	</tr>
+	<tr>
+		<td>Gmail</td>
+		<td>X</td>
+		<td>X</td>
+		<td></td>
+		<td>X</td>
+		<td>X</td>
+		<td>X</td>
+		<td>X</td>
+		<td>X</td>
+		<td>X</td>
+	</tr>
+	<tr>
+		<td>Facebook</td>
+		<td>X</td>
+		<td>X</td>
+		<td>X</td>
+		<td>X</td>
+		<td>X</td>
+		<td>X</td>
+		<td>X</td>
+		<td>X</td>
+		<td>X</td>
+	</tr>
+	<tr>
+		<td>Yahoo</td>
+		<td>X</td>
+		<td>X</td>
+		<td></td>
+		<td>X</td>
+		<td>X</td>
+		<td>X</td>
+		<td>X</td>
+		<td></td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>Hotmail</td>
+		<td>X</td>
+		<td>X</td>
+		<td>X</td>
+		<td>X</td>
+		<td>X</td>
+		<td>X</td>
+		<td>X</td>
+		<td>X</td>
+		<td></td>
+	</tr>
+</table>
+
+Obviously it may happen that some fields are blank even if supported by the provider in the case that the contact did not provide any information about them.
+
+The following snippet shows how to simply print name and email of each contact:
 ```ruby
 def contacts_callback
   @contacts = request.env['omnicontacts.contacts']
@@ -73,8 +142,9 @@ importer :gmail, "xxx", "yyy", :max_results => 1000
 
 Yahoo requires you to configure the Permissions your application requires. Make sure to go the Yahoo website and to select Read permission for Contacts.
 
-Hotmail does not accept requests from localhost. This can be quite annoying during development, but unfortunately this is the way it is.
-Hotmail presents another "peculiar" feature. Their API returns a Contact object, which does not contain an e-mail field! However, if the contact has either name, family name or both set to null, than there is a field called name which does contain the e-mail address. To summarize, a  Hotmail contact will only be returned if the name field contains a valid e-mail address, otherwise it will be skipped. Another consequence is that OmniContacts can provide contacts with only the `:email` key set.
+Hotmail presents a "peculiar" feature. Their API returns a Contact object which does not contain an e-mail field! 
+However, if the contact has either name, family name or both set to null, than there is a field called name which does contain the e-mail address. 
+This means that it may happen that an Hotmail contact does not contain the email field.
 
 ## Integration Testing
 
@@ -103,9 +173,40 @@ Follows a full example of an integration test:
   page.should have_content("user@example.com")
 ```
 
+## Working on localhost
+
+Since Hotmail and Facebook do not allow the usage of `localhost` as redirect path for the authorization step, a workaround is to use the `localtunnel` gem.    
+This gem is really useful when you need someone, the contacts provider in this case, to access your locally running application using a unique url.
+
+Install the Gem using RubyGems:
+```bash
+sudo gem install localtunnel
+```
+
+Start `localtunnel` passing your public SSH key and the port where your application is running:
+```bash
+localtunnel -k ~/.ssh/id_rsa.pub 3000
+```
+
+Check the output to see something like 
+```bash
+Port 3000 is now publicly accessible from http://8bv2.localtunnel.com ...
+```
+
+The printed Url is the one you can now use to access your application.
+
+## Example application
+
+Thanks to @sonianand11, you can find a full example of a Rails application using OmniContacts at: https://github.com/sonianand11/omnicontacts_example
+
+## Thanks
+
+As already mentioned above, a special thanks goes to @sonianand11 for implementing an example app.    
+Thanks also to @asmatameem for its huge contribution. He indeed added support for Facebook and for many fields which were missing before.
+
 ## License
 
-Copyright (c) 2012 Diego81
+Copyright (c) 2012-2013 Diego81
 
 Permission is hereby granted, free of charge, to any person obtaining a
 copy of this software and associated documentation files (the "Software"),

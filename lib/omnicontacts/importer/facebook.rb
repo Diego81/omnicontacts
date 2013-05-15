@@ -70,7 +70,7 @@ module OmniContacts
 
       def create_contact_element contact_info
         # creating nil fields to keep the fields consistent across other networks
-        contact = {:id => nil, :first_name => nil, :last_name => nil, :name => nil, :email => nil, :gender => nil, :birthday => nil, :image_source => nil, :relation => nil}
+        contact = {:id => nil, :first_name => nil, :last_name => nil, :name => nil, :email => nil, :gender => nil, :birthday => nil, :profile_picture=> nil, :relation => nil}
         contact[:id] = contact_info['id']
         contact[:first_name] = normalize_name(contact_info['first_name'])
         contact[:last_name] = normalize_name(contact_info['last_name'])
@@ -79,7 +79,7 @@ module OmniContacts
         contact[:gender] = contact_info['gender']
         birthday = contact_info['birthday'].split('/') if contact_info['birthday']
         contact[:birthday] = birthday_format(birthday[0],birthday[1],birthday[2]) if birthday
-        contact[:image_source] = contact_info['picture']['data']['url'] if contact_info['picture']
+        contact[:profile_picture] = contact_info['picture']['data']['url'] if contact_info['picture']
         contact[:relation] = contact_info['relationship']
         contact
       end

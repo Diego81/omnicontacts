@@ -29,14 +29,18 @@ module OmniContacts
         contacts = []
         response['data'].each do |entry|
           # creating nil fields to keep the fields consistent across other networks
-          contact = {:id => nil, :first_name => nil, :last_name => nil, :name => nil, :email => nil, :gender => nil, :birthday => nil, :image_source => nil, :relation => nil}
+          contact = {:id => nil, :first_name => nil, :last_name => nil, :name => nil, :email => nil, :gender => nil, :birthday => nil, :profile_picture=> nil, :relation => nil}
           contact[:id] = entry['user_id']
-          contact[:first_name] = normalize_name(entry['first_name'])
-          contact[:last_name] = normalize_name(entry['last_name'])
-          contact[:name] = normalize_name(entry['name'])
+          if valid_email? entry["name"]
+            contact[:email] = entry["name"]
+          else
+            contact[:first_name] = normalize_name(entry['first_name'])
+            contact[:last_name] = normalize_name(entry['last_name'])
+            contact[:name] = normalize_name(entry['name'])
+          end
           contact[:birthday] = birthday_format(entry['birth_month'], entry['birth_day'], entry['birth_year'])
           contact[:gender] = entry['gender']
-          contact[:image_source] = 'https://apis.live.net/v5.0/' + entry['user_id'] + '/picture' if entry['user_id']
+          contact[:profile_picture] = 'https://apis.live.net/v5.0/' + entry['user_id'] + '/picture' if entry['user_id']
           contacts << contact if contact[:name] || contact[:first_name]
         end
         contacts

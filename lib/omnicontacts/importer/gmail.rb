@@ -37,7 +37,7 @@ module OmniContacts
         contacts = []
         response['feed']['entry'].each do |entry|
           # creating nil fields to keep the fields consistent across other networks
-          contact = {:id => nil, :first_name => nil, :last_name => nil, :name => nil, :email => nil, :gender => nil, :birthday => nil, :image_source => nil, :relation => nil}
+          contact = {:id => nil, :first_name => nil, :last_name => nil, :name => nil, :email => nil, :gender => nil, :birthday => nil, :profile_picture=> nil, :relation => nil}
           contact[:id] = entry['id']['$t'] if entry['id']
           if entry['gd$name']
             contact[:first_name] = normalize_name(entry['gd$name']['gd$givenName']['$t']) if entry['gd$name']['gd$givenName']
