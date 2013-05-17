@@ -1,9 +1,11 @@
 require "omnicontacts/middleware/oauth2"
+require "omnicontacts/parse_utils"
 require "json"
 
 module OmniContacts
   module Importer
     class Hotmail < Middleware::OAuth2
+      include ParseUtils
 
       attr_reader :auth_host, :authorize_path, :auth_token_path, :scope
 

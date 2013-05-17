@@ -1,9 +1,11 @@
+require "omnicontacts/parse_utils"
 require "omnicontacts/middleware/oauth1"
 require "json"
 
 module OmniContacts
   module Importer
     class Yahoo < Middleware::OAuth1
+      include ParseUtils
 
       attr_reader :auth_host, :auth_token_path, :auth_path, :access_token_path
 
