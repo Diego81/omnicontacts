@@ -49,28 +49,49 @@ module OmniContacts
         return contacts unless response['contacts']['contact']
         response['contacts']['contact'].each do |entry|
           # creating nil fields to keep the fields consistent across other networks
-          contact = {:id => nil, :first_name => nil, :last_name => nil, :name => nil, :email => nil, :gender => nil, :birthday => nil, :profile_picture=> nil, :relation => nil}
+          contact = { :id => nil,
+                      :first_name => nil,
+                      :last_name => nil,
+                      :name => nil,
+                      :email => nil,
+                      :gender => nil,
+                      :birthday => nil,
+                      :profile_picture=> nil,
+                      :address_1 => nil,
+                      :address_2 => nil,
+                      :city => nil,
+                      :region => nil,
+                      :postcode => nil,
+                      :relation => nil }
           yahoo_id = nil
           contact[:id] = entry['id'].to_s
           entry['fields'].each do |field|
-            if field['type'] == 'name'
+            case field['type']
+            when 'name'
               contact[:first_name] = normalize_name(field['value']['givenName'])
               contact[:last_name] = normalize_name(field['value']['familyName'])
               contact[:name] = full_name(contact[:first_name],contact[:last_name])
-            end
-            contact[:email] = field['value'] if field['type'] == 'email'
-
-            if field['type'] == 'yahooid'
+            when 'email'
+              contact[:email] = field['value']
+            when 'yahooid'
               yahoo_id = field['value']
-            end
-
-            contact[:first_name], contact[:last_name], contact[:name] = email_to_name(contact[:email]) if contact[:name].nil? && contact[:email]
-            # contact[:first_name], contact[:last_name], contact[:name] = email_to_name(yahoo_id) if (yahoo_id && contact[:name].nil? && contact[:email].nil?)
-
-            if field['type'] == 'birthday'
+            when 'address'
+              value = field['value']
+              contact[:address_1] = street = value['street']
+              if street.index("\n")
+                parts = street.split("\n")
+                contact[:address_1] = parts.first
+                contact[:address_2] = parts[1..-1].join(', ')
+              end
+              contact[:city] = value['city']
+              contact[:region] = value['stateOrProvince']
+              contact[:postcode] = value['postalCode']
+            when 'birthday'
               contact[:birthday] = birthday_format(field['value']['month'], field['value']['day'],field['value']['year'])
             end
           end
+          contact[:first_name], contact[:last_name], contact[:name] = email_to_name(contact[:email]) if contact[:name].nil? && contact[:email]
+          # contact[:first_name], contact[:last_name], contact[:name] = email_to_name(yahoo_id) if (yahoo_id && contact[:name].nil? && contact[:email].nil?)
           contacts << contact if contact[:name]
         end
         contacts.uniq! {|c| c[:email] || c[:name]}

@@ -16,7 +16,9 @@ describe OmniContacts::Importer::Yahoo do
                 {"id":819, "type":"email", "value":"johnny@yahoo.com"},
                 {"id":806,"type":"name","value":{"givenName":"John","middleName":"","familyName":"Smith"},"editedBy":"OWNER","categories":[]},
                 {"id":33555343,"type":"guid","value":"7ET6MYV2UQ6VR6CBSNMCLFJIVI"},
-                {"id":946,"type":"birthday","value":{"day":"22","month":"2","year":"1952"},"editedBy":"OWNER","categories":[]}
+                {"id":946,"type":"birthday","value":{"day":"22","month":"2","year":"1952"},"editedBy":"OWNER","categories":[]},
+                {"id":21, "type":"address", "value":{"street":"1313 Trashview Court\nApt. 13", "city":"Nowheresville", "stateOrProvince":"OK", "postalCode":"66666", "country":"", "countryCode":""}, "editedBy":"OWNER", "flags":["HOME"], "categories":[]}
+                
               ]
             }
           ]
@@ -41,7 +43,7 @@ describe OmniContacts::Importer::Yahoo do
       yahoo.fetch_contacts_from_token_and_verifier "auth_token", "auth_token_secret", "oauth_verifier"
     end
 
-    it "should correctly parse id, name,email,gender, birthday, image source and relation" do
+    it "should correctly parse id, name,email,gender, birthday, image source, snailmail address, and relation" do
       yahoo.should_receive(:fetch_access_token).and_return(["access_token", "access_token_secret", "guid"])
       yahoo.should_receive(:http_get).and_return(contacts_as_json)
       result = yahoo.fetch_contacts_from_token_and_verifier "auth_token", "auth_token_secret", "oauth_verifier"
@@ -53,6 +55,11 @@ describe OmniContacts::Importer::Yahoo do
       result.first[:email].should eq("johnny@yahoo.com")
       result.first[:gender].should be_nil
       result.first[:birthday].should eq({:day=>22, :month=>2, :year=>1952})
+      result.first[:address_1].should eq('1313 Trashview Court')
+      result.first[:address_2].should eq('Apt. 13')
+      result.first[:city].should eq('Nowheresville')
+      result.first[:region].should eq('OK')
+      result.first[:postcode].should eq('66666')
       result.first[:relation].should be_nil
     end
 

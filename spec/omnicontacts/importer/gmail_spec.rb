@@ -58,7 +58,8 @@ describe OmniContacts::Importer::Gmail do
             "gContact$relation":{"rel":"father"},
             "gContact$gender":{"value":"male"},
             "gd$email":[{"rel":"http://schemas.google.com/g/2005#other","address":"bennet@gmail.com","primary":"true"}],
-            "gContact$groupMembershipInfo":[{"deleted":"false","href":"http://www.google.com/m8/feeds/groups/logged_in_user%40gmail.com/base/6"}]
+            "gContact$groupMembershipInfo":[{"deleted":"false","href":"http://www.google.com/m8/feeds/groups/logged_in_user%40gmail.com/base/6"}],
+            "gd$structuredPostalAddress":[{"rel":"http://schemas.google.com/g/2005#home", "gd$formattedAddress":{"$t":"1313 Trashview Court\nApt. 13\nNowheresville, OK 66666"}, "gd$street":{"$t":"1313 Trashview Court\nApt. 13"}, "gd$postcode":{"$t":"66666"}, "gd$city":{"$t":"Nowheresville"}, "gd$region":{"$t":"OK"}}]
           }]
         }
       }'
@@ -77,7 +78,7 @@ describe OmniContacts::Importer::Gmail do
       gmail.fetch_contacts_using_access_token token, token_type
     end
 
-    it "should correctly parse id, name,email,gender, birthday, image source and relation" do
+    it "should correctly parse id, name,email,gender, birthday, image source, snailmail address, and relation" do
       gmail.should_receive(:https_get).and_return(contacts_as_json)
       result = gmail.fetch_contacts_using_access_token token, token_type
       result.size.should be(1)
@@ -88,6 +89,11 @@ describe OmniContacts::Importer::Gmail do
       result.first[:email].should eq("bennet@gmail.com")
       result.first[:gender].should eq("male")
       result.first[:birthday].should eq({:day=>02, :month=>07, :year=>1954})
+      result.first[:address_1].should eq('1313 Trashview Court')
+      result.first[:address_2].should eq('Apt. 13')
+      result.first[:city].should eq('Nowheresville')
+      result.first[:region].should eq('OK')
+      result.first[:postcode].should eq('66666')
       result.first[:relation].should eq('father')
     end
 
