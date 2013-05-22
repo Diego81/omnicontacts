@@ -53,10 +53,10 @@ The following table shows which fields are supported by which provider:
 <table>
   <tr>
     <th>Item</th>
-    <th>GMail</th>
     <th>Facebook</th>
-    <th>Yahoo</th>
+    <th>GMail</th>
     <th>Hotmail</th>
+    <th>Yahoo</th>
   </tr>
 
   <tr>
@@ -77,10 +77,10 @@ The following table shows which fields are supported by which provider:
 
   <tr>
 		<td><b>:profile_image</b></td>
-		<td></td>
 		<td>X</td>
 		<td></td>
 		<td>X</td>
+		<td></td>
   </tr>
 
   <tr>
@@ -109,40 +109,40 @@ The following table shows which fields are supported by which provider:
 
   <tr>
 		<td><b>:address_1</b></td>
-		<td>X</td>
 		<td></td>
+		<td>X</td>
 		<td></td>
 		<td></td>
   </tr>
 
   <tr>
 		<td><b>:address_2</b></td>
-		<td>X</td>
 		<td></td>
+		<td>X</td>
 		<td></td>
 		<td></td>
   </tr>
 
   <tr>
 		<td><b>:city</b></td>
-		<td>X</td>
 		<td></td>
+		<td>X</td>
 		<td></td>
 		<td></td>
   </tr>
 
   <tr>
 		<td><b>:region</b></td>
-		<td>X</td>
 		<td></td>
+		<td>X</td>
 		<td></td>
 		<td></td>
   </tr>
 
   <tr>
 		<td><b>:postcode</b></td>
-		<td>X</td>
 		<td></td>
+		<td>X</td>
 		<td></td>
 		<td></td>
   </tr>
@@ -159,8 +159,8 @@ The following table shows which fields are supported by which provider:
 		<td><b>:gender</b></td>
 		<td>X</td>
 		<td>X</td>
-		<td></td>
 		<td>X</td>
+		<td></td>
   </tr>
 
   <tr>
