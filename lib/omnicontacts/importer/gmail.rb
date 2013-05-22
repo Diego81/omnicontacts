@@ -39,7 +39,21 @@ module OmniContacts
         contacts = []
         response['feed']['entry'].each do |entry|
           # creating nil fields to keep the fields consistent across other networks
-          contact = {:id => nil, :first_name => nil, :last_name => nil, :name => nil, :email => nil, :gender => nil, :birthday => nil, :profile_picture=> nil, :relation => nil}
+          contact = { :id => nil,
+                      :first_name => nil,
+                      :last_name => nil,
+                      :name => nil,
+                      :email => nil,
+                      :gender => nil,
+                      :birthday => nil,
+                      :profile_picture=> nil,
+                      :relation => nil,
+                      :address_1 => nil,
+                      :address_2 => nil,
+                      :city => nil,
+                      :region => nil,
+                      :postcode => nil,
+          }
           contact[:id] = entry['id']['$t'] if entry['id']
           if entry['gd$name']
             contact[:first_name] = normalize_name(entry['gd$name']['gd$givenName']['$t']) if entry['gd$name']['gd$givenName']
@@ -60,6 +74,17 @@ module OmniContacts
           # value is either "male" or "female"
           contact[:gender] = entry['gContact$gender']['value']  if entry['gContact$gender']
           contact[:relation] = entry['gContact$relation']['rel'] if entry['gContact$relation']
+
+          address = entry['gd$structuredPostalAddress'][0] if entry['gd$structuredPostalAddress']
+          if address
+            contact[:address_1] = address['gd$street']['$t'] if address['gd$street']
+            contact[:address_1] = address['gd$formattedAddress']['$t'] if contact[:address_1].nil? && address['gd$formattedAddress']
+            # gmail doesn't parse the street address into two lines, so no contact[:address_2]
+            contact[:city] = address['gd$city']['$t'] if address['gd$city']
+            contact[:region] = address['gd$region']['$t'] if address['gd$region'] # like state or province
+            contact[:postcode] = address['gd$postcode']['$t'] if address['gd$postcode']
+            puts "Address of #{contact[:first_name]} #{contact[:last_name]}: #{contact[:address_1]}, #{contact[:city]}, #{contact[:region]} #{contact[:postcode]}"
+          end
 
           contacts << contact if contact[:name]
         end
