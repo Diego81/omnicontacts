@@ -112,7 +112,7 @@ The following table shows which fields are supported by which provider:
 		<td></td>
 		<td>X</td>
 		<td></td>
-		<td></td>
+		<td>X</td>
   </tr>
 
   <tr>
@@ -120,7 +120,7 @@ The following table shows which fields are supported by which provider:
 		<td></td>
 		<td>X</td>
 		<td></td>
-		<td></td>
+		<td>X</td>
   </tr>
 
   <tr>
@@ -128,7 +128,7 @@ The following table shows which fields are supported by which provider:
 		<td></td>
 		<td>X</td>
 		<td></td>
-		<td></td>
+		<td>X</td>
   </tr>
 
   <tr>
@@ -136,7 +136,7 @@ The following table shows which fields are supported by which provider:
 		<td></td>
 		<td>X</td>
 		<td></td>
-		<td></td>
+		<td>X</td>
   </tr>
 
   <tr>
@@ -144,7 +144,7 @@ The following table shows which fields are supported by which provider:
 		<td></td>
 		<td>X</td>
 		<td></td>
-		<td></td>
+		<td>X</td>
   </tr>
 
   <tr>
@@ -172,6 +172,8 @@ The following table shows which fields are supported by which provider:
   </tr>
 
 </table>
+
+Note: :region is where something like a US state or Canadian province would go, and similarly the :postcode is for a US ZIP code or similar foreign code.
 
 Obviously it may happen that some fields are blank even if supported by the provider in the case that the contact did not provide any information about them.
 
