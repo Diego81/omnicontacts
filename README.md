@@ -50,6 +50,7 @@ If nothing is specified the default value is `/contacts/:importer/callback` (e.g
 The list of contacts can be accessed via the `omnicontacts.contacts` key in the environment hash and it consists of a simple array of hashes.    
 The following table shows which fields are supported by which provider:
 
+<small>
 <table>
 	<tr>
 		<th>Provider</th>
@@ -137,6 +138,7 @@ The following table shows which fields are supported by which provider:
 		<td></td>
 	</tr>
 </table>
+</small>
 
 Obviously it may happen that some fields are blank even if supported by the provider in the case that the contact did not provide any information about them.
 
