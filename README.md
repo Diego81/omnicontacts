@@ -59,6 +59,11 @@ The following table shows which fields are supported by which provider:
 		<th>:name</th>
 		<th>:first_name</th>
 		<th>:last_name</th>
+		<th>:address_1</th>
+		<th>:address_2</th>
+		<th>:city</th>
+		<th>:region</th>
+		<th>:postcode</th>
 		<th>:birthday</th>
 		<th>:gender</th>
 		<th>:relation</th>
@@ -74,6 +79,11 @@ The following table shows which fields are supported by which provider:
 		<td>X</td>
 		<td>X</td>
 		<td>X</td>
+		<td>X</td>
+		<td>X</td>
+		<td>X</td>
+		<td>X</td>
+		<td>X</td>
 	</tr>
 	<tr>
 		<td>Facebook</td>
@@ -83,6 +93,11 @@ The following table shows which fields are supported by which provider:
 		<td>X</td>
 		<td>X</td>
 		<td>X</td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
 		<td>X</td>
 		<td>X</td>
 		<td>X</td>
@@ -95,6 +110,11 @@ The following table shows which fields are supported by which provider:
 		<td>X</td>
 		<td>X</td>
 		<td>X</td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
 		<td>X</td>
 		<td></td>
 		<td></td>
@@ -107,6 +127,11 @@ The following table shows which fields are supported by which provider:
 		<td>X</td>
 		<td>X</td>
 		<td>X</td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
 		<td>X</td>
 		<td>X</td>
 		<td></td>
