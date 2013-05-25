@@ -36,15 +36,17 @@ module OmniContacts
 
       def contacts_from_response response_as_json
         response = JSON.parse(response_as_json)
+        return [] if response['feed'].nil? || response['feed']['entry'].nil?
         contacts = []
         response['feed']['entry'].each do |entry|
           # creating nil fields to keep the fields consistent across other networks
           contact = {:id => nil, :first_name => nil, :last_name => nil, :name => nil, :email => nil, :gender => nil, :birthday => nil, :profile_picture=> nil, :relation => nil}
           contact[:id] = entry['id']['$t'] if entry['id']
           if entry['gd$name']
-            contact[:first_name] = normalize_name(entry['gd$name']['gd$givenName']['$t']) if entry['gd$name']['gd$givenName']
-            contact[:last_name] = normalize_name(entry['gd$name']['gd$familyName']['$t']) if entry['gd$name']['gd$familyName']
-            contact[:name] = normalize_name(entry['gd$name']['gd$fullName']['$t']) if entry['gd$name']['gd$fullName']
+            gd_name = entry['gd$name']
+            contact[:first_name] = normalize_name(entry['gd$name']['gd$givenName']['$t']) if gd_name['gd$givenName']
+            contact[:last_name] = normalize_name(entry['gd$name']['gd$familyName']['$t']) if gd_name['gd$familyName']
+            contact[:name] = normalize_name(entry['gd$name']['gd$fullName']['$t']) if gd_name['gd$fullName']
             contact[:name] = full_name(contact[:first_name],contact[:last_name]) if contact[:name].nil?
           end
 
