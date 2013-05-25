@@ -55,7 +55,7 @@ The following table shows which fields are supported by which provider:
 		<th>Provider</th>
 		<th>:email</th>
 		<th>:id</th>
-		<th>:profile_image</th>
+		<th>:profile_picture</th>
 		<th>:name</th>
 		<th>:first_name</th>
 		<th>:last_name</th>
