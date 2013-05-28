@@ -77,7 +77,7 @@ The following table shows which fields are supported by which provider:
 	</tr>
 	<tr>
 		<td>Facebook</td>
-		<td>X</td>
+		<td></td>
 		<td>X</td>
 		<td>X</td>
 		<td>X</td>
