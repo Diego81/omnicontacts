@@ -115,11 +115,14 @@ The following table shows which fields are supported by which provider:
 
 Obviously it may happen that some fields are blank even if supported by the provider in the case that the contact did not provide any information about them.
 
-The following snippet shows how to simply print name and email of each contact:
+The information for the logged in user can also be accessed via 'omnicontacts.user' key in the environment hash. It consists of a simple hash which includes the same fields as above.
+
+The following snippet shows how to simply print name and email of each contact, and also the the name of logged in user:
 ```ruby
 def contacts_callback
   @contacts = request.env['omnicontacts.contacts']
-  puts "List of contacts obtained from #{params[:importer]}:"
+  @user = request.env['omnicontacts.user']
+  puts "List of contacts of #{user[:name]} obtained from #{params[:importer]}:"
   @contacts.each do |contact|
     puts "Contact found: name => #{contact[:name]}, email => #{contact[:email]}"
   end
@@ -202,7 +205,7 @@ Thanks to @sonianand11, you can find a full example of a Rails application using
 ## Thanks
 
 As already mentioned above, a special thanks goes to @sonianand11 for implementing an example app.    
-Thanks also to @asmatameem for its huge contribution. He indeed added support for Facebook and for many fields which were missing before.
+Thanks also to @asmatameem for her huge contribution. She indeed added support for Facebook and for many fields which were missing before.
 
 ## License
 

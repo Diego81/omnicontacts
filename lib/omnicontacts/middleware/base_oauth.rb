@@ -69,6 +69,10 @@ module OmniContacts
         end
       end
 
+      def set_current_user user
+        @env["omnicontacts.user"] = user
+      end
+
       #  This method rescues executes a block of code and
       #  rescue all exceptions. In case of an exception the 
       #  user is redirected to the failure endpoint.

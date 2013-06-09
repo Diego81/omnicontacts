@@ -5,6 +5,19 @@ describe OmniContacts::Importer::Gmail do
 
   let(:gmail) { OmniContacts::Importer::Gmail.new({}, "client_id", "client_secret") }
 
+  let(:self_response) {
+    '{
+      "id":"16482944006464829443",
+      "email":"chrisjohnson@gmail.com",
+      "name":"Chris Johnson",
+      "given_name":"Chris",
+      "family_name":"Johnson",
+      "picture":"https://lh3.googleusercontent.com/-b8aFbTBM/AAAAAAI/IWA/vsek/photo.jpg",
+      "gender":"male",
+      "birthday":"1982-06-21"
+    }'
+  }
+
   let(:contacts_as_json) {
     '{"version":"1.0","encoding":"UTF-8",
         "feed":{
@@ -31,7 +44,7 @@ describe OmniContacts::Importer::Gmail do
             {"rel":"self","type":"application/atom+xml","href":"https://www.google.com/m8/feeds/contacts/logged_in_user%40gmail.com/full?alt\u003djson\u0026max-results\u003d1"},
             {"rel":"next","type":"application/atom+xml","href":"https://www.google.com/m8/feeds/contacts/logged_in_user%40gmail.com/full?alt\u003djson\u0026start-index\u003d2\u0026max-results\u003d1"}
           ],
-          "author":[{"name":{"$t":"Asma"},"email":{"$t":"logged_in_user@gmail.com"}}],
+          "author":[{"name":{"$t":"Edward"},"email":{"$t":"logged_in_user@gmail.com"}}],
           "generator":{"version":"1.0","uri":"http://www.google.com/m8/feeds","$t":"Contacts"},
           "openSearch$totalResults":{"$t":"1007"},
           "openSearch$startIndex":{"$t":"1"},
@@ -68,7 +81,16 @@ describe OmniContacts::Importer::Gmail do
     let(:token) { "token" }
     let(:token_type) { "token_type" }
 
+    before(:each) do
+      gmail.instance_variable_set(:@env, {})
+    end
+
     it "should request the contacts by specifying version and code in the http headers" do
+      gmail.should_receive(:https_get) do |host, path, params, headers|
+        headers["GData-Version"].should eq("3.0")
+        headers["Authorization"].should eq("#{token_type} #{token}")
+        self_response
+      end
       gmail.should_receive(:https_get) do |host, path, params, headers|
         headers["GData-Version"].should eq("3.0")
         headers["Authorization"].should eq("#{token_type} #{token}")
@@ -78,8 +100,10 @@ describe OmniContacts::Importer::Gmail do
     end
 
     it "should correctly parse id, name,email,gender, birthday, image source and relation" do
+      gmail.should_receive(:https_get)
       gmail.should_receive(:https_get).and_return(contacts_as_json)
       result = gmail.fetch_contacts_using_access_token token, token_type
+
       result.size.should be(1)
       result.first[:id].should eq('http://www.google.com/m8/feeds/contacts/logged_in_user%40gmail.com/base/1')
       result.first[:first_name].should eq('Edward')
@@ -89,6 +113,24 @@ describe OmniContacts::Importer::Gmail do
       result.first[:gender].should eq("male")
       result.first[:birthday].should eq({:day=>02, :month=>07, :year=>1954})
       result.first[:relation].should eq('father')
+    end
+
+    it "should correctly parse and set logged in user information" do
+      gmail.should_receive(:https_get).and_return(self_response)
+      gmail.should_receive(:https_get).and_return(contacts_as_json)
+
+      gmail.fetch_contacts_using_access_token token, token_type
+
+      user = gmail.instance_variable_get(:@env)["omnicontacts.user"]
+      user.should_not be_nil
+      user[:id].should eq("16482944006464829443")
+      user[:first_name].should eq("Chris")
+      user[:last_name].should eq("Johnson")
+      user[:name].should eq("Chris Johnson")
+      user[:email].should eq("chrisjohnson@gmail.com")
+      user[:gender].should eq("male")
+      user[:birthday].should eq({:day=>21, :month=>06, :year=>1982})
+      user[:profile_picture].should eq("https://lh3.googleusercontent.com/-b8aFbTBM/AAAAAAI/IWA/vsek/photo.jpg")
     end
 
   end

@@ -22,8 +22,10 @@ module OmniContacts
       end
 
       def fetch_contacts_using_access_token access_token, access_token_secret
-        self_response = https_get(@contacts_host, @self_path, :access_token => access_token)
-        spouse_id = extract_spouse_id(self_response)
+        self_response = fetch_current_user access_token
+        user = current_user self_response
+        set_current_user user
+        spouse_id = extract_spouse_id self_response
         spouse_response = nil
         if spouse_id
           spouse_path = "/#{spouse_id}"
@@ -34,10 +36,16 @@ module OmniContacts
         contacts_from_response(spouse_response, family_response, friends_response)
       end
 
+      def fetch_current_user access_token
+        self_response = https_get(@contacts_host, @self_path, {:access_token => access_token, :fields => 'first_name,last_name,name,id,gender,birthday,picture,relationship_status,significant_other'})
+        self_response = JSON.parse(self_response) if self_response
+        self_response
+      end
+
       private
 
-      def extract_spouse_id self_response
-        response = JSON.parse(self_response)
+      def extract_spouse_id response
+        return nil if response.nil?
         id = nil
         if response['significant_other'] && response['relationship_status'] == 'Married'
           id = response['significant_other']['id']
@@ -79,8 +87,7 @@ module OmniContacts
         contact[:name] = contact_info['name']
         contact[:email] = contact_info['email']
         contact[:gender] = contact_info['gender']
-        birthday = contact_info['birthday'].split('/') if contact_info['birthday']
-        contact[:birthday] = birthday_format(birthday[0],birthday[1],birthday[2]) if birthday
+        contact[:birthday] = birthday(contact_info['birthday'])
         contact[:profile_picture] = contact_info['picture']['data']['url'] if contact_info['picture']
         contact[:relation] = contact_info['relationship']
         contact
@@ -88,6 +95,22 @@ module OmniContacts
 
       def escape_windows_format value
         value.gsub(/[\r\s]/, '')
+      end
+
+      def birthday dob
+        return nil if dob.nil?
+        birthday = dob.split('/')
+        return birthday_format(birthday[0],birthday[1],birthday[2])
+      end
+
+      def current_user me
+        return nil if me.nil?
+        user = {:id => me['id'], :email => me['email'],
+                :name => me['name'], :first_name => normalize_name(me['first_name']),
+                :last_name => normalize_name(me['last_name']), :birthday => birthday(me['birthday']),
+                :gender => me['gender'], :profile_picture => me['picture']['data']['url']
+        }
+        user
       end
 
     end
