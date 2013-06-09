@@ -92,18 +92,7 @@ module OmniContacts
         return birthday_format(birthday[2], birthday[3], nil) if birthday.size == 4
         return birthday_format(birthday[1], birthday[2], birthday[0]) if birthday.size == 3
       end
-
-      #def profile_image_data path, access_token, token_type
-      #  if path
-      #    photo_path = path['href'].split('https://www.google.com').second if path['gd$etag']
-      #    if photo_path
-      #      # need to make a get request to this image_source url to get the actual image of the contact
-      #      photo_response = https_get(@contacts_host, photo_path,{}, contacts_req_headers(access_token, token_type))
-      #    end
-      #  end
-      #  photo_response
-      #end
-
+      
     end
   end
 end
