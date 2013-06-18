@@ -12,6 +12,12 @@ describe OmniContacts::HTTPUtils do
         result.should eq("surname=doe&name=john")
       end
     end
+
+    it "should work for integer values in the map" do
+      result = OmniContacts::HTTPUtils.to_query_string(:client_id => 1234, :secret => "1234HJL8")
+      result.should eq("client_id=1234&secret=1234HJL8")
+    end
+
   end
 
   describe "encode" do
