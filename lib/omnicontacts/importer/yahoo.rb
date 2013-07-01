@@ -79,14 +79,14 @@ module OmniContacts
             end
 
             if yahoo_id
-              contact[:image_source] = yahoo_image_url(yahoo_id)
+              contact[:profile_picture] = yahoo_image_url(yahoo_id)
             else
-              contact[:image_source] = image_url(contact[:email])
+              contact[:profile_picture] = image_url(contact[:email])
             end
           end
           contacts << contact if contact[:name]
         end
-        contacts.uniq! {|c| c[:email] || c[:image_source] || c[:name]}
+        contacts.uniq! {|c| c[:email] || c[:profile_picture] || c[:name]}
         contacts
       end
 

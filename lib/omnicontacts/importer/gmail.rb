@@ -68,12 +68,12 @@ module OmniContacts
 
           # value is either "male" or "female"
           contact[:gender] = entry['gContact$gender']['value']  if entry['gContact$gender']
-          contact[:image_source] = image_url(contact[:email])
+          contact[:profile_picture] = image_url(contact[:email])
           contact[:relation] = entry['gContact$relation']['rel'] if entry['gContact$relation']
 
           contacts << contact if contact[:name]
         end
-        contacts.uniq! {|c| c[:email] || c[:image_source] || c[:name]}
+        contacts.uniq! {|c| c[:email] || c[:profile_picture] || c[:name]}
         contacts
       end
 
