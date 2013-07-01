@@ -21,7 +21,7 @@ module OmniContacts
 
     def to_query_string map
       map.collect do |key, value|
-        key.to_s + "=" + value
+        key.to_s + "=" + value.to_s
       end.join("&")
     end
 
