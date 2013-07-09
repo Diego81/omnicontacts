@@ -68,9 +68,14 @@ describe OmniContacts::Importer::Facebook do
       end
       facebook.should_receive(:https_get) do |host, path, params, headers|
         params[:access_token].should eq(token)
+        params[:fields].should eq('first_name,last_name,name,id,gender,birthday,picture,relationship')
+        contacts_as_json
+      end.exactly(1).times
+      facebook.should_receive(:https_get) do |host, path, params, headers|
+        params[:access_token].should eq(token)
         params[:fields].should eq('first_name,last_name,name,id,gender,birthday,picture')
         contacts_as_json
-      end.exactly(2).times
+      end.exactly(1).times
 
       facebook.fetch_contacts_using_access_token token, token_type
     end
