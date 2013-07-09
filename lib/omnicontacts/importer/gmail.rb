@@ -68,9 +68,15 @@ module OmniContacts
 
           # value is either "male" or "female"
           contact[:gender] = entry['gContact$gender']['value']  if entry['gContact$gender']
-          contact[:profile_picture] = image_url(contact[:email])
-          contact[:relation] = entry['gContact$relation']['rel'] if entry['gContact$relation']
 
+          if entry['gContact$website'] && entry['gContact$website'][0]["rel"] == "profile"
+            contact[:id] = contact_id(entry['gContact$website'][0]["href"])
+            contact[:profile_picture] = gmail_image_url(contact[:id])
+          else
+            contact[:profile_picture] = image_url(contact[:email])
+          end
+
+          contact[:relation] = entry['gContact$relation']['rel'] if entry['gContact$relation']
           contacts << contact if contact[:name]
         end
         contacts.uniq! {|c| c[:email] || c[:profile_picture] || c[:name]}
@@ -91,6 +97,11 @@ module OmniContacts
         birthday = dob.split('-')
         return birthday_format(birthday[2], birthday[3], nil) if birthday.size == 4
         return birthday_format(birthday[1], birthday[2], birthday[0]) if birthday.size == 3
+      end
+
+      def contact_id(profile_url)
+        id = (profile_url.present?) ? File.basename(profile_url) : nil
+        id
       end
       
     end

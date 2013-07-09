@@ -55,5 +55,9 @@ module OmniContacts
       image_url
     end
 
+    def gmail_image_url gmail_id
+      return "https://profiles.google.com/s2/photos/profile/" + gmail_id if gmail_id
+    end
+
   end
 end
