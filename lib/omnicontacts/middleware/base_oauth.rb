@@ -87,7 +87,7 @@ module OmniContacts
       end
 
       def handle_error error_type, exception
-        logger << ("Error #{error_type} while processing #{@env["PATH_INFO"]}: #{exception.message}") if logger
+        logger.puts("Error #{error_type} while processing #{@env["PATH_INFO"]}: #{exception.message}") if logger
         [302, {"Content-Type" => "text/html", "location" => "/contacts/failure?error_message=#{error_type}&importer=#{class_name}"}, []]
       end
 
