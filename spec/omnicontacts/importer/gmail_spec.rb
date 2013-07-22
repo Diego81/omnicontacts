@@ -72,7 +72,30 @@ describe OmniContacts::Importer::Gmail do
             "gContact$gender":{"value":"male"},
             "gd$email":[{"rel":"http://schemas.google.com/g/2005#other","address":"bennet@gmail.com","primary":"true"}],
             "gContact$groupMembershipInfo":[{"deleted":"false","href":"http://www.google.com/m8/feeds/groups/logged_in_user%40gmail.com/base/6"}]
-          }]
+          },
+          {
+          "gd$etag":"\"R3oyfDVSLyt7I2A9WhBTSEULRA0.\"",
+          "id":{"$t":"http://www.google.com/m8/feeds/contacts/logged_in_user%40gmail.com/base/1"},
+          "updated":{"$t":"2013-02-15T22:36:36.494Z"},
+          "app$edited":{"xmlns$app":"http://www.w3.org/2007/app","$t":"2013-02-15T22:36:36.494Z"},
+          "category":[{"scheme":"http://schemas.google.com/g/2005#kind","term":"http://schemas.google.com/contact/2008#contact"}],
+          "title":{"$t":"Emilia Fox"},
+          "link":[
+            {"rel":"http://schemas.google.com/contacts/2008/rel#photo","type":"image/*","href":"https://www.google.com/m8/feeds/photos/media/logged_in_user%40gmail.com/1"},
+            {"rel":"self","type":"application/atom+xml","href":"https://www.google.com/m8/feeds/contacts/logged_in_user%40gmail.com/full/1"},
+            {"rel":"edit","type":"application/atom+xml","href":"https://www.google.com/m8/feeds/contacts/logged_in_user%40gmail.com/full/1"}
+          ],
+          "gd$name":{
+            "gd$fullName":{"$t":"Emilia Fox"},
+            "gd$givenName":{"$t":"Emilia"},
+            "gd$familyName":{"$t":"Fox"}
+          },
+          "gContact$birthday":{"when":"1974-02-10"},
+          "gContact$relation":[{"rel":"spouse"}],
+          "gContact$gender":{"value":"female"},
+          "gd$email":[{"rel":"http://schemas.google.com/g/2005#other","address":"emilia.fox@gmail.com","primary":"true"}],
+          "gContact$groupMembershipInfo":[{"deleted":"false","href":"http://www.google.com/m8/feeds/groups/logged_in_user%40gmail.com/base/6"}]
+        }]
         }
       }'
   }
@@ -99,12 +122,12 @@ describe OmniContacts::Importer::Gmail do
       gmail.fetch_contacts_using_access_token token, token_type
     end
 
-    it "should correctly parse id, name,email,gender, birthday, image source and relation" do
+    it "should correctly parse id, name, email, gender, birthday, image source and relation for 1st contact" do
       gmail.should_receive(:https_get)
       gmail.should_receive(:https_get).and_return(contacts_as_json)
       result = gmail.fetch_contacts_using_access_token token, token_type
 
-      result.size.should be(1)
+      result.size.should be(2)
       result.first[:id].should eq('http://www.google.com/m8/feeds/contacts/logged_in_user%40gmail.com/base/1')
       result.first[:first_name].should eq('Edward')
       result.first[:last_name].should eq('Bennet')
@@ -113,6 +136,22 @@ describe OmniContacts::Importer::Gmail do
       result.first[:gender].should eq("male")
       result.first[:birthday].should eq({:day=>02, :month=>07, :year=>1954})
       result.first[:relation].should eq('father')
+    end
+
+    it "should correctly parse id, name, email, gender, birthday, image source and relation for 2nd contact" do
+      gmail.should_receive(:https_get)
+      gmail.should_receive(:https_get).and_return(contacts_as_json)
+      result = gmail.fetch_contacts_using_access_token token, token_type
+
+      result.size.should be(2)
+      result.last[:id].should eq('http://www.google.com/m8/feeds/contacts/logged_in_user%40gmail.com/base/1')
+      result.last[:first_name].should eq('Emilia')
+      result.last[:last_name].should eq('Fox')
+      result.last[:name].should eq("Emilia Fox")
+      result.last[:email].should eq("emilia.fox@gmail.com")
+      result.last[:gender].should eq("female")
+      result.last[:birthday].should eq({:day=>10, :month=>02, :year=>1974})
+      result.last[:relation].should eq('spouse')
     end
 
     it "should correctly parse and set logged in user information" do
@@ -132,6 +171,5 @@ describe OmniContacts::Importer::Gmail do
       user[:birthday].should eq({:day=>21, :month=>06, :year=>1982})
       user[:profile_picture].should eq("https://lh3.googleusercontent.com/-b8aFbTBM/AAAAAAI/IWA/vsek/photo.jpg")
     end
-
   end
 end

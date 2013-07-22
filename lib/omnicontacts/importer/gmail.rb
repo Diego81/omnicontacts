@@ -69,7 +69,14 @@ module OmniContacts
           # value is either "male" or "female"
           contact[:gender] = entry['gContact$gender']['value']  if entry['gContact$gender']
           contact[:image_source] = image_url(contact[:email])
-          contact[:relation] = entry['gContact$relation']['rel'] if entry['gContact$relation']
+
+          if entry['gContact$relation']
+            if entry['gContact$relation'].is_a?(Hash)
+              contact[:relation] = entry['gContact$relation']['rel']
+            elsif entry['gContact$relation'].is_a?(Array)
+              contact[:relation] = entry['gContact$relation'].first['rel']
+            end
+          end
 
           contacts << contact if contact[:name]
         end
