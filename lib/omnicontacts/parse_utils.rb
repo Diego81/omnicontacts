@@ -12,7 +12,6 @@ module OmniContacts
     def normalize_name name
       return nil if name.nil?
       name.chomp!
-      name = name.split(' ').map(&:capitalize).join(' ')
       name.squeeze!(' ')
       name.strip!
       return name
