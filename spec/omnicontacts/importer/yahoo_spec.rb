@@ -9,9 +9,9 @@ describe OmniContacts::Importer::Yahoo do
                   "guid":"PCLASP523T3E2R5TFMHDW9KWQQ",
                   "birthdate": "06/21",
                   "emails":[{"handle":"chrisjohnson@gmail.com", "id":10, "primary":true, "type":"HOME"}, {"handle":"xyz@xyz.com", "id":11, "type":"HOME"}],
-                  "familyName": "johnson",
+                  "familyName": "Johnson",
                   "gender":"M",
-                  "givenName":"chris",
+                  "givenName":"Chris",
                   "image":{"imageUrl":"http://avatars.zenfs.com/users/23T3E2R5TFMHDW-AFE-I7lUpIsGQ==.large.png"}
                 }
       }'
