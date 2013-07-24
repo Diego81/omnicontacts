@@ -19,7 +19,7 @@ module OmniContacts
 
     # create a full name given the individual first and last name
     def full_name first_name, last_name
-      return "#{first_name.capitalize} #{last_name.capitalize}" if first_name && last_name
+      return "#{first_name} #{last_name}" if first_name && last_name
       return "#{first_name}" if first_name && !last_name
       return "#{last_name}" if !first_name && last_name
       return nil
