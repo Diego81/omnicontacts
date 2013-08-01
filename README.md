@@ -36,6 +36,9 @@ Since Yahoo implements the version 1.0 of the OAuth protocol, naming is slightly
 While `:ssl_ca_file` is optional, it is highly recommended to set it on production environments for obvious security reasons.
 On the other hand it makes things much easier to leave the default value for `:redirect_path` and `:callback path`, the reason of which will be clear after reading the following section.
 
+## Google API Console
+You can register your application using the [Google API Console](https://code.google.com/apis/console/)
+
 ## Integrating with your Application
 
 To use the Gem you first need to redirect your users to `/contacts/:importer`, where `:importer` can be facebook, gmail, yahoo or hotmail. 
