@@ -37,7 +37,7 @@ module OmniContacts
       end
 
       def fetch_current_user access_token
-        self_response = https_get(@contacts_host, @self_path, {:access_token => access_token, :fields => 'first_name,last_name,name,id,gender,birthday,picture,relationship_status,significant_other'})
+        self_response = https_get(@contacts_host, @self_path, {:access_token => access_token, :fields => 'first_name,last_name,name,id,gender,birthday,picture,relationship_status,significant_other,email'})
         self_response = JSON.parse(self_response) if self_response
         self_response
       end
