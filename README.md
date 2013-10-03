@@ -36,8 +36,18 @@ Since Yahoo implements the version 1.0 of the OAuth protocol, naming is slightly
 While `:ssl_ca_file` is optional, it is highly recommended to set it on production environments for obvious security reasons.
 On the other hand it makes things much easier to leave the default value for `:redirect_path` and `:callback path`, the reason of which will be clear after reading the following section.
 
-## Google API Console
-You can register your application using the [Google API Console](https://code.google.com/apis/console/)
+## Register your application
+
+* For Gmail : [Google API Console](https://code.google.com/apis/console/)
+
+* For Yahoo : [Yahoo Developer Network](https://developer.apps.yahoo.com/projects)
+
+* For Hotmail : [Microsoft Developer Network](https://account.live.com/developers/applications/index)
+
+* For Facebook : [Facebook Developers](https://developers.facebook.com/apps)
+
+##### Note: 
+Please go through [MSDN](http://msdn.microsoft.com/en-us/library/cc287659.aspx) if above Hotmail link will not work.
 
 ## Integrating with your Application
 
