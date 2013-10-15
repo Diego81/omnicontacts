@@ -64,7 +64,9 @@ module OmniContacts
                       :address_2 => nil,
                       :city => nil,
                       :region => nil,
+                      :country => nil,
                       :postcode => nil,
+                      :phone_number => nil
           }
           contact[:id] = entry['id']['$t'] if entry['id']
           if entry['gd$name']
@@ -105,8 +107,11 @@ module OmniContacts
             end
             contact[:city] = address['gd$city']['$t'] if address['gd$city']
             contact[:region] = address['gd$region']['$t'] if address['gd$region'] # like state or province
+            contact[:country] = address['gd$country']['code'] if address['gd$country']
             contact[:postcode] = address['gd$postcode']['$t'] if address['gd$postcode']
           end
+          contact[:phone_number] =  entry["gd$phoneNumber"][0]['$t'] if entry["gd$phoneNumber"]
+
           contacts << contact if contact[:name]
         end
         contacts.uniq! {|c| c[:email] || c[:image_source] || c[:name]}
