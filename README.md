@@ -119,11 +119,11 @@ The following table shows which fields are supported by which provider:
 		<td>X</td>
 		<td>X</td>
 		<td>X</td>
-		<td></td>
-		<td></td>
-		<td></td>
-		<td></td>
-		<td></td>
+		<td>X</td>
+		<td>X</td>
+		<td>X</td>
+		<td>X</td>
+		<td>X</td>
 		<td></td>
 		<td></td>
 		<td>X</td>
