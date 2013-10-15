@@ -50,7 +50,22 @@ module OmniContacts
         return contacts if response.nil?
         response['feed']['entry'].each do |entry|
           # creating nil fields to keep the fields consistent across other networks
-          contact = {:id => nil, :first_name => nil, :last_name => nil, :name => nil, :email => nil, :gender => nil, :birthday => nil, :profile_picture=> nil, :relation => nil}
+    
+          contact = { :id => nil,
+                      :first_name => nil,
+                      :last_name => nil,
+                      :name => nil,
+                      :email => nil,
+                      :gender => nil,
+                      :birthday => nil,
+                      :profile_picture=> nil,
+                      :relation => nil,
+                      :address_1 => nil,
+                      :address_2 => nil,
+                      :city => nil,
+                      :region => nil,
+                      :postcode => nil,
+          }
           contact[:id] = entry['id']['$t'] if entry['id']
           if entry['gd$name']
             gd_name = entry['gd$name']
@@ -77,7 +92,21 @@ module OmniContacts
               contact[:relation] = entry['gContact$relation'].first['rel']
             end
           end
-
+          
+          address = entry['gd$structuredPostalAddress'][0] if entry['gd$structuredPostalAddress']
+          if address
+            contact[:address_1] = address['gd$street']['$t'] if address['gd$street']
+            contact[:address_1] = address['gd$formattedAddress']['$t'] if contact[:address_1].nil? && address['gd$formattedAddress']
+            if contact[:address_1].index("\n")
+              parts = contact[:address_1].split("\n")
+              contact[:address_1] = parts.first
+              # this may contain city/state/zip if user jammed it all into one string.... :-(
+              contact[:address_2] = parts[1..-1].join(', ')
+            end
+            contact[:city] = address['gd$city']['$t'] if address['gd$city']
+            contact[:region] = address['gd$region']['$t'] if address['gd$region'] # like state or province
+            contact[:postcode] = address['gd$postcode']['$t'] if address['gd$postcode']
+          end
           contacts << contact if contact[:name]
         end
         contacts.uniq! {|c| c[:email] || c[:image_source] || c[:name]}
