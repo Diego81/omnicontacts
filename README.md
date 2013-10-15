@@ -54,142 +54,101 @@ The list of contacts can be accessed via the `omnicontacts.contacts` key in the 
 The following table shows which fields are supported by which provider:
 
 <table>
-  <tr>
-    <th>Item</th>
-    <th>Facebook</th>
-    <th>GMail</th>
-    <th>Hotmail</th>
-    <th>Yahoo</th>
-  </tr>
-
-  <tr>
-		<td><b>:email</b></td>
+	<tr>
+		<th>Provider</th>
+		<th>:email</th>
+		<th>:id</th>
+		<th>:profile_picture</th>
+		<th>:name</th>
+		<th>:first_name</th>
+		<th>:last_name</th>
+		<th>:address_1</th>
+		<th>:address_2</th>
+		<th>:city</th>
+		<th>:region</th>
+		<th>:postcode</th>
+		<th>:country</th>
+		<th>:phone_number</th>
+		<th>:birthday</th>
+		<th>:gender</th>
+		<th>:relation</th>
+	</tr>
+	<tr>
+		<td>Gmail</td>
 		<td>X</td>
-		<td>X</td>
-		<td>X</td>
-		<td>X</td>
-  </tr>
-
-  <tr>
-		<td><b>:id</b></td>
-		<td>X</td>
-		<td>X</td>
-		<td>X</td>
-		<td>X</td>
-  </tr>
-
-  <tr>
-		<td><b>:profile_image</b></td>
 		<td>X</td>
 		<td></td>
 		<td>X</td>
-		<td></td>
-  </tr>
-
-  <tr>
-		<td><b>:name</b></td>
 		<td>X</td>
 		<td>X</td>
 		<td>X</td>
 		<td>X</td>
-  </tr>
-
-  <tr>
-		<td><b>:first_name</b></td>
 		<td>X</td>
 		<td>X</td>
 		<td>X</td>
 		<td>X</td>
-  </tr>
-
-  <tr>
-		<td><b>:last_name</b></td>
 		<td>X</td>
 		<td>X</td>
 		<td>X</td>
 		<td>X</td>
-  </tr>
-
-  <tr>
-		<td><b>:address_1</b></td>
+	</tr>
+	<tr>
+		<td>Facebook</td>
 		<td></td>
 		<td>X</td>
-		<td></td>
-		<td></td>
-  </tr>
-
-  <tr>
-		<td><b>:address_2</b></td>
-		<td></td>
 		<td>X</td>
-		<td></td>
-		<td></td>
-  </tr>
-
-  <tr>
-		<td><b>:city</b></td>
-		<td></td>
-		<td>X</td>
-		<td></td>
-		<td></td>
-  </tr>
-
-  <tr>
-		<td><b>:region</b></td>
-		<td></td>
-		<td>X</td>
-		<td></td>
-		<td></td>
-  </tr>
-
-  <tr>
-		<td><b>:postcode</b></td>
-		<td></td>
-		<td>X</td>
-		<td></td>
-		<td></td>
-  </tr>
-  
-  <tr>
-		<td><b>:country</b></td>
-		<td></td>
-		<td>X</td>
-		<td></td>
-		<td></td>
-  </tr>
-
-  <tr>
-		<td><b>:phone</b></td>
-		<td></td>
-		<td>X</td>
-		<td></td>
-		<td></td>
-  </tr>
-
-  <tr>
-		<td><b>:birthday</b></td>
-		<td>X</td>
-		<td>X</td>
-		<td>X</td>
-		<td>X</td>
-  </tr>
-
-  <tr>
-		<td><b>:gender</b></td>
 		<td>X</td>
 		<td>X</td>
 		<td>X</td>
 		<td></td>
-  </tr>
-
-  <tr>
-		<td><b>:relation</b></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td>X</td>
+		<td>X</td>
+		<td>X</td>
+	</tr>
+	<tr>
+		<td>Yahoo</td>
+		<td>X</td>
+		<td>X</td>
+		<td></td>
+		<td>X</td>
 		<td>X</td>
 		<td>X</td>
 		<td></td>
 		<td></td>
-  </tr>
-
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td>X</td>
+		<td></td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>Hotmail</td>
+		<td>X</td>
+		<td>X</td>
+		<td>X</td>
+		<td>X</td>
+		<td>X</td>
+		<td>X</td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td>X</td>
+		<td>X</td>
+		<td></td>
+	</tr>
 </table>
 
 Obviously it may happen that some fields are blank even if supported by the provider in the case that the contact did not provide any information about them.
