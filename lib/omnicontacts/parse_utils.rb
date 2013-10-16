@@ -44,6 +44,7 @@ module OmniContacts
     def image_url email
       return nil if email.nil? || !email.include?('@')
       username, domain = *(email.split('@'))
+      return nil if username.nil? or domain.nil?
       gmail_base_url = "https://profiles.google.com/s2/photos/profile/"
       yahoo_base_url = "http://img.msg.yahoo.com/avatar.php?yids="
       if domain.include?('gmail')
