@@ -1,5 +1,6 @@
 coverage
 *.iml
 .idea
+.rvmrc
 .DS_Store
 nbproject
