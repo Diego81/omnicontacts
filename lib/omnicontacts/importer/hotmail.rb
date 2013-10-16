@@ -39,7 +39,7 @@ module OmniContacts
         contacts = []
         response['data'].each do |entry|
           # creating nil fields to keep the fields consistent across other networks
-          contact = {:id => nil, :first_name => nil, :last_name => nil, :name => nil, :email => nil, :gender => nil, :birthday => nil, :profile_picture=> nil, :relation => nil}
+          contact = {:id => nil, :first_name => nil, :last_name => nil, :name => nil, :email => nil, :gender => nil, :birthday => nil, :profile_picture=> nil, :relation => nil, :email_hashes => []}
           contact[:id] = entry['user_id'] ? entry['user_id'] : entry['id']
           if valid_email? entry["name"]
             contact[:email] = entry["name"]
@@ -52,6 +52,7 @@ module OmniContacts
           contact[:birthday] = birthday_format(entry['birth_month'], entry['birth_day'], entry['birth_year'])
           contact[:gender] = entry['gender']
           contact[:profile_picture] = 'https://apis.live.net/v5.0/' + entry['user_id'] + '/picture' if entry['user_id']
+          contact[:email_hashes] = entry['email_hashes']
           contacts << contact if contact[:name] || contact[:first_name]
         end
         contacts
