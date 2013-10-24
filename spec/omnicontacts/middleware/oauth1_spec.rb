@@ -41,7 +41,7 @@ describe OmniContacts::Middleware::OAuth1 do
   context "visiting the listening path" do
     it "should save the authorization token and redirect to the authorization url" do
       OAuth1Middleware.mock_auth_token_resp.should_receive(:body).and_return(["auth_token", "auth_token_secret"])
-      get "/contacts/oauth1middleware"
+      get "#{ MOUNT_PATH }oauth1middleware"
       last_response.should be_redirect
       last_response.headers['location'].should eq("http://www.example.com")
     end
@@ -50,23 +50,23 @@ describe OmniContacts::Middleware::OAuth1 do
       OAuth1Middleware.mock_auth_token_resp.should_receive(:body).and_raise("Request failed")
       get "contacts/oauth1middleware"
       last_response.should be_redirect
-      last_response.headers["location"].should eq("/contacts/failure?error_message=internal_error&importer=oauth1middleware")
+      last_response.headers["location"].should eq("#{ MOUNT_PATH }failure?error_message=internal_error&importer=oauth1middleware")
     end
   end
 
   context "visiting the callback url after authorization" do
     it "should return the list of contacts" do
       OAuth1Middleware.mock_session.should_receive(:[]).and_return("oauth_token_secret")
-      get "/contacts/oauth1middleware/callback?oauth_token=token&oauth_verifier=verifier"
+      get "#{ MOUNT_PATH }oauth1middleware/callback?oauth_token=token&oauth_verifier=verifier"
       last_response.should be_ok
       last_request.env["omnicontacts.contacts"].size.should be(1)
     end
 
     it "should redirect to failure url if oauth_token_secret is not found in the session" do
       OAuth1Middleware.mock_session.should_receive(:[]).and_return(nil)
-      get "/contacts/oauth1middleware/callback?oauth_token=token&oauth_verifier=verifier"
+      get "#{ MOUNT_PATH }oauth1middleware/callback?oauth_token=token&oauth_verifier=verifier"
       last_response.should be_redirect
-      last_response.headers["location"].should eq("/contacts/failure?error_message=not_authorized&importer=oauth1middleware")
+      last_response.headers["location"].should eq("#{ MOUNT_PATH }failure?error_message=not_authorized&importer=oauth1middleware")
     end
   end
 end

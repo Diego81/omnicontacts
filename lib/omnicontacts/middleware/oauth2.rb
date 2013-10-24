@@ -19,7 +19,7 @@ module OmniContacts
         super app, options
         @client_id = client_id
         @client_secret = client_secret
-        @redirect_path = options[:redirect_path] || "/contacts/#{class_name}/callback"
+        @redirect_path = options[:redirect_path] || "#{ MOUNT_PATH }#{class_name}/callback"
         @ssl_ca_file = options[:ssl_ca_file]
       end
 

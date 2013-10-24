@@ -8,3 +8,5 @@ require "rack/test"
 RSpec.configure do |config|
   config.include Rack::Test::Methods
 end
+
+MOUNT_PATH = "/contacts/"
