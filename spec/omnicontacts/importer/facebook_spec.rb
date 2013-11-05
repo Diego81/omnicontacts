@@ -58,7 +58,7 @@ describe OmniContacts::Importer::Facebook do
     it "should request the contacts by providing the token in the url" do
       facebook.should_receive(:https_get) do |host, self_path, params, headers|
         params[:access_token].should eq(token)
-        params[:fields].should eq('first_name,last_name,name,id,gender,birthday,picture,relationship_status,significant_other')
+        params[:fields].should eq('first_name,last_name,name,id,gender,birthday,picture,relationship_status,significant_other,email')
         self_response
       end
       facebook.should_receive(:https_get) do |host, spouse_path, params, headers|
@@ -93,7 +93,7 @@ describe OmniContacts::Importer::Facebook do
       result.first[:email].should be_nil
       result.first[:gender].should eq('male')
       result.first[:birthday].should eq({:day=>21, :month=>06, :year=>nil})
-      result.first[:profile_picture].should eq('http://profile.ak.fbcdn.net/hprofile-ak-snc6/186364_608061886_2089044200_q.jpg')
+      result.first[:profile_picture].should eq('http://graph.facebook.com/608061886/picture')
       result.first[:relation].should eq('cousin')
     end
 
@@ -113,7 +113,7 @@ describe OmniContacts::Importer::Facebook do
       user[:email].should eq("chrisjohnson@gmail.com")
       user[:gender].should eq("male")
       user[:birthday].should eq({:day=>21, :month=>06, :year=>1982})
-      user[:profile_picture].should eq("http://profile.ak.fbcdn.net/hprofile-ak-snc6/186364_543216789_2089044200_q.jpg")
+      user[:profile_picture].should eq("http://graph.facebook.com/543216789/picture")
     end
   end
 

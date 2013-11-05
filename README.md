@@ -36,6 +36,19 @@ Since Yahoo implements the version 1.0 of the OAuth protocol, naming is slightly
 While `:ssl_ca_file` is optional, it is highly recommended to set it on production environments for obvious security reasons.
 On the other hand it makes things much easier to leave the default value for `:redirect_path` and `:callback path`, the reason of which will be clear after reading the following section.
 
+## Register your application
+
+* For Gmail : [Google API Console](https://code.google.com/apis/console/)
+
+* For Yahoo : [Yahoo Developer Network](https://developer.apps.yahoo.com/projects)
+
+* For Hotmail : [Microsoft Developer Network](https://account.live.com/developers/applications/index)
+
+* For Facebook : [Facebook Developers](https://developers.facebook.com/apps)
+
+##### Note: 
+Please go through [MSDN](http://msdn.microsoft.com/en-us/library/cc287659.aspx) if above Hotmail link will not work.
+
 ## Integrating with your Application
 
 To use the Gem you first need to redirect your users to `/contacts/:importer`, where `:importer` can be facebook, gmail, yahoo or hotmail. 
@@ -59,6 +72,13 @@ The following table shows which fields are supported by which provider:
 		<th>:name</th>
 		<th>:first_name</th>
 		<th>:last_name</th>
+		<th>:address_1</th>
+		<th>:address_2</th>
+		<th>:city</th>
+		<th>:region</th>
+		<th>:postcode</th>
+		<th>:country</th>
+		<th>:phone_number</th>
 		<th>:birthday</th>
 		<th>:gender</th>
 		<th>:relation</th>
@@ -74,6 +94,13 @@ The following table shows which fields are supported by which provider:
 		<td>X</td>
 		<td>X</td>
 		<td>X</td>
+		<td>X</td>
+		<td>X</td>
+		<td>X</td>
+		<td>X</td>
+		<td>X</td>
+		<td>X</td>
+		<td>X</td>
 	</tr>
 	<tr>
 		<td>Facebook</td>
@@ -83,6 +110,13 @@ The following table shows which fields are supported by which provider:
 		<td>X</td>
 		<td>X</td>
 		<td>X</td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
 		<td>X</td>
 		<td>X</td>
 		<td>X</td>
@@ -96,6 +130,13 @@ The following table shows which fields are supported by which provider:
 		<td>X</td>
 		<td>X</td>
 		<td>X</td>
+		<td>X</td>
+		<td>X</td>
+		<td>X</td>
+		<td>X</td>
+		<td></td>
+		<td></td>
+		<td>X</td>
 		<td></td>
 		<td></td>
 	</tr>
@@ -107,6 +148,13 @@ The following table shows which fields are supported by which provider:
 		<td>X</td>
 		<td>X</td>
 		<td>X</td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
 		<td>X</td>
 		<td>X</td>
 		<td></td>

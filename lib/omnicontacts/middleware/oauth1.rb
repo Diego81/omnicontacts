@@ -18,7 +18,7 @@ module OmniContacts
         super app, options
         @consumer_key = consumer_key
         @consumer_secret = consumer_secret
-        @callback_path = options[:callback_path] || "/contacts/#{class_name}/callback"
+        @callback_path = options[:callback_path] || "#{ MOUNT_PATH }#{class_name}/callback"
         @token_prop_name = "#{base_prop_name}.oauth_token"
       end
 

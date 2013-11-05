@@ -40,7 +40,7 @@ describe OmniContacts::Middleware::OAuth2 do
 
   context "visiting the listening path" do
     it "should redirect to authorization site when visiting the listening path" do
-      get "/contacts/oauth2middleware"
+      get "#{ MOUNT_PATH }oauth2middleware"
       last_response.should be_redirect
       last_response.headers['location'].should eq("http://www.example.com")
     end
@@ -56,7 +56,7 @@ describe OmniContacts::Middleware::OAuth2 do
     it "should redirect to failure page because user did not allow access to contacts list" do
       get '/redirect_path?error=not_authorized'
       last_response.should be_redirect
-      last_response.headers["location"].should eq("/contacts/failure?error_message=not_authorized&importer=oauth2middleware")
+      last_response.headers["location"].should eq("#{ MOUNT_PATH }failure?error_message=not_authorized&importer=oauth2middleware")
     end
   end
 end

@@ -11,7 +11,7 @@ describe OmniContacts::Middleware::BaseOAuth do
       end
       
       def redirect_path
-        "/contacts/testprovider/callback"
+        "#{ MOUNT_PATH }testprovider/callback"
       end
     end
     OmniContacts.integration_test.enabled = true
@@ -26,17 +26,17 @@ describe OmniContacts::Middleware::BaseOAuth do
   
   it "should return a preconfigured list of contacts" do
     OmniContacts.integration_test.mock(:testprovider, :email => "user@example.com")
-    get "/contacts/testprovider"    
-    get "/contacts/testprovider/callback"    
+    get "#{ MOUNT_PATH }testprovider"
+    get "#{ MOUNT_PATH }testprovider/callback"
     last_request.env["omnicontacts.contacts"].first[:email].should eq("user@example.com")
   end
 
   it "should redurect to failure url" do
     OmniContacts.integration_test.mock(:testprovider, "some_error" )
-    get "/contacts/testprovider"
-    get "/contacts/testprovider/callback"
+    get "#{ MOUNT_PATH }testprovider"
+    get "#{MOUNT_PATH }testprovider/callback"
     last_response.should be_redirect
-    last_response.headers["location"].should eq("/contacts/failure?error_message=internal_error&importer=testprovider")
+    last_response.headers["location"].should eq("#{ MOUNT_PATH }failure?error_message=internal_error&importer=testprovider")
   end
   
   after(:all) do 

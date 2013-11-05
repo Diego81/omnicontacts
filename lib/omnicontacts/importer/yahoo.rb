@@ -56,38 +56,63 @@ module OmniContacts
         return contacts unless response['contacts']['contact']
         response['contacts']['contact'].each do |entry|
           # creating nil fields to keep the fields consistent across other networks
-          contact = {:id => nil, :first_name => nil, :last_name => nil, :name => nil, :email => nil, :gender => nil, :birthday => nil, :profile_picture=> nil, :relation => nil}
+          contact = { :id => nil,
+                      :first_name => nil,
+                      :last_name => nil,
+                      :name => nil,
+                      :email => nil,
+                      :gender => nil,
+                      :birthday => nil,
+                      :profile_picture=> nil,
+                      :address_1 => nil,
+                      :address_2 => nil,
+                      :city => nil,
+                      :region => nil,
+                      :postcode => nil,
+                      :relation => nil }
           yahoo_id = nil
           contact[:id] = entry['id'].to_s
           entry['fields'].each do |field|
-            if field['type'] == 'name'
+            case field['type']
+            when 'name'
               contact[:first_name] = normalize_name(field['value']['givenName'])
               contact[:last_name] = normalize_name(field['value']['familyName'])
               contact[:name] = full_name(contact[:first_name],contact[:last_name])
-            end
-            contact[:email] = field['value'] if field['type'] == 'email'
-
-            if field['type'] == 'yahooid'
+            when 'email'
+              contact[:email] = field['value'] if field['type'] == 'email'
+            when 'yahooid'
               yahoo_id = field['value']
+            when 'address'
+              value = field['value']
+              contact[:address_1] = street = value['street']
+              if street.index("\n")
+                parts = street.split("\n")
+                contact[:address_1] = parts.first
+                contact[:address_2] = parts[1..-1].join(', ')
+              end
+              contact[:city] = value['city']
+              contact[:region] = value['stateOrProvince']
+              contact[:postcode] = value['postalCode']
+            when 'birthday'
+              contact[:birthday] = birthday_format(field['value']['month'], field['value']['day'],field['value']['year'])
             end
-
             contact[:first_name], contact[:last_name], contact[:name] = email_to_name(contact[:email]) if contact[:name].nil? && contact[:email]
             # contact[:first_name], contact[:last_name], contact[:name] = email_to_name(yahoo_id) if (yahoo_id && contact[:name].nil? && contact[:email].nil?)
 
-            if field['type'] == 'birthday'
-              contact[:birthday] = birthday_format(field['value']['month'], field['value']['day'],field['value']['year'])
-            end
-
             if yahoo_id
-              contact[:profile_picture] = yahoo_image_url(yahoo_id)
+              contact[:profile_picture] = image_url(yahoo_id)
             else
-              contact[:profile_picture] = image_url(contact[:email])
+              contact[:profile_picture] = image_url_from_email(contact[:email])
             end
           end
           contacts << contact if contact[:name]
         end
         contacts.uniq! {|c| c[:email] || c[:profile_picture] || c[:name]}
         contacts
+      end
+
+      def image_url yahoo_id
+        return 'http://img.msg.yahoo.com/avatar.php?yids=' + yahoo_id if yahoo_id
       end
 
       def parse_email(emails)
@@ -121,7 +146,7 @@ module OmniContacts
         return "male" if g == "M"
       end
 
-      def image img
+      def my_image img
         return nil if img.nil?
         return img['imageUrl']
       end
@@ -133,7 +158,7 @@ module OmniContacts
         email = parse_email(me['emails'])
         user = {:id => me["guid"], :email => email, :name => full_name(me['givenName'],me['familyName']), :first_name => normalize_name(me['givenName']),
                 :last_name => normalize_name(me['familyName']), :gender => gender(me['gender']), :birthday => birthday(me['birthdate']),
-                :profile_picture => image(me['image'])
+                :profile_picture => my_image(me['image'])
                }
         user
       end

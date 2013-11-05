@@ -13,7 +13,7 @@ module OmniContacts
 
       def initialize app, options
         @app = app
-        @listening_path = "/contacts/" + class_name
+        @listening_path = MOUNT_PATH + class_name
         @ssl_ca_file = options[:ssl_ca_file]
       end
 
@@ -87,8 +87,8 @@ module OmniContacts
       end
 
       def handle_error error_type, exception
-        logger << ("Error #{error_type} while processing #{@env["PATH_INFO"]}: #{exception.message}") if logger
-        [302, {"Content-Type" => "text/html", "location" => "/contacts/failure?error_message=#{error_type}&importer=#{class_name}"}, []]
+        logger.puts("Error #{error_type} while processing #{@env["PATH_INFO"]}: #{exception.message}") if logger
+        [302, {"Content-Type" => "text/html", "location" => "#{ MOUNT_PATH }failure?error_message=#{error_type}&importer=#{class_name}"}, []]
       end
 
       def session

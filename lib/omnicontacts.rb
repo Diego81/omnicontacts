@@ -1,6 +1,8 @@
 module OmniContacts
   
-  VERSION = "0.3.7"
+  VERSION = "0.3.6"
+
+  MOUNT_PATH = "/contacts/"
 
   autoload :Builder, "omnicontacts/builder"
   autoload :Importer, "omnicontacts/importer"
@@ -8,7 +10,8 @@ module OmniContacts
 
   class AuthorizationError < RuntimeError
   end
-  
+
+
   def self.integration_test
     IntegrationTest.instance
   end
