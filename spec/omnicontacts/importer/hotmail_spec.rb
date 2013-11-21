@@ -3,7 +3,8 @@ require "omnicontacts/importer/hotmail"
 
 describe OmniContacts::Importer::Hotmail do
 
-  let(:hotmail) { OmniContacts::Importer::Hotmail.new({}, "client_id", "client_secret") }
+  let(:permissions) { "perm1, perm2" }
+  let(:hotmail) { OmniContacts::Importer::Hotmail.new({}, "client_id", "client_secret", {:permissions => permissions}) }
 
   let(:self_response) {
     '{
@@ -45,7 +46,7 @@ describe OmniContacts::Importer::Hotmail do
     let(:token_type) { "token_type" }
 
     before(:each) do
-      hotmail.instance_variable_set(:@env, {})
+      hotmail.instance_variable_set(:@env, {"HTTP_HOST" => "http://example.com"})
     end
 
     it "should request the contacts by providing the token in the url" do
@@ -59,6 +60,10 @@ describe OmniContacts::Importer::Hotmail do
         contacts_as_json
       end
       hotmail.fetch_contacts_using_access_token token, token_type
+    end
+
+    it "should set requested permissions in the authorization url" do
+      hotmail.authorization_url.should match(/scope=#{Regexp.quote(CGI.escape(permissions))}/)
     end
 
     it "should correctly parse id, name, email, gender, birthday, profile picture, relation and email hashes" do
