@@ -112,7 +112,7 @@ module OmniContacts
       end
 
       def image_url yahoo_id
-        return 'http://img.msg.yahoo.com/avatar.php?yids=' + yahoo_id if yahoo_id
+        return 'https://img.msg.yahoo.com/avatar.php?yids=' + yahoo_id if yahoo_id
       end
 
       def parse_email(emails)

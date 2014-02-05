@@ -94,7 +94,7 @@ module OmniContacts
       end
 
       def image_url fb_id
-        return "http://graph.facebook.com/" + fb_id + "/picture" if fb_id
+        return "https://graph.facebook.com/" + fb_id + "/picture" if fb_id
       end
 
       def escape_windows_format value
