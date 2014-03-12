@@ -29,7 +29,7 @@ module OmniContacts
 
       def fetch_current_user access_token, token_type
         self_response = https_get(@self_host, @profile_path, contacts_req_params, contacts_req_headers(access_token, token_type))
-        user = current_user self_response
+        user = current_user(self_response, access_token, token_type)
         set_current_user user
       end
 
@@ -50,7 +50,7 @@ module OmniContacts
         return contacts if response.nil?
         response['feed']['entry'].each do |entry|
           # creating nil fields to keep the fields consistent across other networks
-    
+
           contact = { :id => nil,
                       :first_name => nil,
                       :last_name => nil,
@@ -94,7 +94,7 @@ module OmniContacts
               contact[:relation] = entry['gContact$relation'].first['rel']
             end
           end
-          
+
           address = entry['gd$structuredPostalAddress'][0] if entry['gd$structuredPostalAddress']
           if address
             contact[:address_1] = address['gd$street']['$t'] if address['gd$street']
@@ -118,11 +118,12 @@ module OmniContacts
         contacts
       end
 
-      def current_user me
+      def current_user me, access_token, token_type
         return nil if me.nil?
         me = JSON.parse(me)
         user = {:id => me['id'], :email => me['email'], :name => me['name'], :first_name => me['given_name'],
-                :last_name => me['family_name'], :gender => me['gender'], :birthday => birthday(me['birthday']), :profile_picture => me['picture']
+                :last_name => me['family_name'], :gender => me['gender'], :birthday => birthday(me['birthday']), :profile_picture => me['picture'],
+                :access_token => access_token, :token_type => token_type
         }
         user
       end
@@ -133,7 +134,6 @@ module OmniContacts
         return birthday_format(birthday[2], birthday[3], nil) if birthday.size == 4
         return birthday_format(birthday[1], birthday[2], birthday[0]) if birthday.size == 3
       end
-      
     end
   end
 end
