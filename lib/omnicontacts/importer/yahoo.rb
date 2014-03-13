@@ -22,13 +22,13 @@ module OmniContacts
         (access_token, access_token_secret, guid) = fetch_access_token(auth_token, auth_token_secret, auth_verifier, ['xoauth_yahoo_guid'])
         fetch_current_user(access_token, access_token_secret, guid)
         contacts_path = "/v1/user/#{guid}/contacts"
-        contacts_response = http_get(@contacts_host, contacts_path, contacts_req_params(access_token, access_token_secret, contacts_path))
+        contacts_response = https_get(@contacts_host, contacts_path, contacts_req_params(access_token, access_token_secret, contacts_path))
         contacts_from_response contacts_response
       end
 
       def fetch_current_user access_token, access_token_secret, guid
         self_path = "/v1/user/#{guid}/profile"
-        self_response =  http_get(@contacts_host, self_path, contacts_req_params(access_token, access_token_secret, self_path))
+        self_response =  https_get(@contacts_host, self_path, contacts_req_params(access_token, access_token_secret, self_path))
         user = current_user self_response
         set_current_user user
       end
@@ -45,7 +45,7 @@ module OmniContacts
             :oauth_token => access_token,
             :oauth_version => OmniContacts::Authorization::OAuth1::OAUTH_VERSION
         }
-        contacts_url = "http://#{@contacts_host}#{contacts_path}"
+        contacts_url = "https://#{@contacts_host}#{contacts_path}"
         params['oauth_signature'] = oauth_signature('GET', contacts_url, params, access_token_secret)
         params
       end
@@ -165,7 +165,7 @@ module OmniContacts
 
       #def profile_image_url(guid, access_token, access_token_secret)
       #  image_path = "/v1/user/#{guid}/profile/image/48x48"
-      #  response = http_get(@contacts_host, image_path, contacts_req_params(access_token, access_token_secret, image_path))
+      #  response = https_get(@contacts_host, image_path, contacts_req_params(access_token, access_token_secret, image_path))
       #  image_data = JSON.parse(response)
       #  return image_data['image']['imageUrl'] if image_data['image']
       #  return nil
