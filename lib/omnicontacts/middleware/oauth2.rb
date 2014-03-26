@@ -24,7 +24,8 @@ module OmniContacts
       end
 
       def request_authorization_from_user
-        [302, {"Content-Type" => "application/x-www-form-urlencoded", "location" => authorization_url}, []]
+        target_url = append_state_query(authorization_url)
+        [302, {"location" => target_url}, []]
       end
 
       def redirect_uri

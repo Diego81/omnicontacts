@@ -104,6 +104,15 @@ module OmniContacts
         "omnicontacts." + class_name
       end
 
+      def append_state_query(target_url)
+        state = Rack::Utils.parse_query(@env['QUERY_STRING'])['state']
+
+        unless state.nil?
+          target_url = target_url + (target_url.include?("?")?"&":"?") + 'state=' + state
+        end
+
+        return target_url
+      end
     end
   end
 end
