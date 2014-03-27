@@ -124,7 +124,7 @@ describe OmniContacts::Importer::Gmail do
       gmail.fetch_contacts_using_access_token token, token_type
     end
 
-    it "should correctly parse id, name, email, gender, birthday, image source and relation for 1st contact" do
+    it "should correctly parse id, name, email, gender, birthday, profile picture and relation for 1st contact" do
       gmail.should_receive(:https_get)
       gmail.should_receive(:https_get).and_return(contacts_as_json)
       result = gmail.fetch_contacts_using_access_token token, token_type
@@ -138,9 +138,10 @@ describe OmniContacts::Importer::Gmail do
       result.first[:gender].should eq("male")
       result.first[:birthday].should eq({:day=>02, :month=>07, :year=>1954})
       result.first[:relation].should eq('father')
+      result.first[:profile_picture].should eq("https://profiles.google.com/s2/photos/profile/bennet")
     end
 
-    it "should correctly parse id, name, email, gender, birthday, image source, snailmail address, phone and relation for 2nd contact" do
+    it "should correctly parse id, name, email, gender, birthday, profile picture, snailmail address, phone and relation for 2nd contact" do
       gmail.should_receive(:https_get)
       gmail.should_receive(:https_get).and_return(contacts_as_json)
       result = gmail.fetch_contacts_using_access_token token, token_type
@@ -152,6 +153,7 @@ describe OmniContacts::Importer::Gmail do
       result.last[:email].should eq("emilia.fox@gmail.com")
       result.last[:gender].should eq("female")
       result.last[:birthday].should eq({:day=>10, :month=>02, :year=>1974})
+      result.last[:profile_picture].should eq("https://profiles.google.com/s2/photos/profile/emilia.fox")
       result.last[:relation].should eq('spouse')
       result.first[:address_1].should eq('1313 Trashview Court')
       result.first[:address_2].should eq('Apt. 13')
@@ -177,7 +179,7 @@ describe OmniContacts::Importer::Gmail do
       user[:email].should eq("chrisjohnson@gmail.com")
       user[:gender].should eq("male")
       user[:birthday].should eq({:day=>21, :month=>06, :year=>1982})
-      user[:profile_picture].should eq("https://lh3.googleusercontent.com/-b8aFbTBM/AAAAAAI/IWA/vsek/photo.jpg")
+      user[:profile_picture].should eq("https://profiles.google.com/s2/photos/profile/16482944006464829443")
     end
   end
 end

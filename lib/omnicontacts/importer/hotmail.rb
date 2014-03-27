@@ -51,7 +51,7 @@ module OmniContacts
           end
           contact[:birthday] = birthday_format(entry['birth_month'], entry['birth_day'], entry['birth_year'])
           contact[:gender] = entry['gender']
-          contact[:profile_picture] = 'https://apis.live.net/v5.0/' + entry['user_id'] + '/picture' if entry['user_id']
+          contact[:profile_picture] = image_url(entry['user_id'])
           contact[:email_hashes] = entry['email_hashes']
           contacts << contact if contact[:name] || contact[:first_name]
         end
@@ -67,12 +67,16 @@ module OmniContacts
         return nil if me.nil?
         me = JSON.parse(me)
         email = parse_email(me['emails'])
-        picture_url = "https://apis.live.net/v5.0/" + me['id'] + '/picture'
         user = {:id => me['id'], :email => email, :name => me['name'], :first_name => me['first_name'],
-                :last_name => me['last_name'], :gender => me['gender'], :profile_picture => picture_url,
+                :last_name => me['last_name'], :gender => me['gender'], :profile_picture => image_url(me['id']),
                 :birthday => birthday_format(me['birth_month'], me['birth_day'], me['birth_year'])
         }
         user
+      end
+
+
+      def image_url hotmail_id
+        return 'https://apis.live.net/v5.0/' + hotmail_id + '/picture' if hotmail_id
       end
 
       def escape_windows_format value

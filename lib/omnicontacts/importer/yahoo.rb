@@ -22,13 +22,13 @@ module OmniContacts
         (access_token, access_token_secret, guid) = fetch_access_token(auth_token, auth_token_secret, auth_verifier, ['xoauth_yahoo_guid'])
         fetch_current_user(access_token, access_token_secret, guid)
         contacts_path = "/v1/user/#{guid}/contacts"
-        contacts_response = http_get(@contacts_host, contacts_path, contacts_req_params(access_token, access_token_secret, contacts_path))
+        contacts_response = https_get(@contacts_host, contacts_path, contacts_req_params(access_token, access_token_secret, contacts_path))
         contacts_from_response contacts_response
       end
 
       def fetch_current_user access_token, access_token_secret, guid
         self_path = "/v1/user/#{guid}/profile"
-        self_response =  http_get(@contacts_host, self_path, contacts_req_params(access_token, access_token_secret, self_path))
+        self_response =  https_get(@contacts_host, self_path, contacts_req_params(access_token, access_token_secret, self_path))
         user = current_user self_response
         set_current_user user
       end
@@ -45,7 +45,7 @@ module OmniContacts
             :oauth_token => access_token,
             :oauth_version => OmniContacts::Authorization::OAuth1::OAUTH_VERSION
         }
-        contacts_url = "http://#{@contacts_host}#{contacts_path}"
+        contacts_url = "https://#{@contacts_host}#{contacts_path}"
         params['oauth_signature'] = oauth_signature('GET', contacts_url, params, access_token_secret)
         params
       end
@@ -100,15 +100,19 @@ module OmniContacts
             # contact[:first_name], contact[:last_name], contact[:name] = email_to_name(yahoo_id) if (yahoo_id && contact[:name].nil? && contact[:email].nil?)
 
             if yahoo_id
-              contact[:image_source] = yahoo_image_url(yahoo_id)
+              contact[:profile_picture] = image_url(yahoo_id)
             else
-              contact[:image_source] = image_url(contact[:email])
+              contact[:profile_picture] = image_url_from_email(contact[:email])
             end
           end
           contacts << contact if contact[:name]
         end
-        contacts.uniq! {|c| c[:email] || c[:image_source] || c[:name]}
+        contacts.uniq! {|c| c[:email] || c[:profile_picture] || c[:name]}
         contacts
+      end
+
+      def image_url yahoo_id
+        return 'https://img.msg.yahoo.com/avatar.php?yids=' + yahoo_id if yahoo_id
       end
 
       def parse_email(emails)
@@ -142,7 +146,7 @@ module OmniContacts
         return "male" if g == "M"
       end
 
-      def image img
+      def my_image img
         return nil if img.nil?
         return img['imageUrl']
       end
@@ -154,14 +158,14 @@ module OmniContacts
         email = parse_email(me['emails'])
         user = {:id => me["guid"], :email => email, :name => full_name(me['givenName'],me['familyName']), :first_name => normalize_name(me['givenName']),
                 :last_name => normalize_name(me['familyName']), :gender => gender(me['gender']), :birthday => birthday(me['birthdate']),
-                :profile_picture => image(me['image'])
+                :profile_picture => my_image(me['image'])
                }
         user
       end
 
       #def profile_image_url(guid, access_token, access_token_secret)
       #  image_path = "/v1/user/#{guid}/profile/image/48x48"
-      #  response = http_get(@contacts_host, image_path, contacts_req_params(access_token, access_token_secret, image_path))
+      #  response = https_get(@contacts_host, image_path, contacts_req_params(access_token, access_token_secret, image_path))
       #  image_data = JSON.parse(response)
       #  return image_data['image']['imageUrl'] if image_data['image']
       #  return nil

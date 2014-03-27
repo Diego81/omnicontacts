@@ -12,7 +12,7 @@ describe OmniContacts::Importer::Yahoo do
                   "familyName": "Johnson",
                   "gender":"M",
                   "givenName":"Chris",
-                  "image":{"imageUrl":"http://avatars.zenfs.com/users/23T3E2R5TFMHDW-AFE-I7lUpIsGQ==.large.png"}
+                  "image":{"imageUrl":"https://avatars.zenfs.com/users/23T3E2R5TFMHDW-AFE-I7lUpIsGQ==.large.png"}
                 }
       }'
     }
@@ -46,7 +46,7 @@ describe OmniContacts::Importer::Yahoo do
     it "should request the contacts by specifying all required parameters" do
       yahoo.should_receive(:fetch_access_token).and_return(["access_token", "access_token_secret", "guid"])
 
-      yahoo.should_receive(:http_get) do |host, path, params|
+      yahoo.should_receive(:https_get) do |host, path, params|
         params[:format].should eq("json")
         params[:oauth_consumer_key].should eq("consumer_key")
         params[:oauth_nonce].should_not be_nil
@@ -57,7 +57,7 @@ describe OmniContacts::Importer::Yahoo do
         self_response
       end
 
-      yahoo.should_receive(:http_get) do |host, path, params|
+      yahoo.should_receive(:https_get) do |host, path, params|
         params[:format].should eq("json")
         params[:oauth_consumer_key].should eq("consumer_key")
         params[:oauth_nonce].should_not be_nil
@@ -72,8 +72,8 @@ describe OmniContacts::Importer::Yahoo do
 
     it "should correctly parse id, name,email,gender, birthday, snailmail address, image source and relation for contact and logged in user" do
       yahoo.should_receive(:fetch_access_token).and_return(["access_token", "access_token_secret", "guid"])
-      yahoo.should_receive(:http_get).and_return(self_response)
-      yahoo.should_receive(:http_get).and_return(contacts_as_json)
+      yahoo.should_receive(:https_get).and_return(self_response)
+      yahoo.should_receive(:https_get).and_return(contacts_as_json)
       result = yahoo.fetch_contacts_from_token_and_verifier "auth_token", "auth_token_secret", "oauth_verifier"
 
       result.size.should be(1)
@@ -95,8 +95,8 @@ describe OmniContacts::Importer::Yahoo do
     it "should return an empty list of contacts" do
       empty_contacts_list = '{"contacts": {"start":0, "count":0}}'
       yahoo.should_receive(:fetch_access_token).and_return(["access_token", "access_token_secret", "guid"])
-      yahoo.should_receive(:http_get).and_return(self_response)
-      yahoo.should_receive(:http_get).and_return(empty_contacts_list)
+      yahoo.should_receive(:https_get).and_return(self_response)
+      yahoo.should_receive(:https_get).and_return(empty_contacts_list)
       result = yahoo.fetch_contacts_from_token_and_verifier "auth_token", "auth_token_secret", "oauth_verifier"
 
       result.should be_empty
@@ -104,8 +104,8 @@ describe OmniContacts::Importer::Yahoo do
 
     it "should correctly parse and set logged in user information" do
       yahoo.should_receive(:fetch_access_token).and_return(["access_token", "access_token_secret", "guid"])
-      yahoo.should_receive(:http_get).and_return(self_response)
-      yahoo.should_receive(:http_get).and_return(contacts_as_json)
+      yahoo.should_receive(:https_get).and_return(self_response)
+      yahoo.should_receive(:https_get).and_return(contacts_as_json)
       yahoo.fetch_contacts_from_token_and_verifier "auth_token", "auth_token_secret", "oauth_verifier"
 
       user = yahoo.instance_variable_get(:@env)["omnicontacts.user"]
@@ -117,7 +117,7 @@ describe OmniContacts::Importer::Yahoo do
       user[:gender].should eq('male')
       user[:birthday].should eq({:day=>21, :month=>06, :year=>nil})
       user[:email].should eq('chrisjohnson@gmail.com')
-      user[:profile_picture].should eq('http://avatars.zenfs.com/users/23T3E2R5TFMHDW-AFE-I7lUpIsGQ==.large.png')
+      user[:profile_picture].should eq('https://avatars.zenfs.com/users/23T3E2R5TFMHDW-AFE-I7lUpIsGQ==.large.png')
     end
 
   end

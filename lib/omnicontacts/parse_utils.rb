@@ -37,16 +37,13 @@ module OmniContacts
       return username, nil, username
     end
 
-    def yahoo_image_url yahoo_id
-      return 'http://img.msg.yahoo.com/avatar.php?yids=' + yahoo_id if yahoo_id
-    end
-
-    def image_url email
+    # create an image_url from a gmail or yahoo email id.
+    def image_url_from_email email
       return nil if email.nil? || !email.include?('@')
       username, domain = *(email.split('@'))
       return nil if username.nil? or domain.nil?
       gmail_base_url = "https://profiles.google.com/s2/photos/profile/"
-      yahoo_base_url = "http://img.msg.yahoo.com/avatar.php?yids="
+      yahoo_base_url = "https://img.msg.yahoo.com/avatar.php?yids="
       if domain.include?('gmail')
         image_url = gmail_base_url + username
       elsif domain.include?('yahoo')

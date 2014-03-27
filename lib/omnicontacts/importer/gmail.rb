@@ -85,7 +85,6 @@ module OmniContacts
 
           # value is either "male" or "female"
           contact[:gender] = entry['gContact$gender']['value']  if entry['gContact$gender']
-          contact[:image_source] = image_url(contact[:email])
 
           if entry['gContact$relation']
             if entry['gContact$relation'].is_a?(Hash)
@@ -112,17 +111,28 @@ module OmniContacts
           end
           contact[:phone_number] =  entry["gd$phoneNumber"][0]['$t'] if entry["gd$phoneNumber"]
 
+          if entry['gContact$website'] && entry['gContact$website'][0]["rel"] == "profile"
+            contact[:id] = contact_id(entry['gContact$website'][0]["href"])
+            contact[:profile_picture] = image_url(contact[:id])
+          else
+            contact[:profile_picture] = image_url_from_email(contact[:email])
+          end
+
           contacts << contact if contact[:name]
         end
-        contacts.uniq! {|c| c[:email] || c[:image_source] || c[:name]}
+        contacts.uniq! {|c| c[:email] || c[:profile_picture] || c[:name]}
         contacts
+      end
+
+      def image_url gmail_id
+        return "https://profiles.google.com/s2/photos/profile/" + gmail_id if gmail_id
       end
 
       def current_user me, access_token, token_type
         return nil if me.nil?
         me = JSON.parse(me)
         user = {:id => me['id'], :email => me['email'], :name => me['name'], :first_name => me['given_name'],
-                :last_name => me['family_name'], :gender => me['gender'], :birthday => birthday(me['birthday']), :profile_picture => me['picture'],
+                :last_name => me['family_name'], :gender => me['gender'], :birthday => birthday(me['birthday']), :profile_picture => image_url(me['id']),
                 :access_token => access_token, :token_type => token_type
         }
         user
@@ -134,6 +144,12 @@ module OmniContacts
         return birthday_format(birthday[2], birthday[3], nil) if birthday.size == 4
         return birthday_format(birthday[1], birthday[2], birthday[0]) if birthday.size == 3
       end
+
+      def contact_id(profile_url)
+        id = (profile_url.present?) ? File.basename(profile_url) : nil
+        id
+      end
+
     end
   end
 end

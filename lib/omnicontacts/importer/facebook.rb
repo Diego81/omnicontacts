@@ -31,13 +31,13 @@ module OmniContacts
           spouse_path = "/#{spouse_id}"
           spouse_response = https_get(@contacts_host, spouse_path, {:access_token => access_token, :fields => 'first_name,last_name,name,id,gender,birthday,picture'})
         end
-        family_response = https_get(@contacts_host, @family_path, {:access_token => access_token, :fields => 'first_name,last_name,name,id,gender,birthday,picture'})
+        family_response = https_get(@contacts_host, @family_path, {:access_token => access_token, :fields => 'first_name,last_name,name,id,gender,birthday,picture,relationship'})
         friends_response = https_get(@contacts_host, @friends_path, {:access_token => access_token, :fields => 'first_name,last_name,name,id,gender,birthday,picture'})
         contacts_from_response(spouse_response, family_response, friends_response)
       end
 
       def fetch_current_user access_token
-        self_response = https_get(@contacts_host, @self_path, {:access_token => access_token, :fields => 'first_name,last_name,name,id,gender,birthday,picture,relationship_status,significant_other'})
+        self_response = https_get(@contacts_host, @self_path, {:access_token => access_token, :fields => 'first_name,last_name,name,id,gender,birthday,picture,relationship_status,significant_other,email'})
         self_response = JSON.parse(self_response) if self_response
         self_response
       end
@@ -88,9 +88,13 @@ module OmniContacts
         contact[:email] = contact_info['email']
         contact[:gender] = contact_info['gender']
         contact[:birthday] = birthday(contact_info['birthday'])
-        contact[:profile_picture] = contact_info['picture']['data']['url'] if contact_info['picture']
+        contact[:profile_picture] = image_url(contact_info['id'])
         contact[:relation] = contact_info['relationship']
         contact
+      end
+
+      def image_url fb_id
+        return "https://graph.facebook.com/" + fb_id + "/picture" if fb_id
       end
 
       def escape_windows_format value
@@ -108,7 +112,7 @@ module OmniContacts
         user = {:id => me['id'], :email => me['email'],
                 :name => me['name'], :first_name => normalize_name(me['first_name']),
                 :last_name => normalize_name(me['last_name']), :birthday => birthday(me['birthday']),
-                :gender => me['gender'], :profile_picture => me['picture']['data']['url']
+                :gender => me['gender'], :profile_picture => image_url(me['id'])
         }
         user
       end
