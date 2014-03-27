@@ -76,7 +76,7 @@ describe OmniContacts::Authorization::OAuth1 do
   end
 
   describe "oauth_signature" do
-    subject { test_target.oauth_signature("GET", "http://social.yahooapis.com/v1/user", {:name => "diego", :surname => "castorina"}, "secret2") }
-    it { should eq("ZqWoQISWcuz%2FSDnDxWihtsFDKwc%3D") }
+    subject { test_target.oauth_signature("GET", "https://social.yahooapis.com/v1/user", {:name => "diego", :surname => "castorina"}, "secret2") }
+    it { should eq("xfumZoyVYUbHXSAafdha3HZUqQg%3D") }
   end
 end
