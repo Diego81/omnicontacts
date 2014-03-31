@@ -43,7 +43,9 @@ module OmniContacts
       end
 
       def redirect_to_authorization_site auth_token
-        [302, {"Content-Type" => "application/x-www-form-urlencoded", "location" => authorization_url(auth_token)}, []]
+        authorization_url = authorization_url(auth_token)
+        target_url = append_state_query(authorization_url)
+        [302, {"Content-Type" => "application/x-www-form-urlencoded", "location" => target_url}, []]
       end
 
       # Parses the authorization token from the query string and 

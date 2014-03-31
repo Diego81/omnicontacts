@@ -44,6 +44,11 @@ describe OmniContacts::Middleware::OAuth2 do
       last_response.should be_redirect
       last_response.headers['location'].should eq("http://www.example.com")
     end
+
+    it "should pass through state query params visiting the listening path" do
+      get "#{ MOUNT_PATH }oauth2middleware?state=/parent/resource/id"
+      last_response.headers['location'].should eq("http://www.example.com?state=/parent/resource/id")
+    end
   end
 
   context "visiting the callback url after authorization" do

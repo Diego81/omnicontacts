@@ -46,6 +46,12 @@ describe OmniContacts::Middleware::OAuth1 do
       last_response.headers['location'].should eq("http://www.example.com")
     end
 
+    it "should pass through state query params visiting the listening path" do
+      OAuth1Middleware.mock_auth_token_resp.should_receive(:body).and_return(["auth_token", "auth_token_secret"])
+      get "#{ MOUNT_PATH }oauth1middleware?state=/parent/resource/id"
+      last_response.headers['location'].should eq("http://www.example.com?state=/parent/resource/id")
+    end
+
     it "should redirect to failure url if fetching the request token does not succeed" do
       OAuth1Middleware.mock_auth_token_resp.should_receive(:body).and_raise("Request failed")
       get "contacts/oauth1middleware"
