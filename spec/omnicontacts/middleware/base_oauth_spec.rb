@@ -39,6 +39,12 @@ describe OmniContacts::Middleware::BaseOAuth do
     last_response.headers["location"].should eq("#{ MOUNT_PATH }failure?error_message=internal_error&importer=testprovider")
   end
   
+  it "should pass through state query params to the failure url" do
+    OmniContacts.integration_test.mock(:testprovider, "some_error" )
+    get "#{MOUNT_PATH }testprovider/callback?state=/parent/resource/id"
+    last_response.headers["location"].should eq("#{ MOUNT_PATH }failure?error_message=internal_error&importer=testprovider&state=/parent/resource/id")
+  end
+  
   after(:all) do 
     OmniContacts.integration_test.enabled = false
     OmniContacts.integration_test.clear_mocks

@@ -88,7 +88,9 @@ module OmniContacts
 
       def handle_error error_type, exception
         logger.puts("Error #{error_type} while processing #{@env["PATH_INFO"]}: #{exception.message}") if logger
-        [302, {"Content-Type" => "text/html", "location" => "#{ MOUNT_PATH }failure?error_message=#{error_type}&importer=#{class_name}"}, []]
+        failure_url = "#{ MOUNT_PATH }failure?error_message=#{error_type}&importer=#{class_name}"
+        target_url = append_state_query(failure_url)
+        [302, {"Content-Type" => "text/html", "location" => target_url}, []]
       end
 
       def session
