@@ -265,7 +265,11 @@ Web Interface                 127.0.0.1:4040
 Avg Conn Time                 0.00ms
 ```
 
-This window will show all network transaction that your localy hosted application is processing.
+This window will show all network transaction that your locally hosted application is processing.
+You may visit and it will process all of the requests and responses on your localhost
+```bash
+http://123456789.ngrok.com # replace 123456789 with your instance
+```
 
 ## Example application
 
