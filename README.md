@@ -226,8 +226,8 @@ Follows a full example of an integration test:
 
 ## Working on localhost
 
-Since Hotmail and Facebook do not allow the usage of `localhost` as redirect path for the authorization step, a workaround is to use the `localtunnel` gem.
-This gem is really useful when you need someone, the contacts provider in this case, to access your locally running application using a unique url.
+Since Hotmail and Facebook do not allow the usage of `localhost` as redirect path for the authorization step, a workaround is to use `ngrok`.
+This is really useful when you need someone, the contacts provider in this case, to access your locally running application using a unique url.
 
 Install ngrok, download from:
 
@@ -266,7 +266,8 @@ Avg Conn Time                 0.00ms
 ```
 
 This window will show all network transaction that your locally hosted application is processing.
-You may visit and it will process all of the requests and responses on your localhost
+Ngrok will process all of the requests and responses on your localhost. Visit:
+
 ```bash
 http://123456789.ngrok.com # replace 123456789 with your instance
 ```
