@@ -247,9 +247,9 @@ $ rails server
 => Rails 4.0.4 application starting in development on http://0.0.0.0:3000
 ```
 
-In a new window, start the tunnel and pass the port where your application is running:
+In a new terminal window, start the tunnel and pass the port where your application is running:
 ```bash
-./ngrok 300
+./ngrok 3000
 ```
 
 Check the output to see something like
