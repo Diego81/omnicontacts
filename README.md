@@ -1,11 +1,11 @@
 # OmniContacts
 
-Inspired by the popular OmniAuth, OmniContacts is a library that enables users of an application to import contacts 
-from their email or Facebook accounts. The email providers currently supported are Gmail, Yahoo and Hotmail.   
+Inspired by the popular OmniAuth, OmniContacts is a library that enables users of an application to import contacts
+from their email or Facebook accounts. The email providers currently supported are Gmail, Yahoo and Hotmail.
 OmniContacts is a Rack middleware, therefore you can use it with Rails, Sinatra and any other Rack-based framework.
 
 OmniContacts uses the OAuth protocol to communicate with the contacts provider. Yahoo still uses OAuth 1.0, while
- Facebook, Gmail and Hotmail support OAuth 2.0.   
+ Facebook, Gmail and Hotmail support OAuth 2.0.
 In order to use OmniContacts, it is therefore necessary to first register your application with the provider and to obtain client_id and client_secret.
 
 ## Usage
@@ -31,8 +31,8 @@ end
 
 ```
 
-Every importer expects `client_id` and `client_secret` as mandatory, while `:redirect_path` and `:ssl_ca_file` are optional.   
-Since Yahoo implements the version 1.0 of the OAuth protocol, naming is slightly different. Instead of `:redirect_path` you should use `:callback_path` as key in the hash providing the optional parameters.    
+Every importer expects `client_id` and `client_secret` as mandatory, while `:redirect_path` and `:ssl_ca_file` are optional.
+Since Yahoo implements the version 1.0 of the OAuth protocol, naming is slightly different. Instead of `:redirect_path` you should use `:callback_path` as key in the hash providing the optional parameters.
 While `:ssl_ca_file` is optional, it is highly recommended to set it on production environments for obvious security reasons.
 On the other hand it makes things much easier to leave the default value for `:redirect_path` and `:callback path`, the reason of which will be clear after reading the following section.
 
@@ -46,12 +46,12 @@ On the other hand it makes things much easier to leave the default value for `:r
 
 * For Facebook : [Facebook Developers](https://developers.facebook.com/apps)
 
-##### Note: 
+##### Note:
 Please go through [MSDN](http://msdn.microsoft.com/en-us/library/cc287659.aspx) if above Hotmail link will not work.
 
 ## Integrating with your Application
 
-To use the Gem you first need to redirect your users to `/contacts/:importer`, where `:importer` can be facebook, gmail, yahoo or hotmail. 
+To use the Gem you first need to redirect your users to `/contacts/:importer`, where `:importer` can be facebook, gmail, yahoo or hotmail.
 No changes to `config/routes.rb` are needed for this step since OmniContacts will be listening on that path and redirect the user to the email provider's website in order to authorize your app to access his contact list.
 Once that is done the user will be redirected back to your application, to the path specified in `:redirect_path` (or `:callback_path` for yahoo).
 If nothing is specified the default value is `/contacts/:importer/callback` (e.g. `/contacts/yahoo/callback`). This makes things simpler and you can just add the following line to `config/routes.rb`:
@@ -60,7 +60,7 @@ If nothing is specified the default value is `/contacts/:importer/callback` (e.g
   match "/contacts/:importer/callback" => "your_controller#callback"
 ```
 
-The list of contacts can be accessed via the `omnicontacts.contacts` key in the environment hash and it consists of a simple array of hashes.    
+The list of contacts can be accessed via the `omnicontacts.contacts` key in the environment hash and it consists of a simple array of hashes.
 The following table shows which fields are supported by which provider:
 
 <table>
@@ -193,8 +193,8 @@ importer :gmail, "xxx", "yyy", :max_results => 1000
 
 Yahoo requires you to configure the Permissions your application requires. Make sure to go the Yahoo website and to select Read permission for Contacts.
 
-Hotmail presents a "peculiar" feature. Their API returns a Contact object which does not contain an e-mail field! 
-However, if the contact has either name, family name or both set to null, than there is a field called name which does contain the e-mail address. 
+Hotmail presents a "peculiar" feature. Their API returns a Contact object which does not contain an e-mail field!
+However, if the contact has either name, family name or both set to null, than there is a field called name which does contain the e-mail address.
 This means that it may happen that an Hotmail contact does not contain the email field.
 
 ## Integration Testing
@@ -226,25 +226,51 @@ Follows a full example of an integration test:
 
 ## Working on localhost
 
-Since Hotmail and Facebook do not allow the usage of `localhost` as redirect path for the authorization step, a workaround is to use the `localtunnel` gem.    
-This gem is really useful when you need someone, the contacts provider in this case, to access your locally running application using a unique url.
+Since Hotmail and Facebook do not allow the usage of `localhost` as redirect path for the authorization step, a workaround is to use `ngrok`.
+This is really useful when you need someone, the contacts provider in this case, to access your locally running application using a unique url.
 
-Install the Gem using RubyGems:
+Install ngrok, download from:
+
+https://ngrok.com/
+
+https://github.com/inconshreveable/ngrok
+
+Unzip the file
 ```bash
-sudo gem install localtunnel
+unzip /place/this/is/ngrok.zip
+```
+Start your application
+```bash
+$ rails server
+
+=> Booting WEBrick
+=> Rails 4.0.4 application starting in development on http://0.0.0.0:3000
 ```
 
-Start `localtunnel` passing your public SSH key and the port where your application is running:
+In a new terminal window, start the tunnel and pass the port where your application is running:
 ```bash
-localtunnel -k ~/.ssh/id_rsa.pub 3000
+./ngrok 3000
 ```
 
-Check the output to see something like 
+Check the output to see something like
 ```bash
-Port 3000 is now publicly accessible from http://8bv2.localtunnel.com ...
+ngrok                                                                                                                    (Ctrl+C to quit)
+
+Tunnel Status                 online
+Version                       1.6/1.5
+Forwarding                    http://274101c1e.ngrok.com -> 127.0.0.1:3000
+Forwarding                    https://274101c1e.ngrok.com -> 127.0.0.1:3000
+Web Interface                 127.0.0.1:4040
+# Conn                        0
+Avg Conn Time                 0.00ms
 ```
 
-The printed Url is the one you can now use to access your application.
+This window will show all network transaction that your locally hosted application is processing.
+Ngrok will process all of the requests and responses on your localhost. Visit:
+
+```bash
+http://123456789.ngrok.com # replace 123456789 with your instance
+```
 
 ## Example application
 
@@ -252,7 +278,7 @@ Thanks to @sonianand11, you can find a full example of a Rails application using
 
 ## Thanks
 
-As already mentioned above, a special thanks goes to @sonianand11 for implementing an example app.    
+As already mentioned above, a special thanks goes to @sonianand11 for implementing an example app.
 Thanks also to @asmatameem for her huge contribution. She indeed added support for Facebook and for many fields which were missing before.
 
 ## License
