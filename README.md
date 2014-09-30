@@ -276,6 +276,8 @@ http://123456789.ngrok.com # replace 123456789 with your instance
 
 Thanks to @sonianand11, you can find a full example of a Rails application using OmniContacts at: https://github.com/sonianand11/omnicontacts_example
 
+Full example using OmniContacts to get contacts from Google, Facebook, Yahoo: https://github.com/vinhnguyenleasnet/omnicontactvinhnguyen. This example also deployed to Heroku http://omnicontactsvinhnguyen.herokuapp.com/
+
 ## Thanks
 
 As already mentioned above, a special thanks goes to @sonianand11 for implementing an example app.
