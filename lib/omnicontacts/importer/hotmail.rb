@@ -13,7 +13,7 @@ module OmniContacts
         super app, client_id, client_secret, options
         @auth_host = "login.live.com"
         @authorize_path = "/oauth20_authorize.srf"
-        @scope = options[:permissions] || "wl.signin, wl.basic, wl.birthday , wl.emails ,wl.contacts_birthday , wl.contacts_photos"
+        @scope = options[:permissions] || "wl.signin, wl.basic, wl.birthday , wl.emails ,wl.contacts_birthday , wl.contacts_photos, wl.contacts_emails"
         @auth_token_path = "/oauth20_token.srf"
         @contacts_host = "apis.live.net"
         @contacts_path = "/v5.0/me/contacts"
@@ -48,6 +48,7 @@ module OmniContacts
             contact[:first_name] = normalize_name(entry['first_name'])
             contact[:last_name] = normalize_name(entry['last_name'])
             contact[:name] = normalize_name(entry['name'])
+            contact[:email] = parse_email(entry['emails'])
           end
           contact[:birthday] = birthday_format(entry['birth_month'], entry['birth_day'], entry['birth_year'])
           contact[:gender] = entry['gender']
@@ -60,7 +61,7 @@ module OmniContacts
 
       def parse_email(emails)
         return nil if emails.nil?
-        emails['account']
+        emails['account'] || emails['preferred'] || emails['personal'] || emails['business'] || emails['other']
       end
 
       def current_user me
