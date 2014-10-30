@@ -16,7 +16,7 @@ module OmniContacts
         @scope = "https://www.google.com/m8/feeds https://www.googleapis.com/auth/userinfo#email https://www.googleapis.com/auth/userinfo.profile"
         @contacts_host = "www.google.com"
         @contacts_path = "/m8/feeds/contacts/default/full"
-        @max_results = 100
+        @max_results =  (args[3] && args[3][:max_results]) || 100
         @self_host = "www.googleapis.com"
         @profile_path = "/oauth2/v1/userinfo"
       end
@@ -86,11 +86,9 @@ module OmniContacts
           end if entry['gd$email']
 
           # Support older versions of the gem by keeping singular entries around
-          contact_emails = contact[:emails].map{|hsh| hsh.select{|k,v|k =~ /email/}}
-          contact[:email] = contact_emails if contact[:emails][0]
-          
+          contact[:email] = contact[:emails][0][:email] if contact[:emails][0]
           contact[:first_name], contact[:last_name], contact[:name] = email_to_name(contact[:name]) if !contact[:name].nil? && contact[:name].include?('@')
-          contact[:first_name], contact[:last_name], contact[:name] = email_to_name(contact_emails[0]) if contact[:name].nil? && contact_emails[0]
+          contact[:first_name], contact[:last_name], contact[:name] = email_to_name(contact[:emails][0][:email]) if contact[:name].nil? && contact[:emails][0][:email]
           #format - year-month-date
           contact[:birthday] = birthday(entry['gContact$birthday']['when'])  if entry['gContact$birthday']
 
