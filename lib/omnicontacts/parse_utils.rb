@@ -27,7 +27,16 @@ module OmniContacts
 
     # create a username/name from a given email
     def email_to_name username_or_email
-      username_or_email = username_or_email.split('@').first if username_or_email.include?('@')
+      if username_or_email.is_a?(Hash)
+        if username_or_email[:email] && username_or_email.keys.count == 1
+          username_or_email = username_or_email[:email].split('@').first
+        else
+          username_or_email = username_or_email.split('@').first if username_or_email.include?('@')
+        end
+      else
+        username_or_email = username_or_email.split('@').first if username_or_email.include?('@')
+      end
+
       if group = (/(?<first>[a-z|A-Z]+)[\.|_](?<last>[a-z|A-Z]+)/).match(username_or_email)
         first_name = normalize_name(group[:first])
         last_name = normalize_name(group[:last])
