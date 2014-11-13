@@ -58,17 +58,29 @@ module OmniContacts
           # creating nil fields to keep the fields consistent across other networks
           contact = { :id => nil,
                       :first_name => nil,
+                      :middle_name => nil,
                       :last_name => nil,
                       :name => nil,
                       :email => nil,
                       :gender => nil,
                       :birthday => nil,
+                      :anniversary => nil,
                       :profile_picture=> nil,
+                      :yahooid => nil,
+                      :phone => nil,
                       :address_1 => nil,
                       :address_2 => nil,
+                      :address_3 => nil,
                       :city => nil,
                       :region => nil,
                       :postcode => nil,
+                      :country => nil,
+                      :country_abbrev => nil,
+                      :job_title => nil,
+                      :company => nil,
+                      :nickname => nil,
+                      :website => nil,
+                      :notes => nil,
                       :relation => nil }
           yahoo_id = nil
           contact[:id] = entry['id'].to_s
@@ -76,25 +88,39 @@ module OmniContacts
             case field['type']
             when 'name'
               contact[:first_name] = normalize_name(field['value']['givenName'])
+              contact[:middle_name] = normalize_name(field['value']['middleName'])
               contact[:last_name] = normalize_name(field['value']['familyName'])
               contact[:name] = full_name(contact[:first_name],contact[:last_name])
             when 'email'
               contact[:email] = field['value'] if field['type'] == 'email'
             when 'yahooid'
               yahoo_id = field['value']
+              contact[:yahooid] = field['value']
+            when 'phone'
+              contact[:phone] = field['value']
             when 'address'
               value = field['value']
-              contact[:address_1] = street = value['street']
-              if street.index("\n")
-                parts = street.split("\n")
-                contact[:address_1] = parts.first
-                contact[:address_2] = parts[1..-1].join(', ')
-              end
+              contact[:address_1], contact[:address_2], *contact[:address_3] = value['street'].split("\n")
+              contact[:address_3] = contact[:address_3].join(', ')
               contact[:city] = value['city']
               contact[:region] = value['stateOrProvince']
               contact[:postcode] = value['postalCode']
+              contact[:country] = value['country']
+              contact[:country_abbrev] = value['countryCode']
+            when 'jobTitle'
+              contact[:job_title] = field['value']
+            when 'company'
+              contact[:company] = field['value']
+            when 'nickname'
+              contact[:nickname] = field['value']
+            when 'link'
+              contact[:website] = field['value']
             when 'birthday'
               contact[:birthday] = birthday_format(field['value']['month'], field['value']['day'],field['value']['year'])
+            when 'anniversary'
+              contact[:anniversary] = birthday_format(field['value']['month'], field['value']['day'],field['value']['year'])
+            when 'notes'
+              contact[:notes] = field['value']
             end
             contact[:first_name], contact[:last_name], contact[:name] = email_to_name(contact[:email]) if contact[:name].nil? && contact[:email]
             # contact[:first_name], contact[:last_name], contact[:name] = email_to_name(yahoo_id) if (yahoo_id && contact[:name].nil? && contact[:email].nil?)
@@ -138,7 +164,6 @@ module OmniContacts
         birthday = dob.split('/')
         return birthday_format(birthday[0], birthday[1], birthday[3]) if birthday.size == 3
         return birthday_format(birthday[0], birthday[1], nil) if birthday.size == 2
-
       end
 
       def gender g
