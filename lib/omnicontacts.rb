@@ -2,7 +2,7 @@ module OmniContacts
   
   VERSION = "0.3.5"
 
-  MOUNT_PATH = "/import/"
+  MOUNT_PATH = "/contacts/"
 
   autoload :Builder, "omnicontacts/builder"
   autoload :Importer, "omnicontacts/importer"
