@@ -101,7 +101,7 @@ module OmniContacts
             when 'address'
               value = field['value']
               contact[:address_1], contact[:address_2], *contact[:address_3] = value['street'].split("\n")
-              contact[:address_3] = contact[:address_3].join(', ')
+              contact[:address_3] = ( contact[:address_3].empty? ? nil : contact[:address_3].join(', ') )
               contact[:city] = value['city']
               contact[:region] = value['stateOrProvince']
               contact[:postcode] = value['postalCode']
