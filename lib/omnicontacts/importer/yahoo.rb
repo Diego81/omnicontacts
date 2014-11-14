@@ -69,7 +69,6 @@ module OmniContacts
                       :anniversary => nil,
                       :anniversaries => [],
                       :profile_picture=> nil,
-                      :yahooid => nil,
                       :messenger_ids => [],
                       :phone => nil,
                       :phones => [],
@@ -106,7 +105,6 @@ module OmniContacts
               }
             when 'yahooid'
               yahoo_id = field['value']
-              contact[:yahooid] = field['value']
               contact[:messenger_ids] = Array(contact[:messenger_ids]) << {
                 type: "YAHOO",
                 value: field['value']
