@@ -100,7 +100,7 @@ module OmniContacts
             when 'email'
               contact[:email] = field['value']
               contact[:emails] = Array(contact[:emails]) << {
-                type:  field['flags']
+                type:  field['flags'],
                 email: field['value']
               }
             when 'yahooid'
