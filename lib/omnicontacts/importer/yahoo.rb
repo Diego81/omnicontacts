@@ -100,7 +100,7 @@ module OmniContacts
             when 'email'
               contact[:email] = field['value']
               contact[:emails] = Array(contact[:emails]) << {
-                type:  field['flags'],
+                type:  field['flags'].first,
                 email: field['value']
               }
             when 'yahooid'
@@ -111,13 +111,13 @@ module OmniContacts
               }
             when 'otherid'
               contact[:messenger_ids] = Array(contact[:messenger_ids]) << {
-                type:  field['flags'],
+                type:  field['flags'].first,
                 value: field['value']
               }
             when 'phone'
               contact[:phone] = field['value']
               contact[:phones] = Array(contact[:phones]) << {
-                type:  field['flags'],
+                type:  field['flags'].first,
                 phone: field['value']
               }
             when 'address'
@@ -130,7 +130,7 @@ module OmniContacts
               contact[:country] = value['country']
               contact[:country_abbrev] = value['countryCode']
               contact[:addresses] = Array(contact[:addresses]) << {
-                type:           field['flags'],
+                type:           field['flags'].first,
                 address_1:      contact[:address_1],
                 address_2:      contact[:address_2],
                 address_3:      contact[:address_3],
