@@ -62,12 +62,17 @@ module OmniContacts
                       :last_name => nil,
                       :name => nil,
                       :email => nil,
+                      :emails => [],
                       :gender => nil,
                       :birthday => nil,
+                      :birthdays => [],
                       :anniversary => nil,
+                      :anniversaries => [],
                       :profile_picture=> nil,
                       :yahooid => nil,
+                      :messenger_ids => [],
                       :phone => nil,
+                      :phones => [],
                       :address_1 => nil,
                       :address_2 => nil,
                       :address_3 => nil,
@@ -76,10 +81,12 @@ module OmniContacts
                       :postcode => nil,
                       :country => nil,
                       :country_abbrev => nil,
+                      :addresses => [],
                       :job_title => nil,
                       :company => nil,
                       :nickname => nil,
                       :website => nil,
+                      :websites => [],
                       :notes => nil,
                       :relation => nil }
           yahoo_id = nil
@@ -92,12 +99,29 @@ module OmniContacts
               contact[:last_name] = normalize_name(field['value']['familyName'])
               contact[:name] = full_name(contact[:first_name],contact[:last_name])
             when 'email'
-              contact[:email] = field['value'] if field['type'] == 'email'
+              contact[:email] = field['value']
+              contact[:emails] = Array(contact[:emails]) << {
+                type:  field['flags']
+                email: field['value']
+              }
             when 'yahooid'
               yahoo_id = field['value']
               contact[:yahooid] = field['value']
+              contact[:messenger_ids] = Array(contact[:messenger_ids]) << {
+                type: "YAHOO",
+                value: field['value']
+              }
+            when 'otherid'
+              contact[:messenger_ids] = Array(contact[:messenger_ids]) << {
+                type:  field['flags'],
+                value: field['value']
+              }
             when 'phone'
               contact[:phone] = field['value']
+              contact[:phones] = Array(contact[:phones]) << {
+                type:  field['flags'],
+                phone: field['value']
+              }
             when 'address'
               value = field['value']
               contact[:address_1], contact[:address_2], *contact[:address_3] = value['street'].split("\n")
@@ -107,6 +131,17 @@ module OmniContacts
               contact[:postcode] = value['postalCode']
               contact[:country] = value['country']
               contact[:country_abbrev] = value['countryCode']
+              contact[:addresses] = Array(contact[:addresses]) << {
+                type:           field['flags'],
+                address_1:      contact[:address_1],
+                address_2:      contact[:address_2],
+                address_3:      contact[:address_3],
+                city:           contact[:city],
+                region:         contact[:region],
+                postcode:       contact[:postcode],
+                country:        contact[:country],
+                country_abbrev: contact[:country_abbrev]
+              }
             when 'jobTitle'
               contact[:job_title] = field['value']
             when 'company'
@@ -115,10 +150,13 @@ module OmniContacts
               contact[:nickname] = field['value']
             when 'link'
               contact[:website] = field['value']
+              contact[:websites] = Array(contact[:websites]) << {website: field['value']}
             when 'birthday'
               contact[:birthday] = birthday_format(field['value']['month'], field['value']['day'],field['value']['year'])
+              contact[:birthdays] = Array(contact[:birthdays]) << {birthday: contact[:birthday]}
             when 'anniversary'
               contact[:anniversary] = birthday_format(field['value']['month'], field['value']['day'],field['value']['year'])
+              contact[:anniversaries] = Array(contact[:anniversaries]) << {anniversary: contact[:anniversary]}
             when 'notes'
               contact[:notes] = field['value']
             end
