@@ -8,6 +8,14 @@ OmniContacts uses the OAuth protocol to communicate with the contacts provider. 
  Facebook, Gmail and Hotmail support OAuth 2.0.
 In order to use OmniContacts, it is therefore necessary to first register your application with the provider and to obtain client_id and client_secret.
 
+## Contribute!
+Me (rubytastic) and the orginal author Diego don't actively use this code at the moment, anyone interested in maintaining and contributing to this codebase please write me up in a personal message ( rubytastic )
+I try to merge pull requests in every once and a while but this code would benefit from someone actively use and contribute to it.
+
+## Gem build updates
+There is now a new gem build out which should address many issues people had when posting on the issue tracker. Please update to the latest GEM version if you have problems before posting new issues.
+
+
 ## Usage
 
 Add OmniContacts as a dependency:
