@@ -5,6 +5,8 @@ describe OmniContacts::Importer::Gmail do
 
   let(:gmail) { OmniContacts::Importer::Gmail.new({}, "client_id", "client_secret") }
 
+  let(:gmail_with_scope_args) { OmniContacts::Importer::Gmail.new({}, "client_id", "client_secret", {scope: "https://www.google.com/m8/feeds https://www.googleapis.com/auth/userinfo#email https://www.googleapis.com/auth/contacts.readonly"}) }
+  
   let(:self_response) {
     '{
       "id":"16482944006464829443",
@@ -110,6 +112,7 @@ describe OmniContacts::Importer::Gmail do
 
     before(:each) do
       gmail.instance_variable_set(:@env, {})
+      gmail_with_scope_args.instance_variable_set(:@env, {})
     end
 
     it "should request the contacts by specifying version and code in the http headers" do
@@ -124,6 +127,9 @@ describe OmniContacts::Importer::Gmail do
         contacts_as_json
       end
       gmail.fetch_contacts_using_access_token token, token_type
+      
+      gmail.scope.should eq "https://www.google.com/m8/feeds https://www.googleapis.com/auth/userinfo#email https://www.googleapis.com/auth/userinfo.profile"
+      gmail_with_scope_args.scope.should eq "https://www.google.com/m8/feeds https://www.googleapis.com/auth/userinfo#email https://www.googleapis.com/auth/contacts.readonly"
     end
 
     it "should correctly parse id, name, email, gender, birthday, profile picture and relation for 1st contact" do
