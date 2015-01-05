@@ -45,6 +45,7 @@ module OmniContacts
 
       def contacts_from_response response_as_json
         response = JSON.parse(response_as_json)
+
         return [] if response['feed'].nil? || response['feed']['entry'].nil?
         contacts = []
         return contacts if response.nil?
@@ -88,7 +89,7 @@ module OmniContacts
           # Support older versions of the gem by keeping singular entries around
           contact[:email] = contact[:emails][0][:email] if contact[:emails][0]
           contact[:first_name], contact[:last_name], contact[:name] = email_to_name(contact[:name]) if !contact[:name].nil? && contact[:name].include?('@')
-          contact[:first_name], contact[:last_name], contact[:name] = email_to_name(contact[:emails][0][:email]) if contact[:name].nil? && contact[:emails][0] && contact[:emails][0][:email]
+          contact[:first_name], contact[:last_name], contact[:name] = email_to_name(contact[:emails][0][:email]) if (contact[:name].nil? && contact[:emails][0] && contact[:emails][0][:email])
           #format - year-month-date
           contact[:birthday] = birthday(entry['gContact$birthday']['when'])  if entry['gContact$birthday']
 
