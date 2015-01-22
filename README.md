@@ -33,13 +33,14 @@ require "omnicontacts"
 Rails.application.middleware.use OmniContacts::Builder do
   importer :gmail, "client_id", "client_secret", {:redirect_path => "/oauth2callback", :ssl_ca_file => "/etc/ssl/certs/curl-ca-bundle.crt"}
   importer :yahoo, "consumer_id", "consumer_secret", {:callback_path => '/callback'}
+  importer :yahoo, "consumer_id", "consumer_secret", {:callback_path => "/contacts/linkedin/callback", :state => '<long_unique_string_value>'}
   importer :hotmail, "client_id", "client_secret"
   importer :facebook, "client_id", "client_secret"
 end
 
 ```
 
-Every importer expects `client_id` and `client_secret` as mandatory, while `:redirect_path` and `:ssl_ca_file` are optional.
+Every importer expects `client_id` and `client_secret` as mandatory, while `:redirect_path` and `:ssl_ca_file` are optional (except linkedin - `state` arg  mandatory).
 Since Yahoo implements the version 1.0 of the OAuth protocol, naming is slightly different. Instead of `:redirect_path` you should use `:callback_path` as key in the hash providing the optional parameters.
 While `:ssl_ca_file` is optional, it is highly recommended to set it on production environments for obvious security reasons.
 On the other hand it makes things much easier to leave the default value for `:redirect_path` and `:callback path`, the reason of which will be clear after reading the following section.
@@ -53,6 +54,9 @@ On the other hand it makes things much easier to leave the default value for `:r
 * For Hotmail : [Microsoft Developer Network](https://account.live.com/developers/applications/index)
 
 * For Facebook : [Facebook Developers](https://developers.facebook.com/apps)
+
+* For Linkedin : [Linkedin Developer Network](https://www.linkedin.com/secure/developer) 
+
 
 ##### Note:
 Please go through [MSDN](http://msdn.microsoft.com/en-us/library/cc287659.aspx) if above Hotmail link will not work.
@@ -167,6 +171,25 @@ The following table shows which fields are supported by which provider:
 		<td>X</td>
 		<td></td>
 	</tr>
+	<tr>
+	    <td>Linkedin</td>
+		<td></td>
+		<td>X</td>
+		<td>X</td>
+		<td>X</td>
+		<td>X</td>
+		<td>X</td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+	<tr>
 </table>
 
 Obviously it may happen that some fields are blank even if supported by the provider in the case that the contact did not provide any information about them.

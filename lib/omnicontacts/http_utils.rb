@@ -57,7 +57,7 @@ module OmniContacts
     # If the result of ssl_ca_file is nil no file is used. In this case a warn message is logged.
     private
 
-    # Executes an HTTP GET request. 
+    # Executes an HTTP GET request.
     # It raises a RuntimeError if the response code is not equal to 200
     def http_get host, path, params
       connection = Net::HTTP.new(host)
