@@ -16,7 +16,7 @@ module OmniContacts
         @scope = 'email,user_relationships,user_birthday,friends_birthday'
         @auth_token_path = '/v2.3/oauth/access_token'
         @contacts_host = 'graph.facebook.com'
-        @friends_path = '/v2.3/me/friends'
+        @friends_path = '/v2.3/me/taggable_friends'
         @family_path = '/v2.3/me/family'
         @self_path = '/v2.3/me'
       end
@@ -88,7 +88,7 @@ module OmniContacts
         contact[:email] = contact_info['email']
         contact[:gender] = contact_info['gender']
         contact[:birthday] = birthday(contact_info['birthday'])
-        contact[:profile_picture] = image_url(contact_info['id'])
+        contact[:profile_picture] = contact_info['picture']['data']['url'];
         contact[:relation] = contact_info['relationship']
         contact
       end
