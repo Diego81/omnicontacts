@@ -9,6 +9,8 @@ module OmniContacts
 
       attr_reader :auth_host, :authorize_path, :auth_token_path, :scope
 
+      PAGE_SIZE = 1000
+
       def initialize *args
         super *args
         @auth_host = 'graph.facebook.com'
@@ -32,7 +34,8 @@ module OmniContacts
           spouse_response = https_get(@contacts_host, spouse_path, {:access_token => access_token, :fields => 'first_name,last_name,name,id,gender,birthday,picture'})
         end
         family_response = https_get(@contacts_host, @family_path, {:access_token => access_token, :fields => 'first_name,last_name,name,id,gender,birthday,picture,relationship'})
-        friends_response = https_get(@contacts_host, @friends_path, {:access_token => access_token, :fields => 'first_name,last_name,name,id,gender,birthday,picture'})
+        friends_response = https_get(@contacts_host, @friends_path, {:access_token => access_token, :fields => 'first_name,last_name,name,id,gender,birthday,picture', :limit => PAGE_SIZE})
+        friends_response = iterate_pages(friends_response, access_token)
         contacts_from_response(spouse_response, family_response, friends_response)
       end
 
@@ -51,6 +54,34 @@ module OmniContacts
           id = response['significant_other']['id']
         end
         id
+      end
+
+      def iterate_pages(response, access_token)
+        begin
+          @access_token = access_token
+          current_response = JSON.parse(response)
+          data = current_response['data']
+          while current_response['paging']['next']
+            next_page = JSON.parse(next_page_call(current_response['paging']['next']))
+            data += next_page['data']
+            current_response = next_page
+          end
+          return { 'data' => data }.to_json
+        rescue
+          return response
+        end
+      end
+
+      def next_page_call(page_url)
+        my_token.get(page_url, {}).body
+      end
+
+      def my_client
+        @my_client ||= OAuth2::Client.new(client_id, {})
+      end
+
+      def my_token
+        @my_token ||= OAuth2::AccessToken.new(my_client, @access_token)
       end
 
       def contacts_from_response(spouse_response, family_response, friends_response)
