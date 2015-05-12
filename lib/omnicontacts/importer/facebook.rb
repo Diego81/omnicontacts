@@ -15,7 +15,7 @@ module OmniContacts
         super *args
         @auth_host = 'graph.facebook.com'
         @authorize_path = '/v2.3/oauth/authorize'
-        @scope = 'email,user_relationships,user_birthday,friends_birthday'
+        @scope = 'email,user_relationships,user_birthday'
         @auth_token_path = '/v2.3/oauth/access_token'
         @contacts_host = 'graph.facebook.com'
         @friends_path = '/v2.3/me/taggable_friends'
@@ -31,10 +31,11 @@ module OmniContacts
         spouse_response = nil
         if spouse_id
           spouse_path = "/#{spouse_id}"
-          spouse_response = https_get(@contacts_host, spouse_path, {:access_token => access_token, :fields => 'first_name,last_name,name,id,gender,birthday,picture'})
+          spouse_response = https_get(@contacts_host, spouse_path, {:access_token => access_token, :fields => 'first_name,last_name,name,id,gender,picture'})
         end
-        family_response = https_get(@contacts_host, @family_path, {:access_token => access_token, :fields => 'first_name,last_name,name,id,gender,birthday,picture,relationship'})
-        friends_response = https_get(@contacts_host, @friends_path, {:access_token => access_token, :fields => 'first_name,last_name,name,id,gender,birthday,picture', :limit => PAGE_SIZE})
+        family_response = https_get(@contacts_host, @family_path, {:access_token => access_token, :fields => 'first_name,last_name,name,id,gender,picture,relationship'})
+        friends_response = https_get(@contacts_host, @friends_path, {:access_token => access_token, :fields => 'first_name,last_name,name,id,gender,picture', :limit => PAGE_SIZE})
+
         friends_response = iterate_pages(friends_response, access_token)
         contacts_from_response(spouse_response, family_response, friends_response)
       end
