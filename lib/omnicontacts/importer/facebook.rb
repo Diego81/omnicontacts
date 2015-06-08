@@ -18,7 +18,8 @@ module OmniContacts
         @scope = 'email,user_relationships,user_birthday'
         @auth_token_path = '/v2.3/oauth/access_token'
         @contacts_host = 'graph.facebook.com'
-        @friends_path = '/v2.3/me/taggable_friends'
+        @friends_path = '/v2.3/me/friends'
+        @taggable_friends_path = '/v2.3/me/taggable_friends'
         @family_path = '/v2.3/me/family'
         @self_path = '/v2.3/me'
       end
@@ -34,10 +35,22 @@ module OmniContacts
           spouse_response = https_get(@contacts_host, spouse_path, {:access_token => access_token, :fields => 'first_name,last_name,name,id,gender,picture'})
         end
         family_response = https_get(@contacts_host, @family_path, {:access_token => access_token, :fields => 'first_name,last_name,name,id,gender,picture,relationship'})
-        friends_response = https_get(@contacts_host, @friends_path, {:access_token => access_token, :fields => 'first_name,last_name,name,id,gender,picture', :limit => PAGE_SIZE})
 
+        friends_response = https_get(@contacts_host, @friends_path, {:access_token => access_token, :fields => 'first_name,last_name,name,id,gender,picture', :limit => PAGE_SIZE})
         friends_response = iterate_pages(friends_response, access_token)
-        contacts_from_response(spouse_response, family_response, friends_response)
+        friends_info = JSON.parse(friends_response)
+
+        total_friends = friends_info.andand['summary'].andand['total_count'] || PAGE_SIZE
+        picture_urls = friends_info.andand['data'].map { |info| info.andand['picture'].andand['data'].andand['url'] }.to_set || [].to_set
+
+        taggable_friends_response = https_get(@contacts_host, @taggable_friends_path, {:access_token => access_token, :fields => 'first_name,last_name,name,id,gender,picture', :limit => total_friends})
+        taggable_info = JSON.parse(taggable_friends_response)
+        taggable_unique = taggable_info['data'].reject { |info| picture_urls.include? info['picture']['data']['url'] }
+        combined_friends = friends_info['data'] + taggable_unique
+        taggable_info['data'] = combined_friends
+        new_taggable_friends_response = taggable_info.to_json
+
+        contacts_from_response(spouse_response, family_response, new_taggable_friends_response)
       end
 
       def fetch_current_user access_token
@@ -67,7 +80,8 @@ module OmniContacts
             data += next_page['data']
             current_response = next_page
           end
-          return { 'data' => data }.to_json
+          current_response['data'] = data
+          return current_response.to_json
         rescue
           return response
         end
