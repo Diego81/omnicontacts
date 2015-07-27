@@ -3,7 +3,7 @@
 #
 # Extending classes are required to implement
 # the following methods:
-# * request_authorization_from_user 
+# * request_authorization_from_user
 # * fetch_contatcs
 module OmniContacts
   module Middleware
@@ -22,9 +22,9 @@ module OmniContacts
       end
 
       # Rack callback. It handles three cases:
-      # * user visit middleware entry point. 
+      # * user visit middleware entry point.
       #   In this case request_authorization_from_user is called
-      # * user is redirected back to the application 
+      # * user is redirected back to the application
       #   from the authorization site. In this case the list
       #   of contacts is fetched and stored in the variables
       #   omnicontacts.contacts within the Rack env variable.
@@ -43,7 +43,7 @@ module OmniContacts
       end
 
       private
-      
+
       def test_mode?
         IntegrationTest.instance.enabled
       end
@@ -65,6 +65,7 @@ module OmniContacts
           else
             fetch_contacts
           end
+          set_current_user IntegrationTest.instance.mock_fetch_user(self) if test_mode?
           @app.call(@env)
         end
       end
@@ -74,7 +75,7 @@ module OmniContacts
       end
 
       #  This method rescues executes a block of code and
-      #  rescue all exceptions. In case of an exception the 
+      #  rescue all exceptions. In case of an exception the
       #  user is redirected to the failure endpoint.
       def execute_and_rescue_exceptions
         yield

@@ -11,7 +11,7 @@ describe IntegrationTest do
       IntegrationTest.instance.mock_authorization_from_user(provider)[1]["location"].should eq(redirect_path)
     end
   end
-  
+
   context "mock_callback" do
 
     before(:each) {
@@ -20,11 +20,11 @@ describe IntegrationTest do
       @provider.stub(:class_name => "test")
       IntegrationTest.instance.clear_mocks
     }
-    
+
     it "should return an empty contacts list" do
       IntegrationTest.instance.mock_fetch_contacts(@provider).should be_empty
     end
-    
+
     it "should return a configured list of contacts " do
       contacts = [:name => 'John Doe', :email => 'john@doe.com']
       IntegrationTest.instance.mock('test', contacts)
@@ -42,7 +42,16 @@ describe IntegrationTest do
       result.first[:email].should eq(contact[:email])
       result.first[:name].should eq(contact[:name])
     end
-    
+
+    it "should return a user" do
+      contact = {:name => 'John Doe', :email => 'john@doe.com'}
+      user = {:name => 'Mary Smith', :email => 'mary@smith.com'}
+      IntegrationTest.instance.mock('test', contact, user)
+      result = IntegrationTest.instance.mock_fetch_user(@provider)
+      result[:email].should eq(user[:email])
+      result[:name].should eq(user[:name])
+    end
+
     it "should throw an exception" do
       IntegrationTest.instance.mock('test', :some_error)
       expect {IntegrationTest.instance.mock_fetch_contacts(@provider)}.to raise_error
