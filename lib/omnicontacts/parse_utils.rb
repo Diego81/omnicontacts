@@ -42,15 +42,9 @@ module OmniContacts
       return nil if email.nil? || !email.include?('@')
       username, domain = *(email.split('@'))
       return nil if username.nil? or domain.nil?
-      gmail_base_url = "https://profiles.google.com/s2/photos/profile/"
-      yahoo_base_url = "https://img.msg.yahoo.com/avatar.php?yids="
-      if domain.include?('gmail')
-        image_url = gmail_base_url + username
-      elsif domain.include?('yahoo')
-        image_url = yahoo_base_url + username
-      end
+      yahoo_base_url = "http://img.msg.yahoo.com/v1/displayImage/yahoo/"
+      image_url = yahoo_base_url + username if domain.include?('yahoo')
       image_url
     end
-
   end
 end
