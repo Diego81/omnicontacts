@@ -11,8 +11,8 @@ module OmniContacts
 
       PAGE_SIZE = 1000
 
-      def initialize *args
-        super *args
+      def initialize app, client_id, client_secret, options ={}
+        super app, client_id, client_secret, options
         @auth_host = 'graph.facebook.com'
         @authorize_path = '/v2.3/oauth/authorize'
         @scope = 'email,user_relationships,user_birthday'
@@ -22,6 +22,18 @@ module OmniContacts
         @taggable_friends_path = '/v2.3/me/taggable_friends'
         @family_path = '/v2.3/me/family'
         @self_path = '/v2.3/me'
+        @window_params = options[:window_params] || {}
+      end
+
+      def authorize_url_params
+        to_query_string({
+                          :client_id => client_id,
+                          :scope => encode(scope),
+                          :response_type => "code",
+                          :access_type => "online",
+                          :approval_prompt => "auto",
+                          :redirect_uri => encode(redirect_uri)
+                        }.merge(@window_params))
       end
 
       def fetch_contacts_using_access_token access_token, access_token_secret
