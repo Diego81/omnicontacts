@@ -18,7 +18,7 @@ module OmniContacts
         @contacts_path = "/m8/feeds/contacts/default/full"
         @max_results =  (args[3] && args[3][:max_results]) || 100
         @self_host = "www.googleapis.com"
-        @profile_path = "/oauth2/v1/userinfo"
+        @profile_path = "/oauth2/v3/userinfo"
       end
 
       def fetch_contacts_using_access_token access_token, token_type
@@ -156,6 +156,15 @@ module OmniContacts
             contact[:profile_picture] = image_url(contact[:id])
           else
             contact[:profile_picture] = image_url_from_email(contact[:email])
+          end
+
+          if entry["link"] && entry["link"].is_a?(Array)
+            entry["link"].each do |link|
+              if link["type"] == 'image/*'
+                contact[:profile_picture] = link["href"] + "?&access_token=" + @env["omnicontacts.user"][:access_token]
+                break
+              end
+            end
           end
 
           if entry['gContact$event']
