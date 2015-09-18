@@ -160,7 +160,7 @@ module OmniContacts
 
           if entry["link"] && entry["link"].is_a?(Array)
             entry["link"].each do |link|
-              if link["type"] == 'image/*'
+              if link["type"] == 'image/*' && link["gd$etag"]
                 contact[:profile_picture] = link["href"] + "?&access_token=" + @env["omnicontacts.user"][:access_token]
                 break
               end
