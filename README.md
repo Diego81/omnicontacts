@@ -55,7 +55,7 @@ On the other hand it makes things much easier to leave the default value for `:r
 
 * For Facebook : [Facebook Developers](https://developers.facebook.com/apps)
 
-* For Linkedin : [Linkedin Developer Network](https://www.linkedin.com/secure/developer) 
+* For Linkedin : [Linkedin Developer Network](https://www.linkedin.com/secure/developer)
 
 
 ##### Note:
@@ -245,6 +245,11 @@ The `mock` method allows to configure per-provider the result to return:
 ```
 
 You can either pass a single hash or an array of hashes. If you pass a string, an error will be triggered with subsequent redirect to `/contacts/failure?error_message=internal_error`
+
+You can also pass a user to fill `omnicontacts.user` (optional)
+```ruby
+  OmniContacts.integration_test.mock(:provider_name, {:email => "contact@example.com"}, {:email => "user@example.com"})
+```
 
 Follows a full example of an integration test:
 
