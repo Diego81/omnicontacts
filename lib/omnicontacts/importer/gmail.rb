@@ -18,13 +18,13 @@ module OmniContacts
         @contacts_path = "/m8/feeds/contacts/default/full"
         @max_results =  (args[3] && args[3][:max_results]) || 100
         @self_host = "www.googleapis.com"
-        @profile_path = "/oauth2/v1/userinfo"
+        @profile_path = "/oauth2/v3/userinfo"
       end
 
       def fetch_contacts_using_access_token access_token, token_type
         fetch_current_user(access_token, token_type)
         contacts_response = https_get(@contacts_host, @contacts_path, contacts_req_params, contacts_req_headers(access_token, token_type))
-        contacts_from_response contacts_response
+        contacts_from_response(contacts_response, access_token)
       end
 
       def fetch_current_user access_token, token_type
@@ -43,7 +43,7 @@ module OmniContacts
         {"GData-Version" => "3.0", "Authorization" => "#{token_type} #{token}"}
       end
 
-      def contacts_from_response response_as_json
+      def contacts_from_response(response_as_json, access_token)
         response = JSON.parse(response_as_json)
 
         return [] if response['feed'].nil? || response['feed']['entry'].nil?
@@ -156,6 +156,15 @@ module OmniContacts
             contact[:profile_picture] = image_url(contact[:id])
           else
             contact[:profile_picture] = image_url_from_email(contact[:email])
+          end
+
+          if entry["link"] && entry["link"].is_a?(Array)
+            entry["link"].each do |link|
+              if link["type"] == 'image/*' && link["gd$etag"]
+                contact[:profile_picture] = link["href"] + "?&access_token=" + access_token
+                break
+              end
+            end
           end
 
           if entry['gContact$event']

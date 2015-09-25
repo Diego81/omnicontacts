@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    omnicontacts (0.3.8)
+    omnicontacts (0.3.9)
       json
       rack
 
@@ -39,4 +39,4 @@ DEPENDENCIES
   simplecov
 
 BUNDLED WITH
-   1.10.5
+   1.10.6

@@ -5,7 +5,7 @@ describe OmniContacts::Importer::Gmail do
 
   let(:gmail) { OmniContacts::Importer::Gmail.new({}, "client_id", "client_secret") }
 
-  let(:gmail_with_scope_args) { OmniContacts::Importer::Gmail.new({}, "client_id", "client_secret", {scope: "https://www.google.com/m8/feeds https://www.googleapis.com/auth/userinfo#email https://www.googleapis.com/auth/contacts.readonly"}) }
+  let(:gmail_with_scope_args) { OmniContacts::Importer::Gmail.new({}, "client_id", "client_secret", {scope: "https://www.googleapis.com/auth/contacts.readonly https://www.googleapis.com/auth/userinfo#email https://www.googleapis.com/auth/userinfo.profile"}) }
   
   let(:self_response) {
     '{
@@ -39,6 +39,8 @@ describe OmniContacts::Importer::Gmail do
 
           "title":{"$t":"Users\'s Contacts"},
           "link":[
+            {"rel":"http://schemas.google.com/contacts/2008/rel#photo","type":"image/*",
+             "href":"https://www.google.com/m8/feeds/photos/media/logged_in_user%40gmail.com/6b41d030b05abc","gd$etag":"\"VSxuN0cISit7I2A1UVUSdy12KHwgBFkE333.\""},
             {"rel":"alternate","type":"text/html","href":"http://www.google.com/"},
             {"rel":"http://schemas.google.com/g/2005#feed","type":"application/atom+xml","href":"https://www.google.com/m8/feeds/contacts/logged_in_user%40gmail.com/full"},
             {"rel":"http://schemas.google.com/g/2005#post","type":"application/atom+xml","href":"https://www.google.com/m8/feeds/contacts/logged_in_user%40gmail.com/full"},
@@ -60,7 +62,8 @@ describe OmniContacts::Importer::Gmail do
             "category":[{"scheme":"http://schemas.google.com/g/2005#kind","term":"http://schemas.google.com/contact/2008#contact"}],
             "title":{"$t":"Edward Bennet"},
             "link":[
-              {"rel":"http://schemas.google.com/contacts/2008/rel#photo","type":"image/*","href":"https://www.google.com/m8/feeds/photos/media/logged_in_user%40gmail.com/1"},
+              {"rel":"http://schemas.google.com/contacts/2008/rel#photo","type":"image/*",
+               "href":"https://www.google.com/m8/feeds/photos/media/logged_in_user%40gmail.com/6b41d030b05abc", "gd$etag":"\"VSxuN0cISit7I2A1UVUSdy12KHwgBFkE333.\""},
               {"rel":"self","type":"application/atom+xml","href":"https://www.google.com/m8/feeds/contacts/logged_in_user%40gmail.com/full/1"},
               {"rel":"edit","type":"application/atom+xml","href":"https://www.google.com/m8/feeds/contacts/logged_in_user%40gmail.com/full/1"}
             ],
@@ -128,8 +131,8 @@ describe OmniContacts::Importer::Gmail do
       end
       gmail.fetch_contacts_using_access_token token, token_type
       
-      gmail.scope.should eq "https://www.google.com/m8/feeds https://www.googleapis.com/auth/userinfo#email https://www.googleapis.com/auth/userinfo.profile"
-      gmail_with_scope_args.scope.should eq "https://www.google.com/m8/feeds https://www.googleapis.com/auth/userinfo#email https://www.googleapis.com/auth/contacts.readonly"
+      gmail.scope.should eq "https://www.googleapis.com/auth/contacts.readonly https://www.googleapis.com/auth/userinfo#email https://www.googleapis.com/auth/userinfo.profile"
+      gmail_with_scope_args.scope.should eq "https://www.googleapis.com/auth/contacts.readonly https://www.googleapis.com/auth/userinfo#email https://www.googleapis.com/auth/userinfo.profile"
     end
 
     it "should correctly parse id, name, email, gender, birthday, profile picture and relation for 1st contact" do
@@ -146,7 +149,7 @@ describe OmniContacts::Importer::Gmail do
       result.first[:gender].should eq("male")
       result.first[:birthday].should eq({:day=>02, :month=>07, :year=>1954})
       result.first[:relation].should eq('father')
-      result.first[:profile_picture].should eq("https://profiles.google.com/s2/photos/profile/bennet")
+      result.first[:profile_picture].should eq("https://www.google.com/m8/feeds/photos/media/logged_in_user%40gmail.com/6b41d030b05abc?&access_token=token")
       result.first[:dates][0][:name].should eq("anniversary")
     end
 
