@@ -11,7 +11,7 @@ module OmniContacts
 
       def initialize *args
         super *args
-        @auth_host = 'graph.facebook.com'
+        @auth_host = 'graph.facebook.com/v2.0'
         @authorize_path = '/oauth/authorize'
         @scope = 'email,user_relationships,user_birthday'
         @auth_token_path = '/oauth/access_token'
