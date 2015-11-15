@@ -41,8 +41,8 @@ module OmniContacts
           # creating nil fields to keep the fields consistent across other networks
           contact = {:id => nil, :first_name => nil, :last_name => nil, :name => nil, :email => nil, :gender => nil, :birthday => nil, :profile_picture=> nil, :relation => nil, :email_hashes => []}
           contact[:id] = entry['user_id'] ? entry['user_id'] : entry['id']
-          if valid_email? entry["name"]
-            contact[:email] = entry["name"]
+          if valid_email? parse_email(emails)
+            contact[:email] = parse_email(emails)
             contact[:first_name], contact[:last_name], contact[:name] = email_to_name(contact[:email])
           else
             contact[:first_name] = normalize_name(entry['first_name'])
