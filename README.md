@@ -214,7 +214,7 @@ If the user does not authorize your application to access his/her contacts list,
 
 OmniContacts supports OAuth 1.0 and OAuth 2.0 token refresh, but for both it needs to persist data between requests. OmniContacts stores access tokens in the session. If you hit the 4KB cookie storage limit you better opt for the Memcache or the Active Record storage.
 
-Gmail requires you to register the redirect_path on their website along with your application. Make sure to use the same value present in the configuration file, or `/contacts/gmail/callback` if using the default.
+Gmail requires you to register the redirect_path on their website along with your application. Make sure to use the same value present in the configuration file, or `/contacts/gmail/callback` if using the default. Also make sure that your full url is used including "www" if your site redirects from the root domain. 
 
 To configure the max number of contacts to download from Gmail, just add a max results parameter in your initializer:
 
