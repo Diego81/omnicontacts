@@ -13,7 +13,7 @@ module OmniContacts
         super app, client_id, client_secret, options
         @auth_host = "login.live.com"
         @authorize_path = "/oauth20_authorize.srf"
-        @scope = options[:permissions] || "wl.signin, wl.basic, wl.birthday , wl.emails ,wl.contacts_birthday , wl.contacts_photos"
+        @scope = options[:permissions] || "wl.signin, wl.basic, wl.birthday , wl.emails ,wl.contacts_birthday , wl.contacts_photos, wl.contacts_emails"
         @auth_token_path = "/oauth20_token.srf"
         @contacts_host = "apis.live.net"
         @contacts_path = "/v5.0/me/contacts"
@@ -41,14 +41,10 @@ module OmniContacts
           # creating nil fields to keep the fields consistent across other networks
           contact = {:id => nil, :first_name => nil, :last_name => nil, :name => nil, :email => nil, :gender => nil, :birthday => nil, :profile_picture=> nil, :relation => nil, :email_hashes => []}
           contact[:id] = entry['user_id'] ? entry['user_id'] : entry['id']
-          if valid_email? entry["name"]
-            contact[:email] = entry["name"]
-            contact[:first_name], contact[:last_name], contact[:name] = email_to_name(contact[:email])
-          else
-            contact[:first_name] = normalize_name(entry['first_name'])
-            contact[:last_name] = normalize_name(entry['last_name'])
-            contact[:name] = normalize_name(entry['name'])
-          end
+	        contact[:email] = parse_email(emails) if valid_email? parse_email(emails)
+	        contact[:first_name] = normalize_name(entry['first_name'])
+	        contact[:last_name] = normalize_name(entry['last_name'])
+	        contact[:name] = normalize_name(entry['name'])
           contact[:birthday] = birthday_format(entry['birth_month'], entry['birth_day'], entry['birth_year'])
           contact[:gender] = entry['gender']
           contact[:profile_picture] = image_url(entry['user_id'])
@@ -60,7 +56,7 @@ module OmniContacts
 
       def parse_email(emails)
         return nil if emails.nil?
-        emails['account']
+        emails['account'] || emails['preferred'] || emails['personal'] || emails['business'] || emails['other']
       end
 
       def current_user me
