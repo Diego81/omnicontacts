@@ -151,13 +151,6 @@ module OmniContacts
           # Support older versions of the gem by keeping singular entries around
           contact[:phone_number] = contact[:phone_numbers][0][:number] if contact[:phone_numbers][0]
 
-          if entry['gContact$website'] && entry['gContact$website'][0]["rel"] == "profile"
-            contact[:id] = contact_id(entry['gContact$website'][0]["href"])
-            contact[:profile_picture] = image_url(contact[:id])
-          else
-            contact[:profile_picture] = image_url_from_email(contact[:email])
-          end
-
           if entry["link"] && entry["link"].is_a?(Array)
             entry["link"].each do |link|
               if link["type"] == 'image/*' && link["gd$etag"]
@@ -189,15 +182,11 @@ module OmniContacts
         contacts
       end
 
-      def image_url gmail_id
-        return "https://profiles.google.com/s2/photos/profile/" + gmail_id if gmail_id
-      end
-
       def current_user me, access_token, token_type
         return nil if me.nil?
         me = JSON.parse(me)
         user = {:id => me['id'], :email => me['email'], :name => me['name'], :first_name => me['given_name'],
-                :last_name => me['family_name'], :gender => me['gender'], :birthday => birthday(me['birthday']), :profile_picture => image_url(me['id']),
+                :last_name => me['family_name'], :gender => me['gender'], :birthday => birthday(me['birthday']), :profile_picture => me["picture"],
                 :access_token => access_token, :token_type => token_type
         }
         user
