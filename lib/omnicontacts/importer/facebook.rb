@@ -13,7 +13,7 @@ module OmniContacts
         super *args
         @auth_host = 'graph.facebook.com/v2.0'
         @authorize_path = '/oauth/authorize'
-        @scope = 'email,user_relationships,user_birthday'
+        @scope = 'email,user_relationships,user_birthday,user_friends'
         @auth_token_path = '/oauth/access_token'
         @contacts_host = 'graph.facebook.com'
         @friends_path = '/me/friends'
