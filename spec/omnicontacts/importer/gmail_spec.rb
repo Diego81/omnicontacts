@@ -310,8 +310,8 @@ describe OmniContacts::Importer::Gmail do
         result.last[:birthday].should eq({ :day => 10, :month => 02, :year => 1974 })
         result.last[:profile_picture].should be_nil
         result.last[:relation].should eq('spouse')
-        result.first[:address_1].should eq('1313 Trashview Court')
-        result.first[:address_2].should eq('Apt. 13')
+        result.first[:address_1].should eq(nil)
+        result.first[:address_2].should eq(nil)
         result.first[:city].should eq('Nowheresville')
         result.first[:region].should eq('OK')
         result.first[:country].should eq('VA')

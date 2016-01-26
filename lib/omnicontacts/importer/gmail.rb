@@ -115,7 +115,7 @@ module OmniContacts
 
             new_address[:address_1] = address['gd$street']['$t'] if address['gd$street']
             new_address[:address_1] = address['gd$formattedAddress']['$t'] if new_address[:address_1].nil? && address['gd$formattedAddress']
-            if new_address[:address_1].index("\n")
+            if !new_address[:address_1].nil? && new_address[:address_1].index("\n")
               parts = new_address[:address_1].split("\n")
               new_address[:address_1] = parts.first
               # this may contain city/state/zip if user jammed it all into one string.... :-(
