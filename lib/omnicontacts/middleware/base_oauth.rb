@@ -112,7 +112,7 @@ module OmniContacts
 
       def append_request_params(target_url)
         return target_url unless @env['omnicontacts.params']
-        params = URI.encode_www_form(@env['omnicontacts.params'])
+        params = Rack::Utils.build_query(@env['omnicontacts.params'])
         unless params.nil? or params.empty?
           target_url = target_url + (target_url.include?("?")?"&":"?") + params
         end
