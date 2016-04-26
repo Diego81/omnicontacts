@@ -2,10 +2,7 @@ require "omnicontacts/middleware/oauth2"
 require "omnicontacts/parse_utils"
 require "json"
 
-# Outlook contacts REST API
-# https://msdn.microsoft.com/en-us/office/office365/api/api-catalog#Outlookcontacts
-# https://msdn.microsoft.com/office/office365/api/contacts-rest-operations
-# Register app https://apps.dev.microsoft.com/
+# API Docs: https://msdn.microsoft.com/en-us/office/office365/api/api-catalog#Outlookcontacts
 module OmniContacts
   module Importer
     class Outlook < Middleware::OAuth2
@@ -17,7 +14,7 @@ module OmniContacts
         super app, client_id, client_secret, options
         @auth_host = "login.microsoftonline.com"
         @authorize_path = "/common/oauth2/v2.0/authorize"
-        @scope = options[:permissions] || "openid profile https://outlook.office.com/contacts.read"
+        @scope = options[:permissions] || "https://outlook.office.com/contacts.read"
         @auth_token_path = "/common/oauth2/v2.0/token"
         @contacts_host = "outlook.office.com"
         @contacts_path = "/api/v2.0/me/contacts"
@@ -39,21 +36,21 @@ module OmniContacts
       private
 
       def contacts_req_headers token, token_type
-        {"Authorization" => "#{token_type} #{token}"}
+        { "Authorization" => "#{token_type} #{token}" }
       end
 
       def current_user me
         return nil if me.nil?
         me = JSON.parse(me)
 
-        name_splitted = me['DisplayName'].split(' ')
+        name_splitted = me["DisplayName"].split(" ")
         first_name = name_splitted.first
         last_name = name_splitted.last if name_splitted.size > 1
 
         user = empty_contact
-        user[:id]         = me['Id']
-        user[:email]      = me['EmailAddress']
-        user[:name]       = me['DisplayName']
+        user[:id]         = me["Id"]
+        user[:email]      = me["EmailAddress"]
+        user[:name]       = me["DisplayName"]
         user[:first_name] = normalize_name(first_name)
         user[:last_name]  = normalize_name(last_name)
         user
@@ -62,24 +59,24 @@ module OmniContacts
       def contacts_from_response response_as_json
         response = JSON.parse(response_as_json)
         contacts = []
-        response['value'].each do |entry|
+        response["value"].each do |entry|
           contact = empty_contact
           # Full fields reference:
           # https://msdn.microsoft.com/office/office365/api/complex-types-for-mail-contacts-calendar#RESTAPIResourcesContact
-          contact[:id]         = entry['Id']
-          contact[:first_name] = entry['GivenName']
-          contact[:last_name]  = entry['Surname']
-          contact[:name]       = entry['DisplayName']
-          contact[:email]      = parse_email(entry['EmailAddresses'])
-          contact[:birthday]   = birthday(entry['Birthday'])
+          contact[:id]         = entry["Id"]
+          contact[:first_name] = entry["GivenName"]
+          contact[:last_name]  = entry["Surname"]
+          contact[:name]       = entry["DisplayName"]
+          contact[:email]      = parse_email(entry["EmailAddresses"])
+          contact[:birthday]   = birthday(entry["Birthday"])
 
-          address = [entry['HomeAddress'], entry['BusinessAddress'], entry['OtherAddress']].reject(&:empty?).first
+          address = [entry["HomeAddress"], entry["BusinessAddress"], entry["OtherAddress"]].reject(&:empty?).first
           if address
-            contact[:address_1] = address['Street']
-            contact[:city]      = address['City']
-            contact[:region]    = address['State']
-            contact[:postcode]  = address['PostalCode']
-            contact[:country]   = address['CountryOrRegion']
+            contact[:address_1] = address["Street"]
+            contact[:city]      = address["City"]
+            contact[:region]    = address["State"]
+            contact[:postcode]  = address["PostalCode"]
+            contact[:country]   = address["CountryOrRegion"]
           end
 
           contacts << contact if contact[:name] || contact[:first_name]
@@ -95,14 +92,14 @@ module OmniContacts
 
       def parse_email emails
         return nil if emails.nil?
-        emails.map! { |email| email['Address'] }
+        emails.map! { |email| email["Address"] }
         emails.select! { |email| valid_email? email }
         emails.first
       end
 
       def birthday dob
         return nil if dob.nil?
-        birthday = dob[0..9].split('-')
+        birthday = dob[0..9].split("-")
         birthday[0] = nil if birthday[0].to_i < 1900 # if year is not set it returns 1604
         return birthday_format(birthday[1], birthday[2], birthday[0])
       end
