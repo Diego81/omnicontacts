@@ -34,8 +34,10 @@ module OmniContacts
       def call env
         @env = env
         if env["PATH_INFO"] =~ /^#{@listening_path}\/?$/
+          session['omnicontacts.params'] = Rack::Request.new(env).params
           handle_initial_request
         elsif env["PATH_INFO"] =~ /^#{redirect_path}/
+          env['omnicontacts.params'] = session.delete('omnicontacts.params')
           handle_callback
         else
           @app.call(env)
@@ -90,7 +92,8 @@ module OmniContacts
       def handle_error error_type, exception
         logger.puts("Error #{error_type} while processing #{@env["PATH_INFO"]}: #{exception.message}") if logger
         failure_url = "#{ MOUNT_PATH }failure?error_message=#{error_type}&importer=#{class_name}"
-        target_url = append_state_query(failure_url)
+        params_url = append_request_params(failure_url)
+        target_url = append_state_query(params_url)
         [302, {"Content-Type" => "text/html", "location" => target_url}, []]
       end
 
@@ -107,9 +110,17 @@ module OmniContacts
         "omnicontacts." + class_name
       end
 
+      def append_request_params(target_url)
+        return target_url unless @env['omnicontacts.params']
+        params = Rack::Utils.build_query(@env['omnicontacts.params'])
+        unless params.nil? or params.empty?
+          target_url = target_url + (target_url.include?("?")?"&":"?") + params
+        end
+        return target_url
+      end
+
       def append_state_query(target_url)
         state = Rack::Utils.parse_query(@env['QUERY_STRING'])['state']
-
         unless state.nil?
           target_url = target_url + (target_url.include?("?")?"&":"?") + 'state=' + state
         end
