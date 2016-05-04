@@ -32,9 +32,10 @@ require "omnicontacts"
 
 Rails.application.middleware.use OmniContacts::Builder do
   importer :gmail, "client_id", "client_secret", {:redirect_path => "/oauth2callback", :ssl_ca_file => "/etc/ssl/certs/curl-ca-bundle.crt"}
-  importer :yahoo, "consumer_id", "consumer_secret", {:callback_path => '/callback'}
+  importer :yahoo, "consumer_id", "consumer_secret", {:callback_path => "/callback"}
   importer :linkedin, "consumer_id", "consumer_secret", {:redirect_path => "/oauth2callback", :state => '<long_unique_string_value>'}
   importer :hotmail, "client_id", "client_secret"
+  importer :outlook, "app_id", "app_secret"
   importer :facebook, "client_id", "client_secret"
 end
 
@@ -53,13 +54,16 @@ On the other hand it makes things much easier to leave the default value for `:r
 
 * For Hotmail : [Microsoft Developer Network](https://account.live.com/developers/applications/index)
 
+* For Outlook : [Microsoft Application Registration Portal](https://apps.dev.microsoft.com/)
+
 * For Facebook : [Facebook Developers](https://developers.facebook.com/apps)
 
 * For Linkedin : [Linkedin Developer Network](https://www.linkedin.com/secure/developer)
 
 
 ##### Note:
-Please go through [MSDN](http://msdn.microsoft.com/en-us/library/cc287659.aspx) if above Hotmail link will not work.
+Please go through [MSDN](http://msdn.microsoft.com/en-us/library/cc287659.aspx) if above Hotmail link will not work.  
+Outlook is a newer Microsoft API which allows to retrieve real email address instead of `email_hashes` when using Hotmail, it also works with all kinds of MS accounts (Office 365, Hotmail.com, Live.com, MSN.com, Outlook.com, and Passport.com).
 
 ## Integrating with your Application
 
@@ -172,7 +176,26 @@ The following table shows which fields are supported by which provider:
 		<td></td>
 	</tr>
 	<tr>
-	    <td>Linkedin</td>
+		<td>Outlook</td>
+		<td>X</td>
+		<td>X</td>
+		<td></td>
+		<td>X</td>
+		<td>X</td>
+		<td>X</td>
+		<td>X</td>
+		<td></td>
+		<td>X</td>
+		<td>X</td>
+		<td>X</td>
+		<td>X</td>
+		<td></td>
+		<td>X</td>
+		<td></td>
+		<td></td>
+	</tr>
+	<tr>
+	<td>Linkedin</td>
 		<td></td>
 		<td>X</td>
 		<td>X</td>
@@ -214,7 +237,7 @@ If the user does not authorize your application to access his/her contacts list,
 
 OmniContacts supports OAuth 1.0 and OAuth 2.0 token refresh, but for both it needs to persist data between requests. OmniContacts stores access tokens in the session. If you hit the 4KB cookie storage limit you better opt for the Memcache or the Active Record storage.
 
-Gmail requires you to register the redirect_path on their website along with your application. Make sure to use the same value present in the configuration file, or `/contacts/gmail/callback` if using the default. Also make sure that your full url is used including "www" if your site redirects from the root domain. 
+Gmail requires you to register the redirect_path on their website along with your application. Make sure to use the same value present in the configuration file, or `/contacts/gmail/callback` if using the default. Also make sure that your full url is used including "www" if your site redirects from the root domain.
 
 To configure the max number of contacts to download from Gmail, just add a max results parameter in your initializer:
 
