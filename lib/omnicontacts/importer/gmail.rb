@@ -36,7 +36,7 @@ module OmniContacts
       private
 
       def contacts_req_params
-        {'max-results' => @max_results.to_s, 'alt' => 'json'}
+        {'max-results' => @max_results.to_s, 'alt' => 'json', 'orderby' => 'lastmodified'}
       end
 
       def contacts_req_headers token, token_type
@@ -76,6 +76,7 @@ module OmniContacts
             contact[:name] = full_name(contact[:first_name],contact[:last_name]) if contact[:name].nil?
           end
 
+          contact[:updated] = entry['updated']['$t']
           contact[:emails] = []
           entry['gd$email'].each do |email|
             if email['rel']
