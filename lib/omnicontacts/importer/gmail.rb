@@ -36,7 +36,7 @@ module OmniContacts
       private
 
       def contacts_req_params
-        {'max-results' => @max_results.to_s, 'alt' => 'json', 'orderby' => 'lastmodified'}
+        {'max-results' => @max_results.to_s, 'alt' => 'json', 'orderby' => 'lastmodified', 'sortorder' => 'descending'}
       end
 
       def contacts_req_headers token, token_type
