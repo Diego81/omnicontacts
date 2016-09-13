@@ -12,7 +12,8 @@ module OmniContacts
     end
 
     def rack14?
-      Rack.release.split('.')[1].to_i >= 4
+      v = Rack.release.split('.')
+      v[0].to_i >= 1 || v[1].to_i >= 4
     end
 
     def importer importer, *args
