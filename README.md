@@ -8,6 +8,14 @@ OmniContacts uses the OAuth protocol to communicate with the contacts provider. 
  Facebook, Gmail and Hotmail support OAuth 2.0.
 In order to use OmniContacts, it is therefore necessary to first register your application with the provider and to obtain client_id and client_secret.
 
+## Contribute!
+Me (rubytastic) and the orginal author Diego don't actively use this code at the moment, anyone interested in maintaining and contributing to this codebase please write me up in a personal message ( rubytastic )
+I try to merge pull requests in every once and a while but this code would benefit from someone actively use and contribute to it.
+
+## Gem build updates
+There is now a new gem build out which should address many issues people had when posting on the issue tracker. Please update to the latest GEM version if you have problems before posting new issues.
+
+
 ## Usage
 
 Add OmniContacts as a dependency:
@@ -24,14 +32,16 @@ require "omnicontacts"
 
 Rails.application.middleware.use OmniContacts::Builder do
   importer :gmail, "client_id", "client_secret", {:redirect_path => "/oauth2callback", :ssl_ca_file => "/etc/ssl/certs/curl-ca-bundle.crt"}
-  importer :yahoo, "consumer_id", "consumer_secret", {:callback_path => '/callback'}
+  importer :yahoo, "consumer_id", "consumer_secret", {:callback_path => "/callback"}
+  importer :linkedin, "consumer_id", "consumer_secret", {:redirect_path => "/oauth2callback", :state => '<long_unique_string_value>'}
   importer :hotmail, "client_id", "client_secret"
+  importer :outlook, "app_id", "app_secret"
   importer :facebook, "client_id", "client_secret"
 end
 
 ```
 
-Every importer expects `client_id` and `client_secret` as mandatory, while `:redirect_path` and `:ssl_ca_file` are optional.
+Every importer expects `client_id` and `client_secret` as mandatory, while `:redirect_path` and `:ssl_ca_file` are optional (except linkedin - `state` arg  mandatory).
 Since Yahoo implements the version 1.0 of the OAuth protocol, naming is slightly different. Instead of `:redirect_path` you should use `:callback_path` as key in the hash providing the optional parameters.
 While `:ssl_ca_file` is optional, it is highly recommended to set it on production environments for obvious security reasons.
 On the other hand it makes things much easier to leave the default value for `:redirect_path` and `:callback path`, the reason of which will be clear after reading the following section.
@@ -44,10 +54,16 @@ On the other hand it makes things much easier to leave the default value for `:r
 
 * For Hotmail : [Microsoft Developer Network](https://account.live.com/developers/applications/index)
 
+* For Outlook : [Microsoft Application Registration Portal](https://apps.dev.microsoft.com/)
+
 * For Facebook : [Facebook Developers](https://developers.facebook.com/apps)
 
+* For Linkedin : [Linkedin Developer Network](https://www.linkedin.com/secure/developer)
+
+
 ##### Note:
-Please go through [MSDN](http://msdn.microsoft.com/en-us/library/cc287659.aspx) if above Hotmail link will not work.
+Please go through [MSDN](http://msdn.microsoft.com/en-us/library/cc287659.aspx) if above Hotmail link will not work.  
+Outlook is a newer Microsoft API which allows to retrieve real email address instead of `email_hashes` when using Hotmail, it also works with all kinds of MS accounts (Office 365, Hotmail.com, Live.com, MSN.com, Outlook.com, and Passport.com).
 
 ## Integrating with your Application
 
@@ -159,6 +175,44 @@ The following table shows which fields are supported by which provider:
 		<td>X</td>
 		<td></td>
 	</tr>
+	<tr>
+		<td>Outlook</td>
+		<td>X</td>
+		<td>X</td>
+		<td></td>
+		<td>X</td>
+		<td>X</td>
+		<td>X</td>
+		<td>X</td>
+		<td></td>
+		<td>X</td>
+		<td>X</td>
+		<td>X</td>
+		<td>X</td>
+		<td></td>
+		<td>X</td>
+		<td></td>
+		<td></td>
+	</tr>
+	<tr>
+	<td>Linkedin</td>
+		<td></td>
+		<td>X</td>
+		<td>X</td>
+		<td>X</td>
+		<td>X</td>
+		<td>X</td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+	<tr>
 </table>
 
 Obviously it may happen that some fields are blank even if supported by the provider in the case that the contact did not provide any information about them.
@@ -183,7 +237,7 @@ If the user does not authorize your application to access his/her contacts list,
 
 OmniContacts supports OAuth 1.0 and OAuth 2.0 token refresh, but for both it needs to persist data between requests. OmniContacts stores access tokens in the session. If you hit the 4KB cookie storage limit you better opt for the Memcache or the Active Record storage.
 
-Gmail requires you to register the redirect_path on their website along with your application. Make sure to use the same value present in the configuration file, or `/contacts/gmail/callback` if using the default.
+Gmail requires you to register the redirect_path on their website along with your application. Make sure to use the same value present in the configuration file, or `/contacts/gmail/callback` if using the default. Also make sure that your full url is used including "www" if your site redirects from the root domain.
 
 To configure the max number of contacts to download from Gmail, just add a max results parameter in your initializer:
 
@@ -214,6 +268,11 @@ The `mock` method allows to configure per-provider the result to return:
 ```
 
 You can either pass a single hash or an array of hashes. If you pass a string, an error will be triggered with subsequent redirect to `/contacts/failure?error_message=internal_error`
+
+You can also pass a user to fill `omnicontacts.user` (optional)
+```ruby
+  OmniContacts.integration_test.mock(:provider_name, {:email => "contact@example.com"}, {:email => "user@example.com"})
+```
 
 Follows a full example of an integration test:
 

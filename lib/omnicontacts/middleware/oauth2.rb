@@ -5,7 +5,7 @@ require "omnicontacts/middleware/base_oauth"
 #
 # Extending class are required to implement
 # the following methods:
-# * fetch_contacts_using_access_token -> it 
+# * fetch_contacts_using_access_token -> it
 #   fetches the list of contacts from the authorization
 #   server.
 module OmniContacts
@@ -25,7 +25,7 @@ module OmniContacts
 
       def request_authorization_from_user
         target_url = append_state_query(authorization_url)
-        [302, {"location" => target_url}, []]
+        [302, {"Content-Type" => "application/x-www-form-urlencoded", "location" => target_url}, []]
       end
 
       def redirect_uri
@@ -34,7 +34,7 @@ module OmniContacts
 
       # It extract the authorization code from the query string.
       # It uses it to obtain an access token.
-      # If the authorization code has a refresh token associated 
+      # If the authorization code has a refresh token associated
       # with it in the session, it uses the obtain an access token.
       # It fetches the list of contacts and stores the refresh token
       # associated with the access token in the session.

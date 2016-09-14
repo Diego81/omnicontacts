@@ -13,12 +13,12 @@ module OmniContacts
         super *args
         @auth_host = 'graph.facebook.com'
         @authorize_path = '/oauth/authorize'
-        @scope = 'email,user_relationships,user_birthday,friends_birthday'
+        @scope = 'email,user_relationships,user_birthday,user_friends'
         @auth_token_path = '/oauth/access_token'
         @contacts_host = 'graph.facebook.com'
-        @friends_path = '/me/friends'
-        @family_path = '/me/family'
-        @self_path = '/me'
+        @friends_path = '/v2.5/me/friends'
+        @family_path = '/v2.5/me/family'
+        @self_path = '/v2.5/me'
       end
 
       def fetch_contacts_using_access_token access_token, access_token_secret
