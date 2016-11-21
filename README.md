@@ -50,7 +50,7 @@ On the other hand it makes things much easier to leave the default value for `:r
 
 * For Gmail : [Google API Console](https://code.google.com/apis/console/)
 
-* For Yahoo : [Yahoo Developer Network](https://developer.apps.yahoo.com/projects)
+* For Yahoo : [Yahoo Developer Network](https://developer.yahoo.com/social/contacts/)
 
 * For Hotmail : [Microsoft Developer Network](https://account.live.com/developers/applications/index)
 
