@@ -231,7 +231,18 @@ def contacts_callback
 end
 ```
 
+## Handling Errors
+
 If the user does not authorize your application to access his/her contacts list, or any other inconvenience occurs, he/she is redirected to `/contacts/failure`. The query string will contain a parameter named `error_message` which specifies why the list of contacts could not be retrieved. `error_message` can have one of the following values: `not_authorized`, `timeout` and `internal_error`.
+
+There will also be a detailed error message logged into the rails console. Be sure to check that if you're having any issues. 
+
+If you need to use the detailed `error_message` or plain `exception_message`, you can do so by accessing the appropriate session.
+
+- `session[:exception_message]` will provide you with the exception message returned by the Oauth failure.
+- `session[:error_message]` will provide you with the error message logged into your rails console.
+
+You may want to delete these values after accessing them. You can do so with: `session.delete(:exception_message)` or `session.delete(:error_message)`
 
 ##  Tips and tricks
 
