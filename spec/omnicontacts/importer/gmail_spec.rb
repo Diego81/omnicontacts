@@ -163,6 +163,7 @@ describe OmniContacts::Importer::Gmail do
       result.first[:relation].should eq('father')
       result.first[:profile_picture].should eq("https://www.google.com/m8/feeds/photos/media/logged_in_user%40gmail.com/6b41d030b05abc?&access_token=token")
       result.first[:dates][0][:name].should eq("anniversary")
+      result.first[:updated].should match /^2013.*/
     end
 
     it "should correctly parse id, name, email, gender, birthday, profile picture, snailmail address, phone and relation for 2nd contact" do
