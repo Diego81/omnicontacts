@@ -1,6 +1,6 @@
 module OmniContacts
   
-  VERSION = "0.3.9"
+  VERSION = "0.3.10"
 
   MOUNT_PATH = "/contacts/"
 
