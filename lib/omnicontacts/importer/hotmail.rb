@@ -20,7 +20,7 @@ module OmniContacts
         @self_path = "/v5.0/me"
       end
 
-      def fetch_contacts_using_access_token access_token, access_token_secret
+      def fetch_contacts_using_access_token access_token, access_token_secret, opt=nil
         fetch_current_user(access_token)
         contacts_response = https_get(@contacts_host, @contacts_path, :access_token => access_token)
         contacts_from_response contacts_response

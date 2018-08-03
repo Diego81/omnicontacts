@@ -13,7 +13,7 @@ module OmniContacts
     class OAuth2 < BaseOAuth
       include Authorization::OAuth2
 
-      attr_reader :client_id, :client_secret, :redirect_path
+      attr_reader :client_id, :client_secret, :redirect_path, :access_type, :response_type
 
       def initialize app, client_id, client_secret, options ={}
         super app, options
@@ -21,6 +21,8 @@ module OmniContacts
         @client_secret = client_secret
         @redirect_path = options[:redirect_path] || "#{ MOUNT_PATH }#{class_name}/callback"
         @ssl_ca_file = options[:ssl_ca_file]
+        @access_type = options[:access_type] || "online"
+        @response_type = options[:response_type] || "code"
       end
 
       def request_authorization_from_user
@@ -45,12 +47,19 @@ module OmniContacts
         code = query_string_to_map(@env["QUERY_STRING"])["code"]
         if code
           refresh_token = session[refresh_token_prop_name(code)]
-          (access_token, token_type, refresh_token) = if refresh_token
-                                                        refresh_access_token(refresh_token)
-                                                      else
-                                                        fetch_access_token(code)
-                                                      end
-          contacts = fetch_contacts_using_access_token(access_token, token_type)
+          if refresh_token
+            response = refresh_access_token(refresh_token)
+          else
+            response = fetch_access_token(code)
+          end
+
+          access_token = response[:access_token]
+          token_type = response[:token_type]
+          refresh_token = response[:refresh_token]
+          opt = {
+            xoauth_yahoo_guid: response[:xoauth_yahoo_guid]
+          }
+          contacts = fetch_contacts_using_access_token(access_token, token_type, opt)
           session[refresh_token_prop_name(code)] = refresh_token if refresh_token
           contacts
         else

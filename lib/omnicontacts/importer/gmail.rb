@@ -21,7 +21,7 @@ module OmniContacts
         @profile_path = "/oauth2/v3/userinfo"
       end
 
-      def fetch_contacts_using_access_token access_token, token_type
+      def fetch_contacts_using_access_token access_token, token_type, opt=nil
         fetch_current_user(access_token, token_type)
         contacts_response = https_get(@contacts_host, @contacts_path, contacts_req_params, contacts_req_headers(access_token, token_type))
         contacts_from_response(contacts_response, access_token)
@@ -36,7 +36,7 @@ module OmniContacts
       private
 
       def contacts_req_params
-        {'max-results' => @max_results.to_s, 'alt' => 'json'}
+        {'max-results' => @max_results.to_s, 'alt' => 'json', 'orderby' => 'lastmodified', 'sortorder' => 'descending'}
       end
 
       def contacts_req_headers token, token_type
@@ -76,6 +76,7 @@ module OmniContacts
             contact[:name] = full_name(contact[:first_name],contact[:last_name]) if contact[:name].nil?
           end
 
+          contact[:updated] = entry['updated']['$t']
           contact[:emails] = []
           entry['gd$email'].each do |email|
             if email['rel']

@@ -38,6 +38,7 @@ module OmniContacts
       port = ((env["SERVER_PORT"] == 80) && "") || ":#{env['SERVER_PORT']}"
       host = (env["HTTP_HOST"]) || (env["SERVER_NAME"] + port)
       "#{scheme(env)}://#{host}"
+      # 'http://5f9ae49e.ngrok.io'
     end
 
     def scheme env
