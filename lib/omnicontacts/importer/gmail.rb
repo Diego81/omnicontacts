@@ -21,7 +21,7 @@ module OmniContacts
         @profile_path = "/oauth2/v3/userinfo"
       end
 
-      def fetch_contacts_using_access_token access_token, token_type
+      def fetch_contacts_using_access_token access_token, token_type, opt=nil
         fetch_current_user(access_token, token_type)
         contacts_response = https_get(@contacts_host, @contacts_path, contacts_req_params, contacts_req_headers(access_token, token_type))
         contacts_from_response(contacts_response, access_token)

@@ -3,7 +3,7 @@ require "omnicontacts/middleware/base_oauth"
 
 # This class is an OAuth 1.0 Rack middleware.
 #
-# Extending classes are required to 
+# Extending classes are required to
 # implement the following methods:
 # * fetch_token_from_token_and_verifier -> this method has to
 #   fetch the list of contacts from the authorization server.
@@ -48,7 +48,7 @@ module OmniContacts
         [302, {"Content-Type" => "application/x-www-form-urlencoded", "location" => target_url}, []]
       end
 
-      # Parses the authorization token from the query string and 
+      # Parses the authorization token from the query string and
       # obtain the relative secret from the session.
       # Finally it calls fetch_contacts_from_token_and_verifier.
       # If token is found in the query string an AuhorizationError
