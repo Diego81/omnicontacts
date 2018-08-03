@@ -53,8 +53,6 @@ module OmniContacts
             response = fetch_access_token(code)
           end
 
-          binding.pry
-
           access_token = response[:access_token]
           token_type = response[:token_type]
           refresh_token = response[:refresh_token]
