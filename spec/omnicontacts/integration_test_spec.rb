@@ -5,21 +5,18 @@ describe IntegrationTest do
 
   context "mock_initial_request" do
     it "should redirect to the provider's redirect_path" do
-      provider = mock
       redirect_path = "/redirect_path"
-      provider.stub(:redirect_path => redirect_path)
+      provider = double('the-provider', redirect_path: redirect_path)
       IntegrationTest.instance.mock_authorization_from_user(provider)[1]["location"].should eq(redirect_path)
     end
   end
 
   context "mock_callback" do
-
-    before(:each) {
+    before do
       @env = {}
-      @provider = self.mock
-      @provider.stub(:class_name => "test")
+      @provider = double('the-mock', class_name: "test")
       IntegrationTest.instance.clear_mocks
-    }
+    end
 
     it "should return an empty contacts list" do
       IntegrationTest.instance.mock_fetch_contacts(@provider).should be_empty
