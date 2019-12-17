@@ -38,8 +38,9 @@ describe OmniContacts::Authorization::OAuth1 do
     end
 
     it "should raise an error if request is invalid" do
-      test_target.should_receive(:https_post).and_return("invalid_request")
-      expect { test_target.fetch_authorization_token }.to raise_error
+      allow(test_target).to receive(:https_post).and_return("invalid_request")
+
+      expect { test_target.fetch_authorization_token }.to(raise_error)
     end
 
   end
