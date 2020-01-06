@@ -61,6 +61,14 @@ module OmniContacts
         end
         json = JSON.parse(response)
         raise json["error"] if json["error"]
+
+        if auth_host == "api.login.yahoo.com"
+          if session['xoauth_yahoo_guid'].present?
+            session.delete('xoauth_yahoo_guid')
+          end
+          session['xoauth_yahoo_guid'] = json["xoauth_yahoo_guid"]
+        end
+
         [json["access_token"], json["token_type"], json["refresh_token"]]
       end
 
@@ -80,7 +88,6 @@ module OmniContacts
           :refresh_token => refresh_token,
           :grant_type => "refresh_token"
         }
-
       end
     end
   end
